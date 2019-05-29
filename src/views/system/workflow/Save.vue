@@ -1,11 +1,11 @@
 <template>
   <div>
-    <!-- <iframe
+    <iframe
       width="100%"
       src="/static/workflow/modeler.html"
       frameborder="0"
       id="iframe"
-    ></iframe> -->
+    ></iframe>
 
     <!-- <iframe
       width="100%"
@@ -14,12 +14,12 @@
       id="iframe"
     ></iframe> -->
 
-     <iframe
+     <!-- <iframe
       width="100%"
       src="/static/widgets/modeler/modeler.html"
       frameborder="0"
       id="iframe"
-    ></iframe>
+    ></iframe> -->
 
   </div>
 </template>

@@ -6,7 +6,10 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button
+          type="primary"
+          @click="addOrUpdateHandle()"
+        >新增</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -19,20 +22,15 @@
     >
       <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column> -->
       <el-table-column prop="name" header-align="center" align="center" label="序号" width="50"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="公文类型"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="公文类别"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="工作流"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="表单"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="文种"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="业务说明"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="状态"></el-table-column>
-      <el-table-column fixed="right" header-align="center" align="center" width="250" label="操作">
+      <el-table-column prop="name" header-align="center" align="center" label="名称"></el-table-column>
+      <el-table-column prop="name" header-align="center" align="center" label="短名称"></el-table-column>
+      <el-table-column prop="name" header-align="center" align="center" label="别名"></el-table-column>
+      <el-table-column prop="name" header-align="center" align="center" label="是否国际"></el-table-column>
+      <el-table-column prop="name" header-align="center" align="center" label="自动归档"></el-table-column>
+      <el-table-column fixed="right" header-align="center" align="center" width="100" label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">停用</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">上移</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">下移</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -52,7 +50,6 @@
 
 <script>
 import Save from './Save'
-
 export default {
   data () {
     return {
@@ -175,6 +172,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

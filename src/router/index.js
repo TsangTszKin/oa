@@ -42,9 +42,15 @@ const mainRoutes = {
     { path: '/system-form-save/:id?', component: _import('system/form/Save'), name: 'system-form-save', meta: { title: '表单设计', isTab: false } }, // ,
     { path: '/system-table-save/:id?', component: _import('system/table/Save'), name: 'system-table-save', meta: { title: '业务表设计', isTab: true } }, // ,
     { path: '/system-workflow-model', component: _import('system/workflow/List'), name: 'system-workflow-model', meta: { title: '流程设计列表', isTab: true } }, // ,
-    { path: '/system-workflow-model-save', component: _import('system/workflow/Save'), name: 'system-workflow-model-save', meta: { title: '流程设计', isTab: false } } // ,
+    { path: '/system-workflow-model-save', component: _import('system/workflow/Save'), name: 'system-workflow-model-save', meta: { title: '流程设计', isTab: false } }, // ,
     // { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts', meta: { title: 'demo-echarts', isTab: true } },
     // { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } }
+    { path: '/system-', component: _import('system/doc-cfg/doc-type/List'), name: 'system-', meta: { title: '公文类型管理', isTab: true } },
+    { path: '/system-document-docOrderDef', component: _import('system/doc-cfg/symbol/List'), name: 'system-document-docOrderDef', meta: { title: '文号定义', isTab: true } },
+    { path: '/system-document-orderDef', component: _import('system/doc-cfg/code/List'), name: 'system-document-orderDef', meta: { title: '编号管理', isTab: true } },
+    { path: '/system-document-recedoctype', component: _import('system/doc-cfg/received-doc-type/List'), name: 'system-document-recedoctype', meta: { title: '来文类型管理', isTab: true } },
+    { path: '/docBaseCategory', component: _import('system/doc-cfg/doc-cate/List'), name: 'docBaseCategory', meta: { title: '文种管理', isTab: true } },
+    { path: '/proxyManager', component: _import('system/doc-cfg/agent/List'), name: 'proxyManager', meta: { title: '代理管理', isTab: true } }
   ],
   beforeEnter (to, from, next) {
     let token = http.getAccessToken() ? http.getAccessToken() : Vue.cookie.get('vgsoa:token')
