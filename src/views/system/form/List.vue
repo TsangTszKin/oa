@@ -68,7 +68,7 @@
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
 
-    <el-dialog title="设置表字段映射" :visible.sync="dialogMapping">
+    <el-dialog title="设置表字段映射" :visible.sync="dialogMapping" append-to-body>
       <div class="cleanfix" style="margin-bottom: 30px;">
         <p style="float: left;height: 30px;line-height: 30px;margin: 0;">选择表：</p>
         <el-select :value="dycformId" @change="tableChange" filterable placeholder="请选择表">
@@ -96,12 +96,14 @@
         <el-button type="primary" @click="save">确 定</el-button>
       </div>
     </el-dialog>
+    <Save v-if="saveVisible" ref="Save" @refreshDataList="getDataList"></Save>
   </div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
 import common from '@/utils/common'
+import Save from './Save'
 
 export default {
   data () {
@@ -125,10 +127,13 @@ export default {
       dyctable: {},
       dycform: {},
       tableList: [],
-      dycformId: ''
+      dycformId: '',
+      saveVisible: false
     }
   },
-  components: {},
+  components: {
+    Save
+  },
   activated () {
     this.getDataList()
   },
@@ -278,17 +283,17 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {
-      // this.addOrUpdateVisible = true;
-      // this.$nextTick(() => {
-      //   this.$refs.addOrUpdate.init(id);
-      // });
-      if (id) {
-        this.$router.push({ name: 'system-form-save', params: { id: id } })
-        // window.open(`${location.host}/#/system-form-save/${id}`)
-      } else {
-        this.$router.push({ name: 'system-form-save' })
-        // window.open(`${location.host}/#/system-form-save`)
-      }
+      this.saveVisible = true
+      this.$nextTick(() => {
+        this.$refs.Save.init(id)
+      })
+      // if (id) {
+      //   this.$router.push({ name: 'system-form-save', params: { id: id } })
+      //   // window.open(`${location.host}/#/system-form-save/${id}`)
+      // } else {
+      //   this.$router.push({ name: 'system-form-save' })
+      //   // window.open(`${location.host}/#/system-form-save`)
+      // }
     },
     // 删除
     deleteHandle (id) {

@@ -1,311 +1,329 @@
 <template>
-  <div style="padding: 10px 30px;">
-    <el-row>
-      <el-col :span="6">
-        <FDMenu/>
-      </el-col>
-      <el-col
-        :span="12"
-        style="height:100%;"
-        :class="{'fd-main': $store.state.formDesign.formList.length == 0}"
-      >
-        <div style="padding: 10px;">
-          <a @click="dialogFormVisible = true">预览</a>
-          <a @click="dialogVisible = true">保存</a>
-        </div>
-
-        <Panel :formAttr="formAttr"/>
-
-        <!-- <nestedExample /> -->
-      </el-col>
-      <el-col :span="6">
-        <el-tabs
-          v-show="$store.state.formDesign.showType"
-          class="form-design"
-          v-model="activeName"
-          @tab-click="handleClick"
-          style="border-left: 1px solid #eee;padding: 0 10px;overflow: scroll;height: 100%;"
+  <el-dialog
+    :title="!saveData.id ? '新增' : '修改'"
+    :close-on-click-modal="false"
+    :visible.sync="visible"
+    append-to-body
+    fullscreen
+  >
+    <div style="padding: 10px 30px;">
+      <el-row>
+        <el-col :span="6">
+          <FDMenu/>
+        </el-col>
+        <el-col
+          :span="12"
+          style="height:100%;"
+          :class="{'fd-main': $store.state.formDesign.formList.length == 0}"
         >
-          <el-tab-pane label="字段属性" name="1">
-            <FDInput
-              v-show="$store.state.formDesign.showType === 'input'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-            <FDTextArea
-              v-show="$store.state.formDesign.showType === 'textarea'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-            <FDRadio
-              v-show="$store.state.formDesign.showType === 'radio'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-            <FDNumber
-              v-show="$store.state.formDesign.showType === 'number'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-            <FDCheckbox
-              v-show="$store.state.formDesign.showType === 'checkbox'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-            <FDDateTime
-              v-show="$store.state.formDesign.showType === 'datetime'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-            <FDSelect
-              v-show="$store.state.formDesign.showType === 'select'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-            <FDSwitch
-              v-show="$store.state.formDesign.showType === 'switch'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-            <FDImg
-              v-show="$store.state.formDesign.showType === 'img'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-            <FDGrid
-              v-show="$store.state.formDesign.showType === 'grid'"
-              :propData="$store.state.formDesign.activeForm"
-            />
-          </el-tab-pane>
-          <el-tab-pane label="表单属性" name="2">
-            <el-form label-position="top" label-width="80px" size="mini">
-              <el-form-item label="标签对齐方式">
-                <el-radio-group v-model="formAttr.align">
-                  <el-radio-button label="left">左对齐</el-radio-button>
-                  <el-radio-button label="right">右对齐</el-radio-button>
-                  <el-radio-button label="top">顶部对齐</el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="组件尺寸">
-                <el-radio-group v-model="formAttr.size">
-                  <el-radio-button label="large">大</el-radio-button>
-                  <el-radio-button label="medium">中等</el-radio-button>
-                  <el-radio-button label="small ">小</el-radio-button>
-                  <el-radio-button label="mini ">迷你</el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="表单字段宽度">
-                <el-input v-model="formAttr.labelWidth"></el-input>
-              </el-form-item>
-            </el-form>
-          </el-tab-pane>
-        </el-tabs>
-      </el-col>
-    </el-row>
+          <div style="padding: 10px;">
+            <a @click="dialogFormVisible = true">预览</a>
+            <!-- <a @click="dialogVisible = true">保存</a> -->
+          </div>
 
-    <el-dialog title="表单预览" :visible.sync="dialogFormVisible">
-      <el-form
-        :label-position="formAttr.align"
-        :label-width="formAttr.labelWidth"
-        :size="formAttr.size"
-        :rules="$store.state.formDesign.rules"
-      >
-        <template v-for="(item, i) in this.$store.state.formDesign.formList">
-          <el-form-item :label="item.title" :prop="item.key" v-if="item.type !== 'grid'" :key="i">
-            <el-input
-              v-if="item.type === 'input'"
-              :placeholder="item.options.placeholder"
-              :disabled="item.options.disabled"
-              :readonly="item.options.readonly"
-              :style="{width: item.options.width}"
-            ></el-input>
-            <el-input
-              v-if="item.type === 'textarea'"
-              :placeholder="item.options.placeholder"
-              :disabled="item.options.disabled"
-              :readonly="item.options.readonly"
-              type="textarea"
-              :rows="5"
-              :style="{width: item.options.width}"
-            ></el-input>
-            <el-input-number
-              v-if="item.type === 'number'"
-              :disabled="item.options.disabled"
-              :readonly="item.options.readonly"
-              :style="{width: item.options.width}"
-            ></el-input-number>
-            <el-radio-group
-              v-if="item.type === 'radio'"
-              v-model="item.options.defaultValue"
-              :disabled="item.options.disabled"
-              :readonly="item.options.readonly"
-              :style="{width: item.options.width}"
-            >
-              <el-radio
-                v-for="(item, i) in item.options.option"
-                :label="item.value"
-                :key="i"
-              >{{item.label}}</el-radio>
-            </el-radio-group>
-            <el-checkbox-group
-              v-if="item.type === 'checkbox'"
-              v-model="item.options.defaultValue"
-              :disabled="item.options.disabled"
-              :readonly="item.options.readonly"
-              :style="{width: item.options.width}"
-            >
-              <el-checkbox
-                v-for="(item, i) in item.options.option"
-                :label="item.value"
-                :key="i"
-              >{{item.label}}</el-checkbox>
-            </el-checkbox-group>
-            <el-select
-              v-if="item.type === 'select'"
-              :placeholder="item.options.placeholder"
-              :style="{width: item.options.width}"
-              :readonly="item.options.readonly"
-              :disabled="item.options.disabled"
-            >
-              <el-option
-                v-for="(item, i) in item.options.option"
-                :key="i"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-            <el-switch
-              v-if="item.type === 'switch'"
-              v-model="item.options.defaultValue"
-              active-color="#13ce66"
-              inactive-color="#EEEEEE"
-              :style="{width: item.options.width}"
-              :readonly="item.options.readonly"
-              :disabled="item.options.disabled"
-            ></el-switch>
-            <el-date-picker
-              type="datetime"
-              v-if="item.type === 'datetime'"
-              :placeholder="item.options.placeholder"
-              :style="{width: item.options.width}"
-              :disabled="item.options.disabled"
-            ></el-date-picker>
-            <el-upload
-              v-if="item.type === 'img'"
-              class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :limit="1"
-              :file-list="[{name: '图片.jpeg', url: item.options.defaultValue}]"
-              :disabled="item.options.disabled"
-              :readonly="true"
-            >
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
-          </el-form-item>
-          <el-row v-if="item.type === 'grid'" :key="i" :gutter="10">
-            <el-col :span="col.span" v-for="(col, j) in item.cols" :key="j" class="col">
-              <template v-for="(item2, j) in col.list">
-                <el-form-item :label="item2.title" :prop="item2.key" :key="j">
-                  <el-input
-                    v-if="item2.type === 'input'"
-                    :placeholder="item2.options.placeholder"
-                    :disabled="item2.options.disabled"
-                    :readonly="item2.options.readonly"
-                    :style="{width: item2.options.width}"
-                  ></el-input>
-                  <el-input
-                    v-if="item2.type === 'textarea'"
-                    :placeholder="item2.options.placeholder"
-                    :disabled="item2.options.disabled"
-                    :readonly="item2.options.readonly"
-                    type="textarea"
-                    :rows="5"
-                    :style="{width: item2.options.width}"
-                  ></el-input>
-                  <el-input-number
-                    v-if="item2.type === 'number'"
-                    :disabled="item2.options.disabled"
-                    :readonly="item2.options.readonly"
-                    :style="{width: item2.options.width}"
-                  ></el-input-number>
-                  <el-radio-group
-                    v-if="item2.type === 'radio'"
-                    v-model="item2.options.defaultValue"
-                    :disabled="item2.options.disabled"
-                    :readonly="item2.options.readonly"
-                    :style="{width: item2.options.width}"
-                  >
-                    <el-radio
-                      v-for="(item2, i) in item2.options.option"
-                      :label="item2.value"
-                      :key="i"
-                    >{{item.label}}</el-radio>
+          <Panel :formAttr="formAttr"/>
+
+          <!-- <nestedExample /> -->
+        </el-col>
+        <el-col :span="6">
+          <el-tabs
+            v-show="$store.state.formDesign.showType"
+            class="form-design"
+            v-model="activeName"
+            @tab-click="handleClick"
+            style="border-left: 1px solid #eee;padding: 0 10px;overflow: scroll;height: 100%;"
+          >
+            <el-tab-pane label="字段属性" name="1">
+              <FDInput
+                v-show="$store.state.formDesign.showType === 'input'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+              <FDTextArea
+                v-show="$store.state.formDesign.showType === 'textarea'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+              <FDRadio
+                v-show="$store.state.formDesign.showType === 'radio'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+              <FDNumber
+                v-show="$store.state.formDesign.showType === 'number'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+              <FDCheckbox
+                v-show="$store.state.formDesign.showType === 'checkbox'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+              <FDDateTime
+                v-show="$store.state.formDesign.showType === 'datetime'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+              <FDSelect
+                v-show="$store.state.formDesign.showType === 'select'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+              <FDSwitch
+                v-show="$store.state.formDesign.showType === 'switch'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+              <FDImg
+                v-show="$store.state.formDesign.showType === 'img'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+              <FDGrid
+                v-show="$store.state.formDesign.showType === 'grid'"
+                :propData="$store.state.formDesign.activeForm"
+              />
+            </el-tab-pane>
+            <el-tab-pane label="表单属性" name="2">
+              <el-form label-position="top" label-width="80px" size="mini">
+                <el-form-item label="标签对齐方式">
+                  <el-radio-group v-model="formAttr.align">
+                    <el-radio-button label="left">左对齐</el-radio-button>
+                    <el-radio-button label="right">右对齐</el-radio-button>
+                    <el-radio-button label="top">顶部对齐</el-radio-button>
                   </el-radio-group>
-                  <el-checkbox-group
-                    v-if="item2.type === 'checkbox'"
-                    v-model="item2.options.defaultValue"
-                    :disabled="item2.options.disabled"
-                    :readonly="item2.options.readonly"
-                    :style="{width: item2.options.width}"
-                  >
-                    <el-checkbox
-                      v-for="(item2, i) in item2.options.option"
-                      :label="item2.value"
-                      :key="i"
-                    >{{item2.label}}</el-checkbox>
-                  </el-checkbox-group>
-                  <el-select
-                    v-if="item2.type === 'select'"
-                    :placeholder="item2.options.placeholder"
-                    :style="{width: item2.options.width}"
-                    :readonly="item2.options.readonly"
-                    :disabled="item2.options.disabled"
-                  >
-                    <el-option
-                      v-for="(item2, i) in item2.options.option"
-                      :key="i"
-                      :label="item2.label"
-                      :value="item2.value"
-                    ></el-option>
-                  </el-select>
-                  <el-switch
-                    v-if="item2.type === 'switch'"
-                    v-model="item2.options.defaultValue"
-                    active-color="#13ce66"
-                    inactive-color="#EEEEEE"
-                    :style="{width: item2.options.width}"
-                    :readonly="iitem2tem.options.readonly"
-                    :disabled="item2.options.disabled"
-                  ></el-switch>
-                  <el-date-picker
-                    type="datetime"
-                    v-if="item2.type === 'datetime'"
-                    :placeholder="item2.options.placeholder"
-                    :style="{width: item2.options.width}"
-                    :disabled="item2.options.disabled"
-                  ></el-date-picker>
                 </el-form-item>
-              </template>
-            </el-col>
-          </el-row>
-        </template>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('rules')">模拟提交表单</el-button>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-      </div>
-    </el-dialog>
+                <el-form-item label="组件尺寸">
+                  <el-radio-group v-model="formAttr.size">
+                    <el-radio-button label="large">大</el-radio-button>
+                    <el-radio-button label="medium">中等</el-radio-button>
+                    <el-radio-button label="small ">小</el-radio-button>
+                    <el-radio-button label="mini ">迷你</el-radio-button>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="表单字段宽度">
+                  <el-input v-model="formAttr.labelWidth"></el-input>
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+          </el-tabs>
+        </el-col>
+      </el-row>
 
-    <el-dialog title="保存" :visible.sync="dialogVisible">
-      <el-form :inline="true" :model="saveData" @keyup.enter.native="getDataList()" :size="'mini'">
-        <el-form-item>
-          <el-input v-model="saveData.name" placeholder="名称" clearable></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="saveData.code" placeholder="编码" clearable></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
-      </div>
-    </el-dialog>
-  </div>
+      <el-dialog title="表单预览" :visible.sync="dialogFormVisible" append-to-body>
+        <el-form
+          :label-position="formAttr.align"
+          :label-width="formAttr.labelWidth"
+          :size="formAttr.size"
+          :rules="$store.state.formDesign.rules"
+        >
+          <template v-for="(item, i) in this.$store.state.formDesign.formList">
+            <el-form-item :label="item.title" :prop="item.key" v-if="item.type !== 'grid'" :key="i">
+              <el-input
+                v-if="item.type === 'input'"
+                :placeholder="item.options.placeholder"
+                :disabled="item.options.disabled"
+                :readonly="item.options.readonly"
+                :style="{width: item.options.width}"
+              ></el-input>
+              <el-input
+                v-if="item.type === 'textarea'"
+                :placeholder="item.options.placeholder"
+                :disabled="item.options.disabled"
+                :readonly="item.options.readonly"
+                type="textarea"
+                :rows="5"
+                :style="{width: item.options.width}"
+              ></el-input>
+              <el-input-number
+                v-if="item.type === 'number'"
+                :disabled="item.options.disabled"
+                :readonly="item.options.readonly"
+                :style="{width: item.options.width}"
+              ></el-input-number>
+              <el-radio-group
+                v-if="item.type === 'radio'"
+                v-model="item.options.defaultValue"
+                :disabled="item.options.disabled"
+                :readonly="item.options.readonly"
+                :style="{width: item.options.width}"
+              >
+                <el-radio
+                  v-for="(item, i) in item.options.option"
+                  :label="item.value"
+                  :key="i"
+                >{{item.label}}</el-radio>
+              </el-radio-group>
+              <el-checkbox-group
+                v-if="item.type === 'checkbox'"
+                v-model="item.options.defaultValue"
+                :disabled="item.options.disabled"
+                :readonly="item.options.readonly"
+                :style="{width: item.options.width}"
+              >
+                <el-checkbox
+                  v-for="(item, i) in item.options.option"
+                  :label="item.value"
+                  :key="i"
+                >{{item.label}}</el-checkbox>
+              </el-checkbox-group>
+              <el-select
+                v-if="item.type === 'select'"
+                :placeholder="item.options.placeholder"
+                :style="{width: item.options.width}"
+                :readonly="item.options.readonly"
+                :disabled="item.options.disabled"
+              >
+                <el-option
+                  v-for="(item, i) in item.options.option"
+                  :key="i"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+              <el-switch
+                v-if="item.type === 'switch'"
+                v-model="item.options.defaultValue"
+                active-color="#13ce66"
+                inactive-color="#EEEEEE"
+                :style="{width: item.options.width}"
+                :readonly="item.options.readonly"
+                :disabled="item.options.disabled"
+              ></el-switch>
+              <el-date-picker
+                type="datetime"
+                v-if="item.type === 'datetime'"
+                :placeholder="item.options.placeholder"
+                :style="{width: item.options.width}"
+                :disabled="item.options.disabled"
+              ></el-date-picker>
+              <el-upload
+                v-if="item.type === 'img'"
+                class="upload-demo"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :limit="1"
+                :file-list="[{name: '图片.jpeg', url: item.options.defaultValue}]"
+                :disabled="item.options.disabled"
+                :readonly="true"
+              >
+                <el-button size="small" type="primary">点击上传</el-button>
+                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+              </el-upload>
+            </el-form-item>
+            <el-row v-if="item.type === 'grid'" :key="i" :gutter="10">
+              <el-col :span="col.span" v-for="(col, j) in item.cols" :key="j" class="col">
+                <template v-for="(item2, j) in col.list">
+                  <el-form-item :label="item2.title" :prop="item2.key" :key="j">
+                    <el-input
+                      v-if="item2.type === 'input'"
+                      :placeholder="item2.options.placeholder"
+                      :disabled="item2.options.disabled"
+                      :readonly="item2.options.readonly"
+                      :style="{width: item2.options.width}"
+                    ></el-input>
+                    <el-input
+                      v-if="item2.type === 'textarea'"
+                      :placeholder="item2.options.placeholder"
+                      :disabled="item2.options.disabled"
+                      :readonly="item2.options.readonly"
+                      type="textarea"
+                      :rows="5"
+                      :style="{width: item2.options.width}"
+                    ></el-input>
+                    <el-input-number
+                      v-if="item2.type === 'number'"
+                      :disabled="item2.options.disabled"
+                      :readonly="item2.options.readonly"
+                      :style="{width: item2.options.width}"
+                    ></el-input-number>
+                    <el-radio-group
+                      v-if="item2.type === 'radio'"
+                      v-model="item2.options.defaultValue"
+                      :disabled="item2.options.disabled"
+                      :readonly="item2.options.readonly"
+                      :style="{width: item2.options.width}"
+                    >
+                      <el-radio
+                        v-for="(item2, i) in item2.options.option"
+                        :label="item2.value"
+                        :key="i"
+                      >{{item.label}}</el-radio>
+                    </el-radio-group>
+                    <el-checkbox-group
+                      v-if="item2.type === 'checkbox'"
+                      v-model="item2.options.defaultValue"
+                      :disabled="item2.options.disabled"
+                      :readonly="item2.options.readonly"
+                      :style="{width: item2.options.width}"
+                    >
+                      <el-checkbox
+                        v-for="(item2, i) in item2.options.option"
+                        :label="item2.value"
+                        :key="i"
+                      >{{item2.label}}</el-checkbox>
+                    </el-checkbox-group>
+                    <el-select
+                      v-if="item2.type === 'select'"
+                      :placeholder="item2.options.placeholder"
+                      :style="{width: item2.options.width}"
+                      :readonly="item2.options.readonly"
+                      :disabled="item2.options.disabled"
+                    >
+                      <el-option
+                        v-for="(item2, i) in item2.options.option"
+                        :key="i"
+                        :label="item2.label"
+                        :value="item2.value"
+                      ></el-option>
+                    </el-select>
+                    <el-switch
+                      v-if="item2.type === 'switch'"
+                      v-model="item2.options.defaultValue"
+                      active-color="#13ce66"
+                      inactive-color="#EEEEEE"
+                      :style="{width: item2.options.width}"
+                      :readonly="iitem2tem.options.readonly"
+                      :disabled="item2.options.disabled"
+                    ></el-switch>
+                    <el-date-picker
+                      type="datetime"
+                      v-if="item2.type === 'datetime'"
+                      :placeholder="item2.options.placeholder"
+                      :style="{width: item2.options.width}"
+                      :disabled="item2.options.disabled"
+                    ></el-date-picker>
+                  </el-form-item>
+                </template>
+              </el-col>
+            </el-row>
+          </template>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('rules')">模拟提交表单</el-button>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <el-dialog title="保存" :visible.sync="dialogVisible" append-to-body>
+        <el-form
+          :inline="true"
+          :model="saveData"
+          @keyup.enter.native="getDataList()"
+          :size="'mini'"
+        >
+          <el-form-item>
+            <el-input v-model="saveData.name" placeholder="名称" clearable></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input v-model="saveData.code" placeholder="编码" clearable></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="save">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="visible = false">取消</el-button>
+      <el-button type="primary" @click="dialogVisible = true">确定</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>
@@ -343,6 +361,7 @@ export default {
   },
   data () {
     return {
+      visible: false,
       activeName: '1',
       formAttr: {
         align: 'left',
@@ -385,7 +404,6 @@ export default {
     }
   },
   methods: {
-
     handleClick (tab, event) {
       console.log(tab, event)
     },
@@ -498,25 +516,29 @@ export default {
         })
         .catch(() => {})
     },
-    getDetails (id) {
-      this.$http({
-        url: this.$http.adornUrl('/api-oa/dycform/get'),
-        method: 'get',
-        params: this.$http.adornParams({ id })
-      })
-        .then(({ data }) => {
-          if (data && data.code === 0) {
-            this.saveData = common.deepClone(data.resultData)
-            // eslint-disable-next-line no-unused-vars
-            let contentStr = data.resultData.content
-            let content = JSON.parse(data.resultData.content)
-            this.$store.dispatch('formDesign/setFormList', content.formList)
-            this.formAttr = content.formAttr
-          } else {
-            this.$message.error(data.msg)
-          }
+    init (id) {
+      this.visible = true
+      this.$nextTick(() => {
+        if (common.isEmpty(id)) return
+        this.$http({
+          url: this.$http.adornUrl('/api-oa/dycform/get'),
+          method: 'get',
+          params: this.$http.adornParams({ id })
         })
-        .catch(() => {})
+          .then(({ data }) => {
+            if (data && data.code === 0) {
+              this.saveData = common.deepClone(data.resultData)
+              // eslint-disable-next-line no-unused-vars
+              let contentStr = data.resultData.content
+              let content = JSON.parse(data.resultData.content)
+              this.$store.dispatch('formDesign/setFormList', content.formList)
+              this.formAttr = content.formAttr
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
+          .catch(() => {})
+      })
     },
     verify () {
       if (common.isEmpty(this.saveData.name)) {
@@ -570,9 +592,6 @@ export default {
       content: '',
       name: '',
       remarks: ''
-    }
-    if (!common.isEmpty(this.$route.params.id)) {
-      this.getDetails(this.$route.params.id)
     }
   },
   filters: {

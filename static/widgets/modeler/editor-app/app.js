@@ -169,7 +169,8 @@ activitiModeler
 	            if (!$rootScope.editorInitialized) {
 	            	ORYX._loadPlugins()
 
-	                var modelId = EDITOR.UTIL.getParameterByName('modelId')
+                  // var modelId = EDITOR.UTIL.getParameterByName('modelId')
+              var modelId = String(parent.location.href).split('?modelId=')[1]
 	                fetchModel(modelId)
 
 	                $rootScope.window = {}
