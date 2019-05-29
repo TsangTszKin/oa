@@ -1,0 +1,115 @@
+
+.el-dialog__header {
+  border-bottom: 1px solid $--color-border;
+}
+.el-dialog__footer {
+  border-top: 1px solid $--color-border;
+}
+.el-dialog__headerbtn .el-dialog__close {
+  color: $--color-border-hover;
+}
+
+.el-table thead {
+  color: $--color-table-thead;
+}
+.el-table th {
+  background-color: $--color-th-background;
+}
+.el-table--border, .el-table--group {
+  border: 1px solid $--color-border;
+}
+.el-table td, .el-table th.is-leaf {
+  border-bottom: 1px solid $--color-border;
+}
+.el-table--border td, .el-table--border th, .el-table__body-wrapper .el-table--border.is-scrolling-left~.el-table__fixed {
+  border-right: 1px solid $--color-border;
+}
+.el-table .cell pre {
+  white-space: pre-line;
+}
+
+.el-input__inner {
+  border: 1px solid $--color-border;
+}
+.el-input__inner:hover {
+  border-color: $--color-border-hover;
+}
+.el-input__inner:focus {
+  border-color: $--color-primary;
+}
+.el-textarea__inner {
+  border: 1px solid $--color-border;
+}
+.el-textarea__inner:hover {
+  border-color: $--color-border-hover;
+}
+.el-textarea__inner:focus {
+  border-color: $--color-primary;
+}
+.el-input-group__append, .el-input-group__prepend {
+  border: 1px solid $--color-border;
+}
+.el-input-group__append:hover, .el-input-group__prepend:hover {
+  border: 1px solid $--color-border-hover;
+}
+.el-input-group__append:focus, .el-input-group__prepend:focus {
+  border: 1px solid $--color-primary;
+}
+
+.el-checkbox__inner {
+  border: 1px solid $--color-border;
+}
+
+.el-radio-button:first-child .el-radio-button__inner {
+  border-left: 1px solid $--color-border;
+}
+.el-radio-button__inner {
+  border-left: 1px solid $--color-border;
+  border: 1px solid $--color-border;
+}
+
+.el-select .el-input__inner {
+  border: 1px solid $--color-border;
+}
+.el-select .el-input__inner:hover {
+  border-color: $--color-border-hover;
+}
+.el-select-dropdown__item.hover, .el-select-dropdown__item:hover {
+  background-color: mix(#fff, $--color-primary, 90%);
+}
+
+.el-card {
+  border: 1px solid $--color-border;
+}
+.el-card__header {
+  border-bottom: 1px solid $--color-border;
+}
+
+.el-tabs--card>.el-tabs__header {
+  border-bottom: 1px solid $--color-border;
+}
+.el-tabs--card>.el-tabs__header .el-tabs__nav {
+  border: 1px solid $--color-border;
+  border-bottom: none;
+}
+.el-tabs--card>.el-tabs__header .el-tabs__item {
+  border-left: 1px solid $--color-border;
+}
+
+.el-tree-node__content:hover {
+  background-color: mix(#fff, $--color-primary, 90%);
+}
+.el-tree-node:focus>.el-tree-node__content {
+  background-color: mix(#fff, $--color-primary, 90%);
+}
+.el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+  background-color: mix(#fff, $--color-primary, 90%);
+}
+
+// input button 样式组
+.addupdate-inputbutton-input {
+  width: calc(100% - 60px);
+}
+.addupdate-inputbutton-button {
+  padding: 5px 12px;
+}
