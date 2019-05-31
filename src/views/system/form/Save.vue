@@ -510,6 +510,7 @@ export default {
               type: 'success'
             })
             this.dialogVisible = false
+            this.$emit('refreshDataList')
           } else {
             this.$message.error(data.msg)
           }

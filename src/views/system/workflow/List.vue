@@ -52,11 +52,13 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <Save v-if="saveVisible" ref="Save" @refreshDataList="getDataList"></Save>
   </div>
 </template>
 
 <script>
+import Save from './Save'
+
 export default {
   data () {
     return {
@@ -70,13 +72,12 @@ export default {
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      addOrUpdateVisible: false,
-      importProductUrl: this.$http.adornUrl(
-        `/product/tproductbase/importProduct?token=${this.$cookie.get('token')}`
-      )
+      saveVisible: false
     }
   },
-  components: {},
+  components: {
+    Save
+  },
   activated () {
     this.getDataList()
   },
@@ -126,15 +127,15 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {
-      // this.addOrUpdateVisible = true;
-      // this.$nextTick(() => {
-      //   this.$refs.addOrUpdate.init(id);
-      // });
-      if (id) {
-        this.$router.push({ name: 'system-workflow-model-save', query: { modelId: id } })
-      } else {
-        this.$router.push({ name: 'system-workflow-model-save' })
-      }
+      this.saveVisible = true
+      this.$nextTick(() => {
+        this.$refs.Save.init(id)
+      })
+      // if (id) {
+      //   this.$router.push({ name: 'system-workflow-model-save', query: { modelId: id } })
+      // } else {
+      //   this.$router.push({ name: 'system-workflow-model-save' })
+      // }
     },
     // 删除
     deleteHandle (id) {

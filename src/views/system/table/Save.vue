@@ -118,10 +118,14 @@ export default {
         .then(({ data }) => {
           if (data && data.code === 0) {
             this.$message({
-              message: '保存成功',
-              type: 'success'
+              message: '操作成功',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                  // this.visible = false
+                this.$emit('refreshDataList')
+              }
             })
-            // this.dialogFormVisible2 = false;
           } else {
             this.$message.error(data.msg)
           }
