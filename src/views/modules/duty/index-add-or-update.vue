@@ -17,12 +17,12 @@
                   v-for="(tag, index) in dataForm.leaderArr"
                   :key="tag.leaderId"
                   closable
-                  @close="manClose(tag, 'leader', index)"
+                  @close="manClose(tag, 'leader', index, '')"
                   type="success">
                   {{tag.leader}}
                 </el-tag>
               </div>
-              <el-button type="info" class="inputbutton-button" @click="openChangeMan('leader')">选择</el-button>
+              <el-button type="info" class="inputbutton-button" @click="openChangeMan('leader', '', dataForm.leaderArr)">选择</el-button>
             </el-form-item>
             <el-form-item label="值班科长（主任）" prop="director">
               <div class="inputbutton-div">
@@ -32,12 +32,12 @@
                   v-for="(tag, index) in dataForm.directorArr"
                   :key="tag.leaderId"
                   closable
-                  @close="manClose(tag, 'director', index)"
+                  @close="manClose(tag, 'director', index, '')"
                   type="success">
                   {{tag.director}}
                 </el-tag>
               </div>
-              <el-button type="info" class="inputbutton-button" @click="openChangeMan('director')">选择</el-button>
+              <el-button type="info" class="inputbutton-button" @click="openChangeMan('director', '', dataForm.directorArr)">选择</el-button>
             </el-form-item>
             <el-form-item label="值班提醒方式" prop="remindersArr">
               <el-checkbox-group v-model="dataForm.remindersArr">
@@ -124,6 +124,12 @@
           //   callback(new Error('值班时间的以过，不能安排值班'))
           }
           this.dataForm.dutyDetailDtoList.forEach(data => {
+            if (this.formatDate(new Date(data.time[0]), 'yyyy-MM-dd') !== this.formatDate(new Date(this.dataForm.dutyDate), 'yyyy-MM-dd')) {
+              data.time[0] = this.formatDate(new Date(this.dataForm.dutyDate), 'yyyy-MM-dd') + ' ' + this.formatDate(new Date(data.time[0]), 'hh:m')
+            }
+            if (this.formatDate(new Date(data.time[1]), 'yyyy-MM-dd') !== this.formatDate(new Date(this.dataForm.dutyDate), 'yyyy-MM-dd')) {
+              data.time[1] = this.formatDate(new Date(this.dataForm.dutyDate), 'yyyy-MM-dd') + ' ' + this.formatDate(new Date(data.time[1]), 'hh:m')
+            }
             if (data.time !== value) {
               if ((new Date(data.time[0]).getTime() < new Date(value[0]).getTime() && new Date(value[0]).getTime() < new Date(data.time[1]).getTime()) || (new Date(data.time[0]).getTime() < new Date(value[1]).getTime() && new Date(value[1]).getTime() < new Date(data.time[1]).getTime())) {
                 callback(new Error('值班时有重叠，请重新选择'))
@@ -141,16 +147,16 @@
         remindersList: [{
           lable: '手机短信'
         }, {
-          lable: '内部短信'
+          lable: 'app'
         }, {
-          lable: '即时通信'
+          lable: '微信'
         }],
         immediateNoticeList: [{
           lable: '手机短信'
         }, {
-          lable: '内部短信'
+          lable: 'app'
         }, {
-          lable: '即时通信'
+          lable: '微信'
         }],
         dataForm: {
           id: '',
@@ -192,10 +198,10 @@
         this.dataForm.leaderArr = []
         this.dataForm.directorArr = []
         this.visible = true
-        this.submitAble = true
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.dutyDate) {
+            this.submitAble = false
             this.$http({
               url: this.$http.adornUrl(this.moduleApi + `/data/${this.dataForm.dutyDate}`),
               method: 'get',
@@ -205,6 +211,7 @@
                 if (!data.resultData) {
                   this.addRecRow()
                   this.getLeaderAndDirector()
+                  this.submitAble = true
                 } else {
                   this.dataForm.id = data.resultData.id
                   this.dataForm.dutyDate = data.resultData.dutyDate
@@ -240,13 +247,16 @@
                     item.time = [item.timeStart, item.timeEnd]
                   })
                   this.dataForm.dutyDetailDtoList = data.resultData.dutyDetailDtoList
+                  this.submitAble = true
                 }
               } else {
                 this.addRecRow()
+                this.submitAble = true
               }
             })
           } else {
             this.addRecRow()
+            this.submitAble = true
           }
         })
       },
@@ -432,34 +442,34 @@
         }
       },
       // 打开选人页面
-      openChangeMan (state, key) {
+      openChangeMan (state, key, changeMan) {
         this.changemanVisible = true
         this.$nextTick(() => {
-          this.$refs.changeman.init(state, key)
+          this.$refs.changeman.init(state, key, changeMan)
         })
       },
       // 保存选中的人
       selectManDate (data, state, key) {
         data.forEach(item => {
-          if (key === undefined) {
+          if (key === '') {
             this.dataForm[state + 'Arr'].forEach(tablelist => {
-              if (!item.addSuccess && tablelist.id === '' && tablelist.leaderId === '' && tablelist.leader === '') {
+              if (!item.addSuccess && tablelist.id === '' && tablelist[state + 'Id'] === '' && tablelist.leader === '') {
                 tablelist.id = ''
                 tablelist[state + 'Id'] = item.userId
-                tablelist[state] = item.username
+                tablelist[state] = item.realName
                 item.addSuccess = true
-              } else if (tablelist.leaderId === item.userId) {
+              } else if (tablelist[state + 'Id'] === item.userId) {
                 item.addSuccess = true
               }
             })
           } else {
             this.dataForm.dutyDetailDtoList[key][state + 'Arr'].forEach(tablelist => {
-              if (!item.addSuccess && tablelist.id === '' && tablelist.leaderId === '' && tablelist.leader === '') {
+              if (!item.addSuccess && tablelist.id === '' && tablelist[state + 'Id'] === '' && tablelist.leader === '') {
                 tablelist.id = ''
                 tablelist[state + 'Id'] = item.userId
-                tablelist[state] = item.username
+                tablelist[state] = item.realName
                 item.addSuccess = true
-              } else if (tablelist.leaderId === item.userId) {
+              } else if (tablelist[state + 'Id'] === item.userId) {
                 item.addSuccess = true
               }
             })
@@ -467,17 +477,17 @@
         })
         data.forEach(item => {
           if (!item.addSuccess) {
-            if (key === undefined) {
+            if (key === '') {
               let abj = {}
               abj['id'] = ''
               abj[state + 'Id'] = item.userId
-              abj[state] = item.username
+              abj[state] = item.realName
               this.dataForm[state + 'Arr'].push(abj)
             } else {
               let abj = {}
               abj['id'] = ''
               abj[state + 'Id'] = item.userId
-              abj[state] = item.username
+              abj[state] = item.realName
               this.dataForm.dutyDetailDtoList[key][state + 'Arr'].push(abj)
               this.dataForm.dutyDetailDtoList[key][state] = '1'
             }
@@ -486,7 +496,7 @@
       },
       // 删除选中的人
       manClose (tag, state, index, key) {
-        if (key === undefined) {
+        if (key === '') {
           this.dataForm[state + 'Arr'].splice(index, 1)
         } else {
           this.dataForm.dutyDetailDtoList[key][state + 'Arr'].splice(index, 1)
@@ -528,6 +538,7 @@
   }
   .deleteDutyDetail-button {
     padding: 7px 12px;
+    margin-right: 6px;
     float: right;
   }
 </style>

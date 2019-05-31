@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="'值班信息'"
+    :title="'修改值班日志'"
     :close-on-click-modal="false"
     :visible.sync="visible"
     width="70%"
@@ -56,34 +56,34 @@
           <div class="add-table-list-100">
             <el-form-item label="值班登记内容及拟办意见" prop="contentOpinion">
               <el-input v-model="datalogForm.contentOpinion" type="textarea" placeholder="值班登记内容及拟办意见" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
-              <div v-if="datalogForm.crtDutyPersonSign || datalogForm.udtDirectorSign" class="table-list-sign">姓名：<span>{{datalogForm.crtDutyPersonSign && datalogForm.udtDutyPersonSign ? datalogForm.udtDutyPersonSign : datalogForm.crtDutyPersonSign ? datalogForm.crtDutyPersonSign : '—' }}</span></div>
+              <div v-if="datalogForm.crtDutyPersonSign || datalogForm.udtDirectorSign" class="table-list-sign"><span>{{datalogForm.crtDutyPersonSign && datalogForm.udtDutyPersonSign ? datalogForm.crtDutyPersonSign + ' ' + datalogForm.udtDutyPersonSign : datalogForm.crtDutyPersonSign ? datalogForm.crtDutyPersonSign : '—' }}</span></div>
             </el-form-item>
           </div>
           <div class="add-table-list-100">
             <el-form-item label="科长（主任）意见" prop="directorOpinion" style="position: relative">
               <el-button size="mini" class="textarea-button" v-show="directorOpinionAble" @click="fillout('director')">代写</el-button>
               <el-input v-model="datalogForm.directorOpinion" type="textarea" :disabled="directorOpinionEnable" placeholder="科长（主任）意见" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
-              <div v-if="datalogForm.crtDirectorSign || datalogForm.udtDirectorSign" class="table-list-sign">姓名：<span>{{datalogForm.crtDirectorSign && datalogForm.udtDirectorSign ? datalogForm.udtDirectorSign : datalogForm.crtDirectorSign ? datalogForm.crtDirectorSign : '—' }}</span></div>
+              <div v-if="datalogForm.crtDirectorSign || datalogForm.udtDirectorSign" class="table-list-sign"><span>{{datalogForm.crtDirectorSign && datalogForm.udtDirectorSign ? datalogForm.crtDirectorSign + ' ' + datalogForm.udtDirectorSign : datalogForm.crtDirectorSign ? datalogForm.crtDirectorSign : '—' }}</span></div>
             </el-form-item>
           </div>
           <div class="add-table-list-100">
             <el-form-item label="值班领导批示" prop="leaderInstructions" style="position: relative">
               <el-button size="mini" class="textarea-button" v-show="leaderInstructionsAble" @click="fillout('leader')">代写</el-button>
               <el-input v-model="datalogForm.leaderInstructions" type="textarea" :disabled="leaderInstructionsEnable" placeholder="值班领导批示" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
-              <div v-if="datalogForm.crtLeaderSign || datalogForm.udtLeaderSign" class="table-list-sign">姓名：<span>{{datalogForm.crtLeaderSign && datalogForm.udtLeaderSign ? datalogForm.udtLeaderSign : datalogForm.crtLeaderSign ? datalogForm.crtLeaderSign : '—' }}</span></div>
+              <div v-if="datalogForm.crtLeaderSign || datalogForm.udtLeaderSign" class="table-list-sign"><span>{{datalogForm.crtLeaderSign && datalogForm.udtLeaderSign ? datalogForm.crtLeaderSign + ' ' + datalogForm.udtLeaderSign : datalogForm.crtLeaderSign ? datalogForm.crtLeaderSign : '—' }}</span></div>
             </el-form-item>
           </div>
           <div class="add-table-list-100">
             <el-form-item label="处理过程或处理结果" prop="processResult">
               <el-input v-model="datalogForm.processResult" type="textarea" :disabled="processResultEnable" placeholder="处理过程或处理结果" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
-              <div v-if="datalogForm.crtProcessSign || datalogForm.udtProcessSign" class="table-list-sign">姓名：<span>{{datalogForm.crtProcessSign && datalogForm.udtProcessSign ? datalogForm.udtProcessSign : datalogForm.crtProcessSign ? datalogForm.crtProcessSign : '—' }}</span></div>
+              <div v-if="datalogForm.crtProcessSign || datalogForm.udtProcessSign" class="table-list-sign"><span>{{datalogForm.crtProcessSign && datalogForm.udtProcessSign ? datalogForm.crtProcessSign + ' ' + datalogForm.udtProcessSign : datalogForm.crtProcessSign ? datalogForm.crtProcessSign : '—' }}</span></div>
             </el-form-item>
           </div>
         </div>
       </el-form>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button type="success" @click="saveDutylog" :loading="!submitAble">提交</el-button>
+      <el-button type="success" v-if="isAuth('duty:log:data:update')" @click="saveDutylog" :loading="!submitAble">提交</el-button>
       <el-button type="danger" v-if="isAuth('duty:log:data:delete')" @click="deleteDutylog" :loading="!submitAble">删除</el-button>
       <el-button @click="visible = false" :loading="!submitAble">关闭</el-button>
     </span>
@@ -165,9 +165,9 @@ export default {
       remindersList: [{
         lable: '手机短信'
       }, {
-        lable: '内部短信'
+        lable: 'app'
       }, {
-        lable: '即时通信'
+        lable: '微信'
       }],
       sendShow: false,   // 自定义发送内容
       directorOpinionAble: false,   // 科长（主任）意见代填按钮
@@ -195,6 +195,7 @@ export default {
       this.dutyDetailDtoList = dutyDetailDtoList || []
       this.dataForm = dataForm || {}
       this.$nextTick(() => {
+        this.$refs['datalogForm'].resetFields()
         if (this.datalogForm.id) {
           this.$http({
             url: this.$http.adornUrl(this.moduleApi + `/data/${this.datalogForm.id}`),
@@ -210,7 +211,9 @@ export default {
                 }
               })
               if (this.datalogForm.sendContent !== null) {
-                this.openSendeare()
+                this.sendShow = true
+              } else {
+                this.sendShow = false
               }
               this.dutyDetailDtoList.forEach(item => {
                 item.dutyDetailWatchmanDtoList.forEach(watchman => {
@@ -256,18 +259,17 @@ export default {
     },
     // 选择日志时间
     selectLogDate () {
+      this.directorOpinionAble = false
+      this.leaderInstructionsAble = false
+      this.directorOpinionEnable = true
+      this.leaderInstructionsEnable = true
+      this.processResultEnable = true
       this.dutyDetailDtoList.forEach(item => {
         item.dutyDetailWatchmanDtoList.forEach(watchman => {
           if (watchman.watchmanId === this.$http.getAuthData().userId && new Date(item.timeStart).getTime() < new Date(this.datalogForm.logTime).getTime() && new Date(this.datalogForm.logTime).getTime() < new Date(item.timeEnd).getTime()) {
             this.directorOpinionAble = true
             this.leaderInstructionsAble = true
             this.processResultEnable = false
-          } else {
-            this.directorOpinionAble = false
-            this.leaderInstructionsAble = false
-            this.directorOpinionEnable = true
-            this.leaderInstructionsEnable = true
-            this.processResultEnable = true
           }
         })
       })
@@ -293,17 +295,17 @@ export default {
         case 'leader':
           this.leaderInstructionsEnable = !this.leaderInstructionsEnable
           if (this.leaderInstructionsEnable) {
-            this.datalogForm.isLeaderInstructions = 1
-          } else {
             this.datalogForm.isLeaderInstructions = 0
+          } else {
+            this.datalogForm.isLeaderInstructions = 1
           }
           break
         default:
           this.directorOpinionEnable = !this.directorOpinionEnable
           if (this.directorOpinionEnable) {
-            this.datalogForm.isDirectorOpinion = 1
-          } else {
             this.datalogForm.isDirectorOpinion = 0
+          } else {
+            this.datalogForm.isDirectorOpinion = 1
           }
           break
       }
@@ -314,6 +316,7 @@ export default {
       let reminders = ''
       let remindersState = ''
       this.remindersList.forEach(item => {
+        item.isChange = false
         reminders = reminders ? reminders + ',' + item.lable : item.lable
         this.datalogForm.remindersArr.forEach(data => {
           if (item.lable === data) {
@@ -428,9 +431,10 @@ export default {
     padding: 6px 10px;
     position: relative;
     .list-buttom {
+      padding: 8px 60px;
       position: absolute;
       top: 8px;
-      left: -30px;
+      left: -50px;
     }
   }
   .add-table-list-100 {

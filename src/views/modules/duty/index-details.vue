@@ -33,7 +33,7 @@
             <td colspan="3">
               <span>
                 <span v-for="(item, index) in dataList.remindersList" :key="index">
-                  {{ item.isReminders === '1' ? item.reminders : '' }}
+                  {{ item.isReminders === '1' ? item.remindersListSym + item.reminders : '' }}
                 </span>
               </span>
             </td>
@@ -43,7 +43,7 @@
             <td colspan="3">
               <span>
                 <span v-for="(item, index) in dataList.immediateNoticeList" :key="index">
-                  {{ item.isImmediateNotice === '1' ? item.immediateNotice : '' }}
+                  {{ item.isImmediateNotice === '1' ? item.immediateNoticeListSym + item.immediateNotice : '' }}
                 </span>
               </span>
             </td>
@@ -104,7 +104,7 @@
             <el-table-column
               header-align="center"
               label="提交时间"
-              min-width="80"
+              min-width="120"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-button class="column-text" type="text" @click="addOrUpdateHandle(scope.row.id, dataList.dutyDirectorDtoList, dataList.dutyLeaderDtoList, dataList.dutyDetailDtoList, dataForm)">{{scope.row.crtDateTime}}</el-button>
@@ -122,7 +122,7 @@
             <el-table-column
               header-align="center"
               label="编辑时间"
-              min-width="80"
+              min-width="120"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-button class="column-text" type="text" @click="addOrUpdateHandle(scope.row.id, dataList.dutyDirectorDtoList, dataList.dutyLeaderDtoList, dataList.dutyDetailDtoList, dataForm)">{{scope.row.udtDateTime}}</el-button>
@@ -143,7 +143,7 @@
         <el-form ref="datalogForm" :model="datalogForm" :rules="datalogRule" label-width="130px" v-if="isAuth('duty:log:data:add')">
           <div class="add-table-list-trborder">
             <div class="add-table-list-50">选择发送方式发送给值班领导、值班科长</div>
-            <div class="add-table-list-50"><el-button class="list-buttom" size="big" @click="openSendeare">{{sendShow ? '取消自定义内容' : '自定义发送内容'}}</el-button></div>
+            <div class="add-table-list-50"><el-button class="list-buttom" size="small" @click="openSendeare">{{sendShow ? '取消自定义内容' : '自定义发送内容'}}</el-button></div>
             <div class="add-table-list-50">
               <el-checkbox-group v-model="datalogForm.remindersArr">
                 <el-checkbox v-for="(item, index) in remindersList" :key="index" :label="item.lable"></el-checkbox>
@@ -296,9 +296,9 @@ export default {
       remindersList: [{
         lable: '手机短信'
       }, {
-        lable: '内部短信'
+        lable: 'app'
       }, {
-        lable: '即时通信'
+        lable: '微信'
       }],
       logupdateVisible: false,  // 日志修改
       listShow: false,  // 日志列表显示隐藏
@@ -342,6 +342,9 @@ export default {
       this.datalogForm.isLeaderInstructions = 0  // 值班领导批示是否代填(0否,1是)
       this.datalogForm.processResult = ''  // 处理过程结果
       this.$nextTick(() => {
+        if (this.isAuth('duty:log:data:add')) {
+          this.$refs['datalogForm'].resetFields()
+        }
         if (this.dataForm.dutyDate) {
           this.$http({
             url: this.$http.adornUrl(this.moduleDutyApi + `/data/${this.dataForm.dutyDate}`),
@@ -350,6 +353,28 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.dataList = data.resultData
+              let remindersListSym = 0
+              this.dataList.remindersList.forEach(item => {
+                if (item.isReminders === '1') {
+                  remindersListSym++
+                  if (remindersListSym > 1) {
+                    item.remindersListSym = '，'
+                  } else {
+                    item.remindersListSym = ''
+                  }
+                }
+              })
+              let immediateNoticeListSym = 0
+              this.dataList.immediateNoticeList.forEach(item => {
+                if (item.isImmediateNotice === '1') {
+                  immediateNoticeListSym++
+                  if (immediateNoticeListSym > 1) {
+                    item.immediateNoticeListSym = '，'
+                  } else {
+                    item.immediateNoticeListSym = ''
+                  }
+                }
+              })
               // this.datatableList = data.resultData.dutyLogDtoList
               this.dataList.dutyDetailDtoList.forEach(item => {
                 item.dutyDetailWatchmanDtoList.forEach(watchman => {
@@ -382,7 +407,7 @@ export default {
             this.commonError()
           })
         }
-        if (this.dataForm.id) {
+        if (this.dataForm.id && this.isAuth('duty:log:data:list')) {
           this.$http({
             url: this.$http.adornUrl(this.moduleLogApi + `/list/${this.dataForm.id}`),
             method: 'get',
@@ -402,7 +427,7 @@ export default {
     },
     // 打开修改日志
     addOrUpdateHandle (id, dutyDirectorDtoList, dutyLeaderDtoList, dutyDetailDtoList, dataForm) {
-      if (this.isAuth('duty:log:data:update')) {
+      if (this.isAuth('duty:log:data:update') || this.isAuth('duty:log:data:delete')) {
         this.logupdateVisible = true
         this.$nextTick(() => {
           this.$refs.logupdate.init(id, dutyDirectorDtoList, dutyLeaderDtoList, dutyDetailDtoList, dataForm)
@@ -421,18 +446,17 @@ export default {
     },
     // 选择日志时间
     selectLogDate () {
+      this.directorOpinionAble = false
+      this.leaderInstructionsAble = false
+      this.directorOpinionEnable = true
+      this.leaderInstructionsEnable = true
+      this.processResultEnable = true
       this.dataList.dutyDetailDtoList.forEach(item => {
         item.dutyDetailWatchmanDtoList.forEach(watchman => {
           if (watchman.watchmanId === this.$http.getAuthData().userId && new Date(item.timeStart).getTime() < new Date(this.datalogForm.logTime).getTime() && new Date(this.datalogForm.logTime).getTime() < new Date(item.timeEnd).getTime()) {
             this.directorOpinionAble = true
             this.leaderInstructionsAble = true
             this.processResultEnable = false
-          } else {
-            this.directorOpinionAble = false
-            this.leaderInstructionsAble = false
-            this.directorOpinionEnable = true
-            this.leaderInstructionsEnable = true
-            this.processResultEnable = true
           }
         })
       })
@@ -465,17 +489,17 @@ export default {
         case 'leader':
           this.leaderInstructionsEnable = !this.leaderInstructionsEnable
           if (this.leaderInstructionsEnable) {
-            this.datalogForm.isLeaderInstructions = 1
-          } else {
             this.datalogForm.isLeaderInstructions = 0
+          } else {
+            this.datalogForm.isLeaderInstructions = 1
           }
           break
         default:
           this.directorOpinionEnable = !this.directorOpinionEnable
           if (this.directorOpinionEnable) {
-            this.datalogForm.isDirectorOpinion = 1
-          } else {
             this.datalogForm.isDirectorOpinion = 0
+          } else {
+            this.datalogForm.isDirectorOpinion = 1
           }
           break
       }
@@ -486,6 +510,7 @@ export default {
       let reminders = ''
       let remindersState = ''
       this.remindersList.forEach(item => {
+        item.isChange = false
         reminders = reminders ? reminders + ',' + item.lable : item.lable
         this.datalogForm.remindersArr.forEach(data => {
           if (item.lable === data) {
@@ -613,9 +638,10 @@ export default {
     padding: 6px 10px;
     position: relative;
     .list-buttom {
+      padding: 8px 60px;
       position: absolute;
       top: 8px;
-      left: -30px;
+      left: -50px;
     }
   }
   .add-table-list-100 {

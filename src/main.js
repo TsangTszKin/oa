@@ -17,6 +17,7 @@ import sysparams from '@/sysparams'
 import searchBtn from '@/components/searchBtn/index'
 import listTable from '@/components/listTable/index'
 import handlingTitle from '@/components/handlingTitle/index'
+import fileList from '@/components/fileList/index'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(ElementUI)
@@ -26,6 +27,7 @@ Vue.use(VueCookie)
 Vue.component('searchBtn', searchBtn)
 Vue.component('listTable', listTable)
 Vue.component('handlingTitle', handlingTitle)
+Vue.component('fileList', fileList)
 Vue.config.productionTip = false
 Vue.prototype.$ELEMENT = { size: 'mini' }  // 设置element-UI的默认尺寸为mini
 

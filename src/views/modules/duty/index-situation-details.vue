@@ -41,21 +41,25 @@
             <td colspan="3" class="zebra-table-header" width="150">处理过程或处理结果</td>
           </tr>
           <tr>
-            <td colspan="3">
+            <td colspan="3" class="zebra-textarea-sign">
               <pre class="textarea-pre">{{item.contentOpinion ? item.contentOpinion : '—'}}</pre>
-              <div class="zebra-div-sign">{{item.crtDutyPersonSign && item.udtDutyPersonSign ? item.udtDutyPersonSign : item.crtDutyPersonSign ? item.crtDutyPersonSign : '—' }}</div>
+              <div class="zebra-div-crtsign">{{item.crtDutyPersonSign ? item.crtDutyPersonSign : '—' }}</div>
+              <div class="zebra-div-udtsign">{{item.udtDutyPersonSign ? item.udtDutyPersonSign : '' }}</div>
             </td>
-            <td colspan="2">
+            <td colspan="2" class="zebra-textarea-sign">
               <pre class="textarea-pre">{{item.directorOpinion ? item.directorOpinion : '—'}}</pre>
-              <div class="zebra-div-sign">{{item.crtDirectorSign && item.udtDirectorSign ? item.udtDirectorSign : item.crtDirectorSign ? item.crtDirectorSign : '—' }}</div>
+              <div class="zebra-div-crtsign">{{item.crtDirectorSign ? item.crtDirectorSign : '—' }}</div>
+              <div class="zebra-div-udtsign">{{item.udtDirectorSign ? item.udtDirectorSign : '' }}</div>
             </td>
-            <td colspan="2">
+            <td colspan="2" class="zebra-textarea-sign">
               <pre class="textarea-pre">{{item.leaderInstructions ? item.leaderInstructions : '—'}}</pre>
-              <div class="zebra-div-sign">{{item.crtLeaderSign && item.udtLeaderSign ? item.udtLeaderSign : item.crtLeaderSign ? item.crtLeaderSign : '—' }}</div>
+              <div class="zebra-div-crtsign">{{item.crtLeaderSign ? item.crtLeaderSign : '—' }}</div>
+              <div class="zebra-div-udtsign">{{item.udtLeaderSign ? item.udtLeaderSign : '' }}</div>
             </td>
-            <td colspan="3">
+            <td colspan="3" class="zebra-textarea-sign">
               <pre class="textarea-pre">{{item.processResult ? item.processResult : '—'}}</pre>
-              <div class="zebra-div-sign">{{item.crtProcessSign && item.udtProcessSign ? item.udtProcessSign : item.crtProcessSign ? item.crtProcessSign : '—' }}</div>
+              <div class="zebra-div-crtsign">{{item.crtProcessSign ? item.crtProcessSign : '—' }}</div>
+              <div class="zebra-div-udtsign">{{item.udtProcessSign ? item.udtProcessSign : '' }}</div>
             </td>
           </tr>
         </tbody>
@@ -98,6 +102,29 @@ export default {
             if (data && data.code === 0) {
               this.dataForm = data.resultData
               this.visible = true
+              let height = []
+              let heightArr = []
+              setTimeout(() => {
+                for (let i = 0; i < document.getElementsByClassName('zebra-textarea-sign').length; i++) {
+                  height[i % 4] = document.getElementsByClassName('textarea-pre')[i].clientHeight + document.getElementsByClassName('zebra-div-crtsign')[i].clientHeight + document.getElementsByClassName('zebra-div-udtsign')[i].clientHeight
+                  if ((i + 1) % 4 === 0) {
+                    heightArr.push(height)
+                    height = []
+                  }
+                }
+                let max = []
+                heightArr.forEach((item, i) => {
+                  max[i] = Math.max.apply(null, item)
+                })
+                for (let i = 0; i < document.getElementsByClassName('zebra-textarea-sign').length; i++) {
+                  document.getElementsByClassName('zebra-textarea-sign')[i].style.height = max[Math.trunc(i / 4)] + 'px'
+                  if (document.getElementsByClassName('zebra-div-udtsign')[i].clientHeight === 20) {
+                    document.getElementsByClassName('zebra-div-crtsign')[i].style.bottom = '0px'
+                  } else if (document.getElementsByClassName('zebra-div-udtsign')[i].clientHeight > 20) {
+                    document.getElementsByClassName('zebra-div-crtsign')[i].style.bottom = document.getElementsByClassName('zebra-div-udtsign')[i].clientHeight - 20 + 'px'
+                  }
+                }
+              }, 200)
             } else {
               this.$message.error(data.msg)
             }
@@ -174,26 +201,40 @@ export default {
 .el-date-editor.el-input, .el-date-editor.el-input__inner {
   width: 100%;
 }
-.zebra-table .zebra-div-sign {
-  text-align: right
+.zebra-table .zebra-textarea-sign {
+  position: relative;
 }
-.pre-font {
+.zebra-table .textarea-pre {
+  padding: 0px;
+  margin: 0px;
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\5FAE\8F6F\96C5\9ED1", Arial, sans-serif;
-  margin: 0;
   word-break: break-all;
   white-space:pre-wrap;
   white-space:-moz-pre-wrap;
   white-space:-o-pre-wrap;
   word-wrap:break-word;
+  padding: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.zebra-table .zebra-div-crtsign {
+  text-align: right;
+  padding: 10px;
+  position: absolute;
+  bottom: 20px;
+  right: 0;
+}
+.zebra-table .zebra-div-udtsign {
+  text-align: right;
+  padding: 10px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 .store-zeber {
   border-bottom: 1px solid #ebeef5;
   margin: 0 -10px
-}
-.textarea-pre {
-  padding: 0px;
-  margin: 0px;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\5FAE\8F6F\96C5\9ED1", Arial, sans-serif;
 }
 </style>
 <style>

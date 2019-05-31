@@ -8,6 +8,7 @@
     class="emergency-store-detail"
     >
     <el-table
+      ref="multipleTable"
       :data="dataList"
       border
       tooltip-effect="light"
@@ -25,7 +26,7 @@
         min-width="80"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          {{scope.row.username}}
+          {{scope.row.realName}}
         </template>
       </el-table-column>
     </el-table>
@@ -54,11 +55,12 @@
     },
     methods: {
       // 查看
-      init (state, key) {
+      init (state, key, changeData) {
         this.visible = true
         this.submitAble = true
         this.state = state
         this.key = key
+        this.dataListSelections = changeData
         this.$nextTick(() => {
           this.getDataList()
         })

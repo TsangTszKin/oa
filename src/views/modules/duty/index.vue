@@ -25,7 +25,7 @@
           <el-button type="primary" icon="el-icon-caret-left" circle @click="changeOneDay(-1)"></el-button>
         </el-col>
         <div>
-          <el-col :span="3" v-for="(item, index) in weekDate" :key="index" class="datelist-col" :style="{ 'background-color': item.isChange ? '#17B3A3' : '#ffffff', 'color': item.isChange ? '#ffffff' : '#000000' }">
+          <el-col :span="3" v-for="(item, index) in weekDate" :key="index" class="datelist-col" :style="{ 'background-color': item.isChange ? themePickerColor : '#ffffff', 'color': item.isChange ? '#ffffff' : '#000000' }">
             <div @click="changeDate(item)">
               <div class="weekdate-div">{{item.week}}</div>
               <div class="solardate-div">{{item.solar.year + '-' + item.solar.month + '-' + item.solar.day}}</div>
@@ -132,6 +132,11 @@
       CheckDetails,
       printList
     },
+    computed: {
+      themePickerColor: {
+        get () { return this.$store.state.common.themeColors }
+      }
+    },
     mounted () {
       this.$nextTick(function () {
         this.tableHeight = document.documentElement.clientHeight - 50 - 55 - 20 - 50 - 35 - 8 - 15 - 20 - 15
@@ -207,7 +212,7 @@
           if (data && data.code === 0) {
             this.dataList = data.resultData
           } else {
-            this.dataList = []
+            this.dataList = undefined
             this.$message({
               message: data.msg,
               type: 'error',
@@ -379,6 +384,11 @@
     padding: 0px;
     margin: 0px;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\5FAE\8F6F\96C5\9ED1", Arial, sans-serif;
+  word-break: break-all;
+  white-space:pre-wrap;
+  white-space:-moz-pre-wrap;
+  white-space:-o-pre-wrap;
+  word-wrap:break-word;
   }
 </style>
 <style>

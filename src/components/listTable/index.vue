@@ -35,6 +35,13 @@
                 <el-button v-if="items.type === 'updateState' && is <= 3" type="text" size="small" @click="updateStateHandle(scope.row.id, -scope.row.state)">{{ scope.row.state === 1 ? '停用':'启用'}}</el-button>
                 <el-button v-if="items.type === 'loginOut' && is <= 3" type="text" size="small" @click="logoutHandle(scope.row.id)">注销</el-button>
                 <el-button v-if="items.type === 'fill' && is <= 3" type="text" size="small" @click="fillHandle(scope.row.id)">填报</el-button>
+                <el-button v-if="items.type === 'reply' && is <= 3" type="text" size="small" @click="replyHandle(scope.row.id)">回复</el-button>
+                <el-button v-if="items.type === 'resend' && is <= 3" type="text" size="small" @click="resendHandle(scope.row.id)">再次发送</el-button>
+                <el-button v-if="items.type === 'forwarding' && is <= 3" type="text" size="small" @click="forwardingHandle(scope.row.id)">转发</el-button>
+                <el-button v-if="items.type === 'placedTop' && is <= 3" type="text" size="small" @click="placedTopHandle(scope.row[items.objName]['id'], 4, scope.row[items.objName][items.topName])">{{scope.row[items.objName][items.topName] ? '取消置顶' : '置顶'}}</el-button>
+                <el-button v-if="items.type === 'starSvgicon' && is <= 3" type="text" size="small" @click="starSvgiconHandle(scope.row[items.objName]['id'], 2, scope.row[items.objName][items.topName])" class="starSvgBtn" :style="{color: scope.row[items.objName][items.topName]  ? '#e6a23c' : '#606266'}">
+                  <icon-svg :name="scope.row[items.objName][items.topName]  ? 'shoucangfill' : 'shoucang'" class="svgiconButton"></icon-svg>
+                </el-button>
                 <el-dropdown v-if="is > 3 && is < 5" >
                   <span class="el-dropdown-link">
                     更多<i class="el-icon-arrow-down el-icon--right"></i>
@@ -46,13 +53,21 @@
                       <el-button v-if="items.type === 'updateState' && is > 3" type="text" size="small" @click="updateStateHandle(scope.row.id, -scope.row.state)">{{ scope.row.state === 1 ? '停用':'启用'}}</el-button>
                       <el-button v-if="items.type === 'loginOut' && is > 3" type="text" size="small" @click="logoutHandle(scope.row.id)">注销</el-button>
                       <el-button v-if="items.type === 'fill' && is > 3" type="text" size="small" @click="fillHandle(scope.row.id)">填报</el-button>
+                      <el-button v-if="items.type === 'reply' && is > 3" type="text" size="small" @click="replyHandle(scope.row.id)">回复</el-button>
+                      <el-button v-if="items.type === 'resend' && is > 3" type="text" size="small" @click="resendHandle(scope.row.id)">再次发送</el-button>
+                      <el-button v-if="items.type === 'forwarding' && is > 3" type="text" size="small" @click="forwardingHandle(scope.row.id)">转发</el-button>
+                      <el-button v-if="items.type === 'placedTop' && is > 3" type="text" size="small" @click="placedTopHandle(scope.row[items.objName]['id'], 4, scope.row[items.objName][items.topName])">{{scope.row[items.objName][items.topName] ? '取消置顶' : '置顶'}}</el-button>
+                      <el-button v-if="items.type === 'starSvgicon' && is > 3" type="text" size="small" @click="starSvgiconHandle(scope.row[items.objName]['id'], 2, scope.row[items.objName][items.topName])" class="starSvgBtn" :style="{color: scope.row[items.objName][items.topName]  ? '#e6a23c' : '#606266'}">
+                        <icon-svg :name="scope.row[items.objName][items.topName]  ? 'shoucangfill' : 'shoucang'" class="svgiconButton"></icon-svg>
+                      </el-button>
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
                 <el-button v-if="items.type === 'view'" class="iviewTextBtn" type="text" @click="viewHandle(scope.row.id, scope.row.orgId)">
-                  <!-- <icon-svg name="admin"></icon-svg> -->
+                  <icon-svg v-if="scope.row[item.columnName+'Icon']" :name="scope.row[item.columnName+'Icon'] ? scope.row[item.columnName+'Icon'] : ''" class="svgiconButton"></icon-svg>
                   {{scope.row[item.columnName] === null || scope.row[item.columnName] === '' ? '—' : scope.row[item.columnName]}}
                 </el-button>
+                <icon-svg v-if="items.type === 'iconSvg' && scope.row[item.columnName][items.name+'Icon'] !== ''" :name="scope.row[item.columnName][items.name+'Icon']" class="svgiconButton"></icon-svg>
                 <el-tag v-if="items.type === 'tag'" size="small" :type="scope.row[item.columnName+'type']">{{scope.row[item.columnName] ? scope.row[item.columnName] : '—'}}</el-tag>
               </span>
             </span>
@@ -140,6 +155,26 @@
       // 填报
       fillHandle (id) {
         this.$emit('fill-handle', id)
+      },
+      // 回复
+      replyHandle (id) {
+        this.$emit('reply-handle', id)
+      },
+      // 转发
+      forwardingHandle (id) {
+        this.$emit('forwarding-handle', id)
+      },
+      // 再次发送
+      resendHandle (id) {
+        this.$emit('resend-handle', id)
+      },
+      // 置顶、取消置顶
+      placedTopHandle (id, typekey, state) {
+        this.$emit('placed-top-handle', id, typekey, state)
+      },
+      // 标星、取消标星
+      starSvgiconHandle (id, typekey, state) {
+        this.$emit('star-svgicon-handle', id, typekey, state)
       }
     }
   }
@@ -150,8 +185,15 @@
 .iviewTextBtn {
   color: #000000;
 }
+.starSvgBtn {
+  float: right;
+}
 .iviewTextBtn:hover {
   color: $--color-primary;
+}
+.svgiconButton {
+  margin-bottom: -3px;
+  font-size: 16px;
 }
 .el-dropdown-link {
   cursor: pointer;
