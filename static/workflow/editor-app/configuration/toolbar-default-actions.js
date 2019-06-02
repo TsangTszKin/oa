@@ -278,14 +278,20 @@ KISBPM.TOOLBAR = {
 var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
   function ($rootScope, $scope, $http, $route, $location) {
     var modelMetaData = $scope.editor.getModelMetaData()
-
+    console.log('modelMetaData', modelMetaData)
     var description = ''
     if (modelMetaData.description) {
     	description = modelMetaData.description
     }
 
+    var category = '0'
+    if (modelMetaData.category) {
+    	category = modelMetaData.category
+    }
+
     var saveDialog = { 'name': modelMetaData.name,
-      'description': description}
+      'description': description,
+      'category': category}
 
     $scope.saveDialog = saveDialog
 
@@ -308,7 +314,7 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
 
     $scope.saveAndClose = function () {
     	$scope.save(function () {
-    		window.location.href = './'
+        parent.postMessage(JSON.stringify({ code: 1, value: '' }), '*') // window.postMessage
     	})
     }
     $scope.save = function (successCallback) {
@@ -323,6 +329,7 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
 
       modelMetaData.name = $scope.saveDialog.name
       modelMetaData.description = $scope.saveDialog.description
+      modelMetaData.category = $scope.saveDialog.category
 
       var json = $scope.editor.getJSON()
       json = JSON.stringify(json)
@@ -353,7 +360,8 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
         json_xml: json,
         svg_xml: svgDOM,
         name: $scope.saveDialog.name,
-        description: $scope.saveDialog.description
+        description: $scope.saveDialog.description,
+        category: $scope.saveDialog.category
       }
 
         // Update

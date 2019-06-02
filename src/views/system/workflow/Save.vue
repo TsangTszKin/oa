@@ -25,6 +25,24 @@
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">返回</el-button>
     </span>
+
+    <el-dialog
+      title="选择表"
+      :close-on-click-modal="false"
+      :visible.sync="visibleTable"
+      append-to-body
+    >
+      <el-select v-model="formCode" placeholder="请选择表单" filterable style="width: 100%;">
+        <el-option v-for="item in formList" :key="item.code" :label="item.name" :value="item.code">
+          <span style="float: left">{{ item.name }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+        </el-option>
+      </el-select>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="visibleTable = false">取消</el-button>
+        <el-button type="primary" @click="sureForm">确定</el-button>
+      </span>
+    </el-dialog>
   </el-dialog>
 </template>
 
@@ -34,12 +52,23 @@ export default {
   data () {
     return {
       visible: false,
-      id: ''
+      visibleTable: false,
+      id: '',
+      formList: [],
+      formCode: ''
     }
   },
   methods: {
+    sureForm () {
+      const childFrameObj = document.getElementById('iframe')
+      childFrameObj.contentWindow.postMessage(this.formCode, '*') // code:0更新渲染UI
+      this.visibleTable = false
+    },
     close () {
       this.$emit('refreshDataList')
+    },
+    closeEditor(){
+      this.visibleTable = false
     },
     handleClick (tab, event) {
       console.log(tab, event)
@@ -66,25 +95,49 @@ export default {
           sessionStorage.modelId = ''
         }
       })
+    },
+    // 获取数据列表
+    getFormList () {
+      this.$http({
+        url: this.$http.adornUrl('/api-oa/dycform/list'),
+        method: 'post',
+        params: this.$http.adornParams(
+          {
+            pageNo: 1,
+            pageSize: 999,
+            name: '',
+            code: ''
+          },
+          false
+        )
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.formList = data.resultData.resultList
+        } else {
+          this.formList = []
+        }
+      })
     }
   },
   mounted () {
-    const self = this
-    window.addEventListener(
-      'message',
-      function (e) {
-        if (e !== undefined) {
-          console.log('message e = ', e)
-          if (typeof e.data !== 'string') return
-          let data = JSON.parse(e.data)
-          console.log('vue,我接受到了来自iframe的信息：', data)
-          if (data.code === 0) {
-            self.showType = data.value.name
-          }
-        }
-      },
-      false
-    )
+    // 回调函数
+    let self = this
+    function receiveMessageFromIndex (event) {
+      console.log('我是vue,我接受到了：', event.data)
+      let data = JSON.parse(event.data)
+      if (data.code === 0) {
+        self.formCode = data.value
+        self.visibleTable = true
+        self.$nextTick(() => {
+          self.getFormList()
+        })
+      }else if (data.code === 1){
+        self.closeEditor()
+      }
+    }
+
+    // 监听message事件
+    window.addEventListener('message', receiveMessageFromIndex, false)
   }
 }
 </script>
