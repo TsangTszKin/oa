@@ -51,7 +51,7 @@
       }
     },
     created () {
-      this.getUserInfo()
+      this.me()
     },
     mounted () {
       this.resetDocumentClientHeight()
@@ -68,38 +68,6 @@
         this.$refs.mainContent.tabsReloadCurrentHandle()
       },
       // 获取当前管理员信息
-      getUserInfo () {
-        this.$http({
-          url: this.$http.adornUrl('/api-oa/demo/userInfo'),
-          method: 'get',
-          params: this.$http.adornParams()
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.loading = false
-            this.userId = data.id
-            this.userName = data.realName
-          } else {
-            this.getCurrentUser()
-          }
-        })
-      },
-      // 获取当前管理员信息
-      getCurrentUser () {
-        this.$http({
-          url: this.$http.adornUrl('/api-oa/demo/currentUser'),
-          method: 'get',
-          params: this.$http.adornParams()
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.loading = false
-            this.userId = data.id
-            this.userName = data.realName
-          } else {
-            this.me()
-          }
-        })
-      },
-      // 获取当前管理员信息
       me () {
         this.$http({
           url: this.$http.adornUrl('/api-oa/common/user/me'),
@@ -112,7 +80,7 @@
             this.userName = data.resultData.realname
             this.orgName = data.resultData.orgName
           } else {
-            this.me()
+            // this.me()
           }
         })
       }
