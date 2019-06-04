@@ -31,7 +31,13 @@
     >
       <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column> -->
       <el-table-column prop="name" header-align="center" align="center" label="名称"></el-table-column>
-      <el-table-column prop="category" header-align="center" align="center" label="类别"></el-table-column>
+      <el-table-column prop="category" header-align="center" align="center" label="类别">
+         <template slot-scope="scope">
+          <el-tag v-if="scope.row.category === 0 || scope.row.category === '0'">收文</el-tag>
+          <el-tag v-if="scope.row.category === 1 || scope.row.category === '1'">发文</el-tag>
+          <el-tag v-if="scope.row.category === 2 || scope.row.category === '2'">行政管理</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="lastUpdateTime" header-align="center" align="center" label="更新时间"></el-table-column>
       <el-table-column prop="createTime" header-align="center" align="center" label="创建时间"></el-table-column>
 

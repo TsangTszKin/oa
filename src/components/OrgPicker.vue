@@ -128,7 +128,7 @@ export default {
       })
     },
     sure () {
-      if (this.props.selectType === 'radio') {
+      if (this.selectType === 'radio') {
         if (common.isEmpty(this.radio)) {
           this.$message.warning('请选择机构')
           return
@@ -139,20 +139,20 @@ export default {
           })
         }
       }
-      if (this.props.selectType === 'checkbox') {
+      if (this.selectType === 'checkbox') {
         if (common.isEmpty(this.checkList)) {
           this.$message.warning('请选择机构')
           return
-        }
-      } else {
-        let tempArray = []
-        this.checkbox.forEach(element => {
-          tempArray.push({
-            id: element.split('·-·')[0],
-            name: element.split('·-·')[1]
+        } else {
+          let tempArray = []
+          this.checkList.forEach(element => {
+            tempArray.push({
+              id: element.split('·-·')[0],
+              name: element.split('·-·')[1]
+            })
           })
-        })
-        this.$emit('callBack', tempArray)
+          this.$emit('callBack', tempArray)
+        }
       }
       this.visible = false
     }

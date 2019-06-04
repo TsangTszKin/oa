@@ -183,7 +183,7 @@ export default {
   data () {
     return {
       visible: false,
-      orgPickerVisible: false,
+      orgPickerVisible: true,
       orgPickerVisible2: false,
       orgPickerVisible3: false,
       orgPickerVisible4: false,

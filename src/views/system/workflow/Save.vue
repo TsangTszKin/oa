@@ -43,32 +43,64 @@
         <el-button type="primary" @click="sureForm">确定</el-button>
       </span>
     </el-dialog>
+    <OrgPicker
+      selectType="radio"
+      v-if="orgPickerVisible1"
+      ref="OrgPicker1"
+      @callBack="orgPickerCallBack1"
+    ></OrgPicker>
+    <PeoplePicker :isMulti="false" v-if="peoplePickerVisible1" ref="PeoplePicker1" @callBack="peoplePickerCallBack1"></PeoplePicker>
+    <PeoplePicker v-if="peoplePickerVisible2" ref="PeoplePicker2" @callBack="peoplePickerCallBack2"></PeoplePicker>
   </el-dialog>
 </template>
 
 <script>
+import OrgPicker from '@/components/OrgPicker'
+import PeoplePicker from '@/components/PeoplePicker'
+
 export default {
-  components: {},
+  components: {
+    OrgPicker,
+    PeoplePicker
+  },
   data () {
     return {
       visible: false,
       visibleTable: false,
+      orgPickerVisible1: false,
+      peoplePickerVisible1: false,
+      peoplePickerVisible2: false,
       id: '',
       formList: [],
       formCode: ''
     }
   },
   methods: {
+    peoplePickerCallBack1 (data) {
+      console.log(data)
+       this.sendMesgToIframe({ code: 0, value: data })
+      this.peoplePickerVisible1 = false
+    },
+    peoplePickerCallBack2 (data) {
+      console.log(data)
+      this.sendMesgToIframe({ code: 1, value: data })
+      this.peoplePickerVisible2 = false
+    },
+    orgPickerCallBack1 (data) {
+      console.log(data)
+      this.sendMesgToIframe({ code: 2, value: data })
+      this.orgPickerVisible1 = false
+    },
     sureForm () {
       const childFrameObj = document.getElementById('iframe')
-      childFrameObj.contentWindow.postMessage(this.formCode, '*') // code:0更新渲染UI
+      childFrameObj.contentWindow.postMessage(this.formCode, '*')
       this.visibleTable = false
     },
     close () {
       this.$emit('refreshDataList')
     },
-    closeEditor(){
-      this.visibleTable = false
+    closeEditor () {
+      this.visible = false
     },
     handleClick (tab, event) {
       console.log(tab, event)
@@ -131,8 +163,31 @@ export default {
         self.$nextTick(() => {
           self.getFormList()
         })
-      }else if (data.code === 1){
+      } else if (data.code === 1) {
         self.closeEditor()
+      } else if (data.code === 2) {
+        self.$message.success('保存成功')
+      } else if (data.code === 3) {
+        console.log('assigneeFieldPicker')
+        self.peoplePickerVisible1 = true
+        self.$nextTick(() => {
+          console.log('self.$refs', self.$refs)
+          self.$refs.PeoplePicker1.init()
+        })
+      } else if (data.code === 4) {
+        console.log('userFieldPicker')
+        self.peoplePickerVisible2 = true
+        self.$nextTick(() => {
+          self.$refs.PeoplePicker2.init()
+        })
+      } else if (data.code === 5) {
+        console.log('groupFieldPicker')
+        self.orgPickerVisible1 = true
+        self.$nextTick(() => {
+          self.$refs.OrgPicker1.init()
+        })
+      } else {
+        console.log()
       }
     }
 

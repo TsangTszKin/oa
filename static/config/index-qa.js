@@ -5,7 +5,7 @@
   window.SITE_CONFIG = {}
 
   // api接口请求地址
-  window.SITE_CONFIG['baseUrl'] = 'http://localhost:8080/vgsSPMS'
+  window.SITE_CONFIG['baseUrl'] = 'http://192.168.0.21:5555'
 
   // cdn地址 = 域名 + 版本号
   window.SITE_CONFIG['appKey'] = 'web-oa' // 应用标识

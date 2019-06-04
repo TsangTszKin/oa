@@ -403,7 +403,7 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
                 // Reset state
               $scope.error = undefined
               $scope.status.loading = false
-
+              parent.postMessage(JSON.stringify({ code: 2, value: ''}), '*') // window.postMessage
                 // Execute any callback
               if (successCallback) {
                 successCallback()

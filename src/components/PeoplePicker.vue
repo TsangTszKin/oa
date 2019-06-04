@@ -7,6 +7,32 @@
     width="850px"
   >
     <el-row>
+      <el-col :span="24" style="margin-bottom: 20px;">
+        <div class="form-item">
+          <p class="v-label">跨区域：</p>
+          <el-select v-model="area" placeholder="请选择">
+            <el-option
+              v-for="item in areaOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </div>
+        <div class="form-item">
+          <p class="v-label">角色：</p>
+          <el-select v-model="area" placeholder="请选择">
+            <el-option
+              v-for="item in roleOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
       <el-col :span="8">
         <el-radio-group v-model="radio">
           <el-tree :data="leftData" node-key="id" default-expand-all :expand-on-click-node="false">
@@ -91,18 +117,55 @@ const data = [
   }
 ]
 
+const areaOptions = [
+  {
+    value: '全部',
+    label: '全部'
+  },
+  {
+    value: '惠城区',
+    label: '惠城区'
+  },
+  {
+    value: '惠阳区',
+    label: '惠阳区'
+  },
+  {
+    value: '大亚湾',
+    label: '大亚湾'
+  }
+]
+const roleOptions = [
+  {
+    value: '全部',
+    label: '全部'
+  },
+  {
+    value: '局长',
+    label: '局长'
+  },
+  {
+    value: '科长',
+    label: '科长'
+  }
+]
+
 const generateData = _ => {
   const data = []
-  const peopleList = [{
-    id: '1',
-    name: '李白1'
-  }, {
-    id: '2',
-    name: '李白2'
-  }, {
-    id: '3',
-    name: '李白3'
-  }]
+  const peopleList = [
+    {
+      id: '1',
+      name: '李白1'
+    },
+    {
+      id: '1112',
+      name: '李白2'
+    },
+    {
+      id: '3',
+      name: '李白3'
+    }
+  ]
   peopleList.forEach((item, index) => {
     data.push({
       label: item.name,
@@ -117,6 +180,10 @@ export default {
     title: {
       type: String,
       default: '选人组件'
+    },
+    isMulti:{
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -126,7 +193,12 @@ export default {
       visible: false,
       leftData: [],
       rightData: generateData(),
-      value: []
+      value: [],
+      selectedOption: [],
+      area: '全部',
+      role: '全部',
+      areaOptions: areaOptions,
+      roleOptions: roleOptions
     }
   },
   methods: {
@@ -138,13 +210,22 @@ export default {
     },
     changePepple (value, direction, key) {
       console.log('value, direction, key', value, direction, key)
+      let selectedOption = []
+      key.forEach(element => {
+        selectedOption.push(this.rightData[element])
+      })
+      this.selectedOption = selectedOption
     },
     sure () {
       if (common.isEmpty(this.value)) {
         this.$message.warning('请选择人')
         return
       }
-      this.$emit('callBack', this.value)
+      if (!this.isMulti && this.value.length > 1){
+         this.$message.warning('只能选择一个人')
+        return
+      }
+      this.$emit('callBack', this.selectedOption)
       this.visible = false
     }
   }
@@ -154,6 +235,18 @@ export default {
 <style lang="css" scoped>
 .el-checkbox__label {
   padding-left: 23px;
+}
+.v-label {
+  width: fit-content;
+  float: left;
+  height: 28px;
+  line-height: 28px;
+  margin-right: 5px;
+}
+.form-item {
+  width: fit-content;
+  margin-right: 20px;
+  float: left;
 }
 </style>
 
