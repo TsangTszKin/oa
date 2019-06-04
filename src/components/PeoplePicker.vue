@@ -181,7 +181,7 @@ export default {
       type: String,
       default: '选人组件'
     },
-    isMulti:{
+    isMulti: {
       type: Boolean,
       default: true
     }
@@ -221,8 +221,8 @@ export default {
         this.$message.warning('请选择人')
         return
       }
-      if (!this.isMulti && this.value.length > 1){
-         this.$message.warning('只能选择一个人')
+      if (!this.isMulti && this.value.length > 1) {
+        this.$message.warning('只能选择一个人')
         return
       }
       this.$emit('callBack', this.selectedOption)

@@ -78,7 +78,7 @@ export default {
   methods: {
     peoplePickerCallBack1 (data) {
       console.log(data)
-       this.sendMesgToIframe({ code: 0, value: data })
+      this.sendMesgToIframe({ code: 0, value: data })
       this.peoplePickerVisible1 = false
     },
     peoplePickerCallBack2 (data) {
