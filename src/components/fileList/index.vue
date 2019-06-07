@@ -47,12 +47,13 @@
         type: Boolean,
         default: false
       },
-      defaultExpandAll: Boolean, // 是否展开子节点
-      dirKey: String,            // 文件夹标识
-      adduseDirKeyLabel: String, // 添加页面xx人关键字label
-      fileheight: String,        // 文件夹标题和树的高度
-      filelistApi: String,       // 文件夹树API
-      filedataApi: String        // 文件夹增删改查API
+      defaultExpandAll: Boolean,  // 是否展开子节点
+      dirKey: String,             // 文件夹标识
+      adduseDirKeyLabel: String,  // 添加页面xx人关键字label
+      fileheight: String,         // 文件夹标题和树的高度
+      filelistApi: String,        // 文件夹树API
+      filedataApi: String,        // 文件夹增删改查API
+      deleteHaveDateHint: String  // 文件夹增删改查API
     },
     components: {
       addOrUpdate
@@ -135,7 +136,7 @@
               if (fail !== 'cancel') this.commonError()
             })
           } else {
-            this.$alert('该文件夹下存在子文件夹或数据，请删除子文件夹或数据后才能删除该文件夹！', '提示', {
+            this.$alert(this.deleteHaveDateHint, '提示', {
               confirmButtonText: '确定',
               callback: action => {
               }

@@ -63,7 +63,7 @@
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <el-button v-if="items.type === 'view'" class="iviewTextBtn" type="text" @click="viewHandle(scope.row.id, scope.row.orgId)">
+                <el-button v-if="items.type === 'view'" class="iviewTextBtn" type="text" @click="viewHandle(scope.row.id, scope.row.orgId)" :style="{'fontWeight': scope.row.isBold ? 'bold' : 'none'}">
                   <icon-svg v-if="scope.row[item.columnName+'Icon']" :name="scope.row[item.columnName+'Icon'] ? scope.row[item.columnName+'Icon'] : ''" class="svgiconButton"></icon-svg>
                   {{scope.row[item.columnName] === null || scope.row[item.columnName] === '' ? '—' : scope.row[item.columnName]}}
                 </el-button>
@@ -124,6 +124,21 @@
       this.columnSortList.unshift(str[0])
     },
     methods: {
+      // 修改显示隐藏列
+      changeColumnShow (label, isShow) {
+        let columni = 0
+        this.columnList.forEach(column => {
+          if (column.label === label) {
+            column.show = isShow
+          }
+          if (column.show) {
+            columni++
+          }
+        })
+        this.columnSortList = JSON.parse(JSON.stringify(this.columnList))
+        let str = this.columnSortList.splice(columni - 1, 1)
+        this.columnSortList.unshift(str[0])
+      },
       // 排序
       sortChangeHandle (column) {
         this.$emit('sort-change-handle', column)

@@ -9,7 +9,7 @@
       <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="140px">
         <el-form-item label="请选择文件夹图标" prop="icon">
           <el-row>
-            <el-col :span="22">
+            <el-col :span="24">
               <el-popover
                 ref="iconListPopover"
                 placement="bottom-start"
@@ -29,12 +29,12 @@
                 <icon-svg :name="dataForm.icon" slot="prepend"></icon-svg>
               </el-input>
             </el-col>
-            <el-col :span="2" class="icon-list__tips">
+            <!-- <el-col :span="2" class="icon-list__tips">
               <el-tooltip placement="top" effect="light">
                 <div slot="content">全站使用SVG图标, 制作可参考:<a href="http://www.iconfont.cn/" target="_blank">Iconfont-阿里巴巴矢量图标库</a></div>
                 <i class="el-icon-warning"></i>
               </el-tooltip>
-            </el-col>
+            </el-col> -->
           </el-row>
         </el-form-item>
         <el-form-item label="请输入文件夹名称" prop="dirName">

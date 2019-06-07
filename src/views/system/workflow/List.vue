@@ -31,6 +31,7 @@
     >
       <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column> -->
       <el-table-column prop="name" header-align="center" align="center" label="名称"></el-table-column>
+      <el-table-column prop="key" header-align="center" align="center" label="编码"></el-table-column>
       <el-table-column prop="category" header-align="center" align="center" label="类别">
          <template slot-scope="scope">
           <el-tag v-if="scope.row.category === 0 || scope.row.category === '0'">收文</el-tag>
@@ -43,7 +44,8 @@
 
       <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">设计</el-button>
+          <el-button type="text" size="small" @click="modelDeploy(scope.row.id)">发布</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -114,6 +116,25 @@ export default {
           this.totalPage = 0
         }
         this.dataListLoading = false
+      })
+    },
+    // 流程发布（部署）
+    modelDeploy (modelId) {
+      this.$http({
+        url: this.$http.adornUrl('/api-oa/modelDeploy'),
+        method: 'post',
+        params: this.$http.adornParams(
+          {
+            modelId: modelId
+          },
+          false
+        )
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.$message.success('操作成功')
+        } else {
+          this.$message.warning(data.msg)
+        }
       })
     },
     // 每页数
