@@ -1,0 +1,633 @@
+{
+    "success": true,
+    "code": 0,
+    "msg": "success",
+    "resultData": [
+        {
+            "id": "b12ac46d-38d1-4743-943d-4da11e4a5bfa",
+            "parentId": null,
+            "label": "广东省",
+            "children": [
+                {
+                    "id": "103e37f5-a11b-4029-8ced-512b32516b9f",
+                    "parentId": "b12ac46d-38d1-4743-943d-4da11e4a5bfa",
+                    "label": "惠州市",
+                    "children": [
+                        {
+                            "id": "63c1b87d-1ecd-47a1-84e8-b9b8100e2093",
+                            "parentId": "103e37f5-a11b-4029-8ced-512b32516b9f",
+                            "label": "惠城区",
+                            "children": [
+                                {
+                                    "id": "21e8fa1f-0ede-43a4-9dbc-760a731335a2",
+                                    "parentId": "63c1b87d-1ecd-47a1-84e8-b9b8100e2093",
+                                    "label": "小金口办事处",
+                                    "children": [],
+                                    "areaName": "小金口办事处",
+                                    "shortName": "小金口办事处",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "de46c44f-02bf-45c3-b7ba-5413af83f82d",
+                                    "parentId": "63c1b87d-1ecd-47a1-84e8-b9b8100e2093",
+                                    "label": "芦洲镇",
+                                    "children": [],
+                                    "areaName": "芦洲镇",
+                                    "shortName": "芦洲镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "16f21f23-e635-44e9-8614-fe0bcd005748",
+                                    "parentId": "63c1b87d-1ecd-47a1-84e8-b9b8100e2093",
+                                    "label": "矮陂镇",
+                                    "children": [],
+                                    "areaName": "矮陂镇",
+                                    "shortName": "矮陂镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                }
+                            ],
+                            "areaName": "惠城区",
+                            "shortName": "惠城区",
+                            "orgTreeVoList": [
+                                {
+                                    "id": "4ecd63be-7531-4a08-a1f9-33005840be82",
+                                    "parentId": null,
+                                    "label": "北大青鸟",
+                                    "children": [],
+                                    "orgName": "北大青鸟",
+                                    "shortName": null,
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": 1
+                                }
+                            ],
+                            "type": 0
+                        },
+                        {
+                            "id": "95133035-e43f-4651-88c0-1c38395318b3",
+                            "parentId": "103e37f5-a11b-4029-8ced-512b32516b9f",
+                            "label": "惠阳区",
+                            "children": [
+                                {
+                                    "id": "33376c79-37b1-4c01-8457-ea80871b2ef3",
+                                    "parentId": "95133035-e43f-4651-88c0-1c38395318b3",
+                                    "label": "开发区",
+                                    "children": [],
+                                    "areaName": "开发区",
+                                    "shortName": "开发区",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "e5ac64ee-844d-41e4-87cb-7f461c816476",
+                                    "parentId": "95133035-e43f-4651-88c0-1c38395318b3",
+                                    "label": "平潭镇",
+                                    "children": [],
+                                    "areaName": "平潭镇",
+                                    "shortName": "平潭镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                }
+                            ],
+                            "areaName": "惠阳区",
+                            "shortName": "惠阳区",
+                            "orgTreeVoList": [],
+                            "type": 0
+                        },
+                        {
+                            "id": "cf307bd8-2376-48ae-893b-ab23fd33bae7",
+                            "parentId": "103e37f5-a11b-4029-8ced-512b32516b9f",
+                            "label": "惠东县",
+                            "children": [
+                                {
+                                    "id": "5e78fa65-5559-4718-a201-3cf33a9b9c0c",
+                                    "parentId": "cf307bd8-2376-48ae-893b-ab23fd33bae7",
+                                    "label": "白盆珠镇",
+                                    "children": [],
+                                    "areaName": "白盆珠镇",
+                                    "shortName": "白盆珠镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "be0eceb0-b8df-4515-990f-02313a2d797c",
+                                    "parentId": "cf307bd8-2376-48ae-893b-ab23fd33bae7",
+                                    "label": "宝口镇",
+                                    "children": [],
+                                    "areaName": "宝口镇",
+                                    "shortName": "宝口镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "55fc66b6-fb71-4d2a-b836-dcf624cd5b82",
+                                    "parentId": "cf307bd8-2376-48ae-893b-ab23fd33bae7",
+                                    "label": "高潭镇",
+                                    "children": [],
+                                    "areaName": "高潭镇",
+                                    "shortName": "高潭镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                }
+                            ],
+                            "areaName": "惠东县",
+                            "shortName": "惠东县",
+                            "orgTreeVoList": [],
+                            "type": 0
+                        },
+                        {
+                            "id": "a5b67533-5d8b-4355-a5d8-450bf20a6c11",
+                            "parentId": "103e37f5-a11b-4029-8ced-512b32516b9f",
+                            "label": "博罗县",
+                            "children": [
+                                {
+                                    "id": "970c58a0-7c07-44e0-b214-d4dd4ded6435",
+                                    "parentId": "a5b67533-5d8b-4355-a5d8-450bf20a6c11",
+                                    "label": "石湾镇",
+                                    "children": [],
+                                    "areaName": "石湾镇",
+                                    "shortName": "石湾镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "68242711-02d8-4498-beb6-05772be15748",
+                                    "parentId": "a5b67533-5d8b-4355-a5d8-450bf20a6c11",
+                                    "label": "杨侨镇",
+                                    "children": [],
+                                    "areaName": "杨侨镇",
+                                    "shortName": "杨侨镇",
+                                    "orgTreeVoList": [
+                                        {
+                                            "id": "6d21fdda-ecf2-471e-8963-7242c7f479b5",
+                                            "parentId": null,
+                                            "label": "非煤矿山企业",
+                                            "children": [],
+                                            "orgName": "非煤矿山企业",
+                                            "shortName": "非煤矿山企业",
+                                            "areaId": null,
+                                            "areaName": null,
+                                            "type": 1
+                                        }
+                                    ],
+                                    "type": 0
+                                }
+                            ],
+                            "areaName": "博罗县",
+                            "shortName": "博罗县",
+                            "orgTreeVoList": [],
+                            "type": 0
+                        },
+                        {
+                            "id": "0b78845a-bf1c-4840-ae11-110df57d059f",
+                            "parentId": "103e37f5-a11b-4029-8ced-512b32516b9f",
+                            "label": "龙门县",
+                            "children": [
+                                {
+                                    "id": "90e0c068-db6c-46b3-be59-f9883ad9f102",
+                                    "parentId": "0b78845a-bf1c-4840-ae11-110df57d059f",
+                                    "label": "蓝天瑶族乡",
+                                    "children": [],
+                                    "areaName": "蓝天瑶族乡",
+                                    "shortName": "蓝天瑶族乡",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "a604df5d-442d-4d38-a0d1-bf87d370ff93",
+                                    "parentId": "0b78845a-bf1c-4840-ae11-110df57d059f",
+                                    "label": "地派镇",
+                                    "children": [],
+                                    "areaName": "地派镇",
+                                    "shortName": "地派镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "2f078bd2-5560-4830-8f5e-16287644f6e4",
+                                    "parentId": "0b78845a-bf1c-4840-ae11-110df57d059f",
+                                    "label": "龙潭镇",
+                                    "children": [],
+                                    "areaName": "龙潭镇",
+                                    "shortName": "龙潭镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                }
+                            ],
+                            "areaName": "龙门县",
+                            "shortName": "龙门县",
+                            "orgTreeVoList": [],
+                            "type": 0
+                        },
+                        {
+                            "id": "04a9fbf7-55f9-43e6-a1e7-38c3e2d37637",
+                            "parentId": "103e37f5-a11b-4029-8ced-512b32516b9f",
+                            "label": "大亚湾",
+                            "children": [
+                                {
+                                    "id": "f76c1b96-d783-43c1-b929-7c196621a20b",
+                                    "parentId": "04a9fbf7-55f9-43e6-a1e7-38c3e2d37637",
+                                    "label": "西区街道办",
+                                    "children": [],
+                                    "areaName": "西区街道办",
+                                    "shortName": "西区街道办",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "3268d92e-e6f7-421a-9cd8-07df62c50bcc",
+                                    "parentId": "04a9fbf7-55f9-43e6-a1e7-38c3e2d37637",
+                                    "label": "霞涌街道办",
+                                    "children": [],
+                                    "areaName": "霞涌街道办",
+                                    "shortName": "霞涌街道办",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "5e995dd8-a8f2-48d5-a37c-399584cc3b36",
+                                    "parentId": "04a9fbf7-55f9-43e6-a1e7-38c3e2d37637",
+                                    "label": "澳头街道办",
+                                    "children": [],
+                                    "areaName": "澳头街道办",
+                                    "shortName": "澳头街道办",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                }
+                            ],
+                            "areaName": "大亚湾",
+                            "shortName": "大亚湾",
+                            "orgTreeVoList": [
+                                {
+                                    "id": "940ce473-4d11-46f9-9130-0f603ea0cc0b",
+                                    "parentId": "1",
+                                    "label": "大亚湾管委会领导",
+                                    "children": [],
+                                    "orgName": "大亚湾管委会领导",
+                                    "shortName": "大亚湾管委会领导",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": 1
+                                },
+                                {
+                                    "id": "a6ff696c-1b12-44dd-ac5d-9c0b6f5a8b06",
+                                    "parentId": null,
+                                    "label": "大亚湾区工业贸易发展局",
+                                    "children": [
+                                        {
+                                            "id": "16fc4d8d-3dea-4959-a762-f6d4205ebc43",
+                                            "parentId": "a6ff696c-1b12-44dd-ac5d-9c0b6f5a8b06",
+                                            "label": "局领导",
+                                            "children": [],
+                                            "orgName": "局领导",
+                                            "shortName": "局领导",
+                                            "areaId": null,
+                                            "areaName": null,
+                                            "type": null
+                                        }
+                                    ],
+                                    "orgName": "大亚湾区工业贸易发展局",
+                                    "shortName": "大亚湾区工业贸易发展局",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": 1
+                                },
+                                {
+                                    "id": "16fc4d8d-3dea-4959-a762-f6d4205ebc43",
+                                    "parentId": "a6ff696c-1b12-44dd-ac5d-9c0b6f5a8b06",
+                                    "label": "局领导",
+                                    "children": [],
+                                    "orgName": "局领导",
+                                    "shortName": "局领导",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": 1
+                                },
+                                {
+                                    "id": "b23ef63e-28b9-49ba-bbb9-01ca3dcee141",
+                                    "parentId": "b305e940-4c86-451e-9f8b-e6a6b7b42183",
+                                    "label": "普莱克斯(大亚湾)工业气体有限公司",
+                                    "children": [],
+                                    "orgName": "普莱克斯(大亚湾)工业气体有限公司",
+                                    "shortName": "普莱克斯(大亚湾)工业气体有限公司",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": 1
+                                },
+                                {
+                                    "id": "1",
+                                    "parentId": null,
+                                    "label": "大亚湾管委会",
+                                    "children": [
+                                        {
+                                            "id": "940ce473-4d11-46f9-9130-0f603ea0cc0b",
+                                            "parentId": "1",
+                                            "label": "大亚湾管委会领导",
+                                            "children": [],
+                                            "orgName": "大亚湾管委会领导",
+                                            "shortName": "大亚湾管委会领导",
+                                            "areaId": null,
+                                            "areaName": null,
+                                            "type": null
+                                        }
+                                    ],
+                                    "orgName": "大亚湾管委会",
+                                    "shortName": "大亚湾管委会",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": 1
+                                },
+                                {
+                                    "id": "68c30d52-c372-4823-a1da-03b8f08cbde2",
+                                    "parentId": null,
+                                    "label": "工商贸机构",
+                                    "children": [],
+                                    "orgName": "工商贸机构",
+                                    "shortName": "工商贸",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": 1
+                                }
+                            ],
+                            "type": 0
+                        },
+                        {
+                            "id": "351a5232-c100-4733-bcf9-3b691e2e125c",
+                            "parentId": "103e37f5-a11b-4029-8ced-512b32516b9f",
+                            "label": "惠州仲恺国家高新技术产业开发区",
+                            "children": [
+                                {
+                                    "id": "b248e83e-9c84-46de-a790-a755f7446dd4",
+                                    "parentId": "351a5232-c100-4733-bcf9-3b691e2e125c",
+                                    "label": "沥林镇",
+                                    "children": [],
+                                    "areaName": "沥林镇",
+                                    "shortName": "沥林镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "7451f5e8-9304-4b54-9fe5-0dbd1001613c",
+                                    "parentId": "351a5232-c100-4733-bcf9-3b691e2e125c",
+                                    "label": "潼湖镇",
+                                    "children": [],
+                                    "areaName": "潼湖镇",
+                                    "shortName": "潼湖镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                },
+                                {
+                                    "id": "06a3bdfa-4632-4dc5-a25f-0f250900da5e",
+                                    "parentId": "351a5232-c100-4733-bcf9-3b691e2e125c",
+                                    "label": "潼侨镇",
+                                    "children": [],
+                                    "areaName": "潼侨镇",
+                                    "shortName": "潼侨镇",
+                                    "orgTreeVoList": [],
+                                    "type": 0
+                                }
+                            ],
+                            "areaName": "惠州仲恺国家高新技术产业开发区",
+                            "shortName": "惠州仲恺国家高新技术产业开发区",
+                            "orgTreeVoList": [],
+                            "type": 0
+                        }
+                    ],
+                    "areaName": "惠州市",
+                    "shortName": "惠州市",
+                    "orgTreeVoList": [
+                        {
+                            "id": "dcb54da7-7f44-426d-a944-ad5c201f5b95",
+                            "parentId": null,
+                            "label": "新新科技有限公司",
+                            "children": [],
+                            "orgName": "新新科技有限公司",
+                            "shortName": "xxx",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "9c62a9e5-390b-4c6c-9e54-e0525fa92b01",
+                            "parentId": null,
+                            "label": "惠州市市委宣传部",
+                            "children": [],
+                            "orgName": "惠州市市委宣传部",
+                            "shortName": "惠州市市委宣传部",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "9d169908-62cb-40b2-aec9-a74b57b23b00",
+                            "parentId": null,
+                            "label": "惠州应急管理局",
+                            "children": [
+                                {
+                                    "id": "07574197-8861-4041-bbbf-b01fe9c1bb0a",
+                                    "parentId": "9d169908-62cb-40b2-aec9-a74b57b23b00",
+                                    "label": "局领导",
+                                    "children": [],
+                                    "orgName": "局领导",
+                                    "shortName": "惠州应急管理局局领导",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": null
+                                },
+                                {
+                                    "id": "3e11dc2d-f666-4997-b8a3-bc1a6a1faae3",
+                                    "parentId": "9d169908-62cb-40b2-aec9-a74b57b23b00",
+                                    "label": "办公室",
+                                    "children": [],
+                                    "orgName": "办公室",
+                                    "shortName": "惠州应急管理局办公室",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": null
+                                },
+                                {
+                                    "id": "85f00672-8422-445e-99af-1107001dbfdd",
+                                    "parentId": "9d169908-62cb-40b2-aec9-a74b57b23b00",
+                                    "label": "综合协调科",
+                                    "children": [],
+                                    "orgName": "综合协调科",
+                                    "shortName": "综合协调科",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": null
+                                },
+                                {
+                                    "id": "041088d9-f6c0-4d1f-bf0a-f3e631baf4a5",
+                                    "parentId": "9d169908-62cb-40b2-aec9-a74b57b23b00",
+                                    "label": "政策法规科",
+                                    "children": [],
+                                    "orgName": "政策法规科",
+                                    "shortName": "政策法规科",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": null
+                                }
+                            ],
+                            "orgName": "惠州应急管理局",
+                            "shortName": "惠州应急管理局",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "b305e940-4c86-451e-9f8b-e6a6b7b42183",
+                            "parentId": null,
+                            "label": "普莱克斯(惠州)工业气体有限公司",
+                            "children": [
+                                {
+                                    "id": "b23ef63e-28b9-49ba-bbb9-01ca3dcee141",
+                                    "parentId": "b305e940-4c86-451e-9f8b-e6a6b7b42183",
+                                    "label": "普莱克斯(大亚湾)工业气体有限公司",
+                                    "children": [],
+                                    "orgName": "普莱克斯(大亚湾)工业气体有限公司",
+                                    "shortName": "普莱克斯(大亚湾)工业气体有限公司",
+                                    "areaId": null,
+                                    "areaName": null,
+                                    "type": null
+                                }
+                            ],
+                            "orgName": "普莱克斯(惠州)工业气体有限公司",
+                            "shortName": "普莱克斯(惠州)工业气体有限公司",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "7422834b-c11c-421b-a85f-de4323024e68",
+                            "parentId": null,
+                            "label": "惠州工商贸企业",
+                            "children": [],
+                            "orgName": "惠州工商贸企业",
+                            "shortName": "惠州工商贸企业",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "3e11dc2d-f666-4997-b8a3-bc1a6a1faae3",
+                            "parentId": "9d169908-62cb-40b2-aec9-a74b57b23b00",
+                            "label": "办公室",
+                            "children": [],
+                            "orgName": "办公室",
+                            "shortName": "惠州应急管理局办公室",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "07574197-8861-4041-bbbf-b01fe9c1bb0a",
+                            "parentId": "9d169908-62cb-40b2-aec9-a74b57b23b00",
+                            "label": "局领导",
+                            "children": [],
+                            "orgName": "局领导",
+                            "shortName": "惠州应急管理局局领导",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "85f00672-8422-445e-99af-1107001dbfdd",
+                            "parentId": "9d169908-62cb-40b2-aec9-a74b57b23b00",
+                            "label": "综合协调科",
+                            "children": [],
+                            "orgName": "综合协调科",
+                            "shortName": "综合协调科",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "041088d9-f6c0-4d1f-bf0a-f3e631baf4a5",
+                            "parentId": "9d169908-62cb-40b2-aec9-a74b57b23b00",
+                            "label": "政策法规科",
+                            "children": [],
+                            "orgName": "政策法规科",
+                            "shortName": "政策法规科",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "2625ccf2-73c1-4b06-812e-3b656c9abbee",
+                            "parentId": null,
+                            "label": "惠州安全生产教育训练中心",
+                            "children": [],
+                            "orgName": "惠州安全生产教育训练中心",
+                            "shortName": "教育训练中心",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        },
+                        {
+                            "id": "bf10dd8a-03e6-4e83-9539-275ef9204837",
+                            "parentId": null,
+                            "label": "惠州市安监协会",
+                            "children": [],
+                            "orgName": "惠州市安监协会",
+                            "shortName": "惠州市安监协会",
+                            "areaId": null,
+                            "areaName": null,
+                            "type": 1
+                        }
+                    ],
+                    "type": 0
+                },
+                {
+                    "id": "47725535-183a-441d-accf-4482d71e774b",
+                    "parentId": "b12ac46d-38d1-4743-943d-4da11e4a5bfa",
+                    "label": "广州市",
+                    "children": [],
+                    "areaName": "广州市",
+                    "shortName": "广州市",
+                    "orgTreeVoList": [],
+                    "type": 0
+                },
+                {
+                    "id": "ad84b115-a4a4-4f96-b5bd-1b50d9075c7f",
+                    "parentId": "b12ac46d-38d1-4743-943d-4da11e4a5bfa",
+                    "label": "深圳市",
+                    "children": [],
+                    "areaName": "深圳市",
+                    "shortName": "深圳市",
+                    "orgTreeVoList": [],
+                    "type": 0
+                }
+            ],
+            "areaName": "广东省",
+            "shortName": "广东省",
+            "orgTreeVoList": [
+                {
+                    "id": "c3b5e6d3-120f-4f8a-80bd-128ea56327a1",
+                    "parentId": null,
+                    "label": "智讯科技",
+                    "children": [],
+                    "orgName": "智讯科技",
+                    "shortName": "智讯科技",
+                    "areaId": null,
+                    "areaName": null,
+                    "type": 1
+                },
+                {
+                    "id": "544f76f2-8229-44ad-a3ae-6010af60f0b2",
+                    "parentId": null,
+                    "label": "新东方培训机构",
+                    "children": [],
+                    "orgName": "新东方培训机构",
+                    "shortName": "新东方培训机构",
+                    "areaId": null,
+                    "areaName": null,
+                    "type": 1
+                }
+            ],
+            "type": 0
+        }
+    ]
+}

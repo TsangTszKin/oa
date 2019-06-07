@@ -83,7 +83,7 @@
     "PROPERTY.ASSIGNMENT.EMPTY" : "No assignment selected",
     "PROPERTY.ASSIGNMENT.ASSIGNEE_DISPLAY" : "Assignee {{assignee}}",
     "PROPERTY.ASSIGNMENT.CANDIDATE_USERS_DISPLAY" : "{{length}} Candidate users",
-    "PROPERTY.ASSIGNMENT.CANDIDATE_USERS" : "候选受理人",
+    "PROPERTY.ASSIGNMENT.CANDIDATE_USERS" : "受理人（可多选）",
     "PROPERTY.ASSIGNMENT.CANDIDATE_GROUPS_DISPLAY" :  "{{length}} Candidate groups",
     "PROPERTY.ASSIGNMENT.CANDIDATE_GROUPS" :  "候选组",
     "PROPERTY.ASSIGNMENT.USER_IDM_DISPLAY": "User {{firstName}} {{lastName}}",

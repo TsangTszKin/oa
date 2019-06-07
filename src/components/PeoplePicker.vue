@@ -33,20 +33,20 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="8">
+      <el-col :span="8" style="overflow: scroll;">
         <el-radio-group v-model="radio">
           <el-tree :data="leftData" node-key="id" default-expand-all :expand-on-click-node="false">
             <div class="custom-tree-node" slot-scope="{ node, data }">
-              <div @dblclick="sure" v-if="data.type === 1">
+              <div @dblclick="sure">
                 <el-radio :label="`${data.id}·-·${data.label}`">
                   <img src="/static/img/org.png">
                   <span>{{ data.label }}</span>
                 </el-radio>
               </div>
-              <div @dblclick="sure" v-else class="el-checkbox__label">
+              <!-- <div @dblclick="sure" v-else class="el-checkbox__label">
                 <img src="/static/img/area.png">
                 <span>{{ data.label }}</span>
-              </div>
+              </div>-->
             </div>
           </el-tree>
         </el-radio-group>
@@ -59,6 +59,7 @@
           :titles="['未选', '已选']"
           :data="rightData"
           @change="changePepple"
+          style="height:100%;"
         ></el-transfer>
       </el-col>
     </el-row>
@@ -73,49 +74,49 @@
 <script>
 import common from '@/utils/common'
 
-const data = [
-  {
-    id: 1,
-    label: '地区1',
-    type: 0,
-    children: [
-      {
-        id: 4,
-        type: 0,
-        label: '地区 1-1',
-        children: [
-          {
-            id: 9,
-            type: 1,
-            label: '机构 1-1-2'
-          },
-          {
-            id: 10,
-            type: 0,
-            label: '地区 1-1-5'
-          }
-        ]
-      },
-      {
-        id: 5,
-        type: 0,
-        label: '地区2',
-        children: [
-          {
-            id: 6,
-            type: 1,
-            label: '机构 1-1-1'
-          },
-          {
-            id: 7,
-            type: 0,
-            label: '地区'
-          }
-        ]
-      }
-    ]
-  }
-]
+// const data = [
+//   {
+//     id: 1,
+//     label: '地区1',
+//     type: 0,
+//     children: [
+//       {
+//         id: 4,
+//         type: 0,
+//         label: '地区 1-1',
+//         children: [
+//           {
+//             id: 9,
+//             type: 1,
+//             label: '机构 1-1-2'
+//           },
+//           {
+//             id: 10,
+//             type: 0,
+//             label: '地区 1-1-5'
+//           }
+//         ]
+//       },
+//       {
+//         id: 5,
+//         type: 0,
+//         label: '地区2',
+//         children: [
+//           {
+//             id: 6,
+//             type: 1,
+//             label: '机构 1-1-1'
+//           },
+//           {
+//             id: 7,
+//             type: 0,
+//             label: '地区'
+//           }
+//         ]
+//       }
+//     ]
+//   }
+// ]
 
 const areaOptions = [
   {
@@ -150,31 +151,6 @@ const roleOptions = [
   }
 ]
 
-const generateData = _ => {
-  const data = []
-  const peopleList = [
-    {
-      id: '1',
-      name: '李白1'
-    },
-    {
-      id: '1112',
-      name: '李白2'
-    },
-    {
-      id: '3',
-      name: '李白3'
-    }
-  ]
-  peopleList.forEach((item, index) => {
-    data.push({
-      label: item.name,
-      id: item.id,
-      key: index
-    })
-  })
-  return data
-}
 export default {
   props: {
     title: {
@@ -192,7 +168,7 @@ export default {
       radio: '',
       visible: false,
       leftData: [],
-      rightData: generateData(),
+      rightData: [],
       value: [],
       selectedOption: [],
       area: '全部',
@@ -202,16 +178,73 @@ export default {
     }
   },
   methods: {
-    init () {
+    init (defaultValue) {
       this.visible = true
       this.$nextTick(() => {
-        this.leftData = data
+        // this.leftData = data
+        this.$http({
+          url: this.$http.adornUrl(`/api-admin/org/children/orgRoot`),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({ data }) => {
+          if (data && data.code === 0) {
+            if (data.resultData) {
+              this.leftData = data.resultData
+              this.getPersonList(defaultValue)
+            }
+          }
+        })
+      })
+    },
+    getPersonList (defaultValue) {
+      this.$http({
+        url: this.$http.adornUrl(`/api-admin/person/list`),
+        method: 'get',
+        params: this.$http.adornParams(
+          {
+            currPage: 1,
+            pageSize: 100,
+            sortKey: 'sortOrder',
+            sortValue: 'ascending'
+          },
+          true
+        )
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          if (data.resultData && data.resultData.list) {
+            let rightData = []
+            data.resultData.list.forEach((element, index) => {
+              rightData.push({
+                label: element.realName,
+                id: element.userId,
+                key: index
+              })
+            })
+            this.rightData = rightData
+            if (defaultValue) {
+              // defaultValue = Array(defaultValue)
+              console.log('defaultValue', defaultValue)
+              console.log('instanceof Array', defaultValue instanceof Array)
+              console.log('typeof defaultValue', typeof defaultValue)
+              let value = []
+              defaultValue.forEach(element => {
+                rightData.forEach((element2, i) => {
+                  if (element2.id === element.value) {
+                    value.push(i)
+                  }
+                })
+              })
+              console.log('value', value)
+              this.value = value
+            }
+          }
+        }
       })
     },
     changePepple (value, direction, key) {
       console.log('value, direction, key', value, direction, key)
       let selectedOption = []
-      key.forEach(element => {
+      value.forEach((element, j) => {
         selectedOption.push(this.rightData[element])
       })
       this.selectedOption = selectedOption

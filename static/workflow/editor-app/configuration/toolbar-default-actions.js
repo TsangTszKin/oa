@@ -314,7 +314,7 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
 
     $scope.saveAndClose = function () {
     	$scope.save(function () {
-        parent.postMessage(JSON.stringify({ code: 1, value: '' }), '*') // window.postMessage
+      parent.postMessage(JSON.stringify({ code: 1, value: '' }), '*') // window.postMessage
     	})
     }
     $scope.save = function (successCallback) {
@@ -336,6 +336,8 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
 
       var selection = $scope.editor.getSelection()
       $scope.editor.setSelection([])
+
+      console.log('$scope editor', $scope.editor)
 
         // Get the serialized svg image source
       var svgClone = $scope.editor.getCanvas().getSVGRepresentation(true)
@@ -363,6 +365,9 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
         description: $scope.saveDialog.description,
         category: $scope.saveDialog.category
       }
+
+      console.log('params', params)
+      // return
 
         // Update
       $http({ method: 'POST',

@@ -92,8 +92,18 @@ export default {
       this.orgPickerVisible1 = false
     },
     sureForm () {
+      let label
+      this.formList.forEach(element => {
+        if (element.code === this.formCode) {
+          label = element.name
+        }
+      })
+      let postData = {
+        value: this.formCode,
+        label: label
+      }
       const childFrameObj = document.getElementById('iframe')
-      childFrameObj.contentWindow.postMessage(this.formCode, '*')
+      childFrameObj.contentWindow.postMessage(postData, '*')
       this.visibleTable = false
     },
     close () {
@@ -156,7 +166,8 @@ export default {
     let self = this
     function receiveMessageFromIndex (event) {
       console.log('我是vue,我接受到了：', event.data)
-      let data = JSON.parse(event.data)
+      // let data = JSON.parse(event.data)
+      let data = event.data
       if (data.code === 0) {
         self.formCode = data.value
         self.visibleTable = true
@@ -171,20 +182,19 @@ export default {
         console.log('assigneeFieldPicker')
         self.peoplePickerVisible1 = true
         self.$nextTick(() => {
-          console.log('self.$refs', self.$refs)
-          self.$refs.PeoplePicker1.init()
+          self.$refs.PeoplePicker1.init(data.value)
         })
       } else if (data.code === 4) {
         console.log('userFieldPicker')
         self.peoplePickerVisible2 = true
         self.$nextTick(() => {
-          self.$refs.PeoplePicker2.init()
+          self.$refs.PeoplePicker2.init(data.value)
         })
       } else if (data.code === 5) {
         console.log('groupFieldPicker')
         self.orgPickerVisible1 = true
         self.$nextTick(() => {
-          self.$refs.OrgPicker1.init()
+          self.$refs.OrgPicker1.init(data.value)
         })
       } else {
         console.log()

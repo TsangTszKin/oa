@@ -43,15 +43,13 @@ var KisBpmAssignmentPopupCtrl = ['$scope', function ($scope) {
       case 1:
 
         var candidateUsers_temp = []
-        var candidateUsersName_temp = []
         event.data.value.forEach(function (item) {
           candidateUsers_temp.push({
-            value: item.id
+            value: item.id,
+            label: item.label
           })
-          candidateUsersName_temp.push(item.label)
         })
         $scope.assignment.candidateUsers = candidateUsers_temp
-        $scope.assignment.candidateUsersName = candidateUsersName_temp.join(',')
         break
       case 2:
         var candidateGroups_temp = []
@@ -142,15 +140,15 @@ var KisBpmAssignmentPopupCtrl = ['$scope', function ($scope) {
   }
 
   $scope.assigneeFieldPicker = function () {
-    parent.postMessage(JSON.stringify({ code: 3, value: '' }), '*') // window.postMessage
+    parent.postMessage({ code: 3, value: '' }, '*') // window.postMessage
   }
 
   $scope.userFieldPicker = function () {
-    parent.postMessage(JSON.stringify({ code: 4, value: '' }), '*') // window.postMessage
+    parent.postMessage({ code: 4, value: '' }, '*') // window.postMessage
   }
 
   $scope.groupFieldPicker = function () {
-    parent.postMessage(JSON.stringify({ code: 5, value: '' }), '*') // window.postMessage
+    parent.postMessage({ code: 5, value: '' }, '*') // window.postMessage
   }
 
   var handleAssignmentInput = function ($scope) {
