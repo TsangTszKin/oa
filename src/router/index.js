@@ -19,7 +19,6 @@ const _import = require('./import-' + process.env.NODE_ENV)
 const globalRoutes = [
   { path: '/404', component: _import('common/404'), name: '404', meta: { title: '404未找到' } },
   { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' } }
-  // { path: '/system-workflow-model-save/:id', component: _import('system/workflow/Save'), name: 'system-workflow-model-save', meta: { title: '流程设计' } }
 ]
 
 // 主入口路由(需嵌套上左右整体布局)
@@ -41,12 +40,14 @@ const mainRoutes = {
 
     { path: '/system-form-save/:id?', component: _import('system/form/Save'), name: 'system-form-save', meta: { title: '表单设计', isTab: false } }, // ,
     { path: '/system-table-save/:id?', component: _import('system/table/Save'), name: 'system-table-save', meta: { title: '业务表设计', isTab: true } }, // ,
-    { path: '/system-workflow-model', component: _import('system/workflow/List'), name: 'system-workflow-model', meta: { title: '流程设计列表', isTab: true } }, // ,
-    { path: '/system-workflow-model-save', component: _import('system/workflow/Save'), name: 'system-workflow-model-save', meta: { title: '流程设计', isTab: false } }, // ,
+    { path: '/system-workflow-model', component: _import('system/workflow-model/List'), name: 'system-workflow-model', meta: { title: '流程设计列表', isTab: true } }, // ,
+    { path: '/system-workflow-process-version', component: _import('system/workflow-process-version/List'), name: 'system-workflow-process-version', meta: { title: '流程管版本列表', isTab: true } }, // ,
+    { path: '/system-workflow-process-online', component: _import('system/workflow-process-online/List'), name: 'system-workflow-process-online', meta: { title: '在线流程列表', isTab: true } }, // ,
+    { path: '/system-approval-template', component: _import('system/approval-cfg/template/List'), name: 'system-approval-template', meta: { title: '模板定义', isTab: true } }, // ,
     // { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts', meta: { title: 'demo-echarts', isTab: true } },
     // { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } }
     { path: '/system-', component: _import('system/doc-cfg/doc-type/List'), name: 'system-', meta: { title: '公文类型管理', isTab: true } },
-    { path: '/system-document-docOrderDef', component: _import('system/doc-cfg/symbol/List'), name: 'system-document-docOrderDef', meta: { title: '文号定义', isTab: true } },
+    { path: '/system-document-docOrderDef', component: _import('system/doc-cfg/Symbol/List'), name: 'system-document-docOrderDef', meta: { title: '文号定义', isTab: true } },
     { path: '/system-document-orderDef', component: _import('system/doc-cfg/code/List'), name: 'system-document-orderDef', meta: { title: '编号管理', isTab: true } },
     { path: '/system-document-recedoctype', component: _import('system/doc-cfg/received-doc-type/List'), name: 'system-document-recedoctype', meta: { title: '来文类型管理', isTab: true } },
     { path: '/docBaseCategory', component: _import('system/doc-cfg/doc-cate/List'), name: 'docBaseCategory', meta: { title: '文种管理', isTab: true } },

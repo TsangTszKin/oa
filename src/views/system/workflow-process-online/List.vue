@@ -1,25 +1,21 @@
+/* eslint-disable no-unreachable */
 <template>
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()" :size="'mini'">
       <el-form-item>
-        <el-input v-model="dataForm.name" placeholder="表单名称" clearable></el-input>
+        <el-input v-model="dataForm.resourceName" placeholder="名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.code" placeholder="表单编码" clearable></el-input>
+        <el-input v-model="dataForm.key" placeholder="编码" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="dataForm.defState" placeholder="是否激活">
+          <el-option label="已挂起" :value="0"></el-option>
+          <el-option label="已激活" :value="1"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button
-          v-if="isAuth('system:form:update')"
-          type="primary"
-          @click="addOrUpdateHandle()"
-        >新增</el-button>
-        <!-- <el-button
-          v-if="isAuth('system:form:delete')"
-          type="danger"
-          @click="deleteHandle()"
-          :disabled="dataListSelections.length <= 0"
-        >批量删除</el-button> -->
       </el-form-item>
     </el-form>
     <el-table
@@ -30,23 +26,21 @@
       style="width: 100%;"
     >
       <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column> -->
-      <el-table-column prop="name" header-align="center" align="center" label="名称"></el-table-column>
+      <el-table-column prop="id" header-align="center" align="center" label="主键"></el-table-column>
       <el-table-column prop="key" header-align="center" align="center" label="编码"></el-table-column>
-      <el-table-column prop="category" header-align="center" align="center" label="类别">
-         <template slot-scope="scope">
-          <el-tag v-if="scope.row.category === 0 || scope.row.category === '0'">收文</el-tag>
-          <el-tag v-if="scope.row.category === 1 || scope.row.category === '1'">发文</el-tag>
-          <el-tag v-if="scope.row.category === 2 || scope.row.category === '2'">行政管理</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="lastUpdateTime" header-align="center" align="center" label="更新时间"></el-table-column>
-      <el-table-column prop="createTime" header-align="center" align="center" label="创建时间"></el-table-column>
+      <el-table-column prop="name" header-align="center" align="center" label="名称"></el-table-column>
+      <el-table-column prop="version" header-align="center" align="center" label="当前版本"></el-table-column>
 
-      <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
+      <el-table-column
+        fixed="right"
+        header-align="center"
+        align="center"
+        width="250"
+        label="操作"
+      >
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">设计</el-button>
-          <el-button type="text" size="small" @click="modelDeploy(scope.row.id)">发布</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="history(scope.row.key)">启动流程</el-button>
+          <el-button type="text" size="small" @click="chartView(scope.row.id)">流程实例</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -60,19 +54,24 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <Save v-if="saveVisible" ref="Save" @refreshDataList="getDataList"></Save>
+    <ChartView v-if="chartViewVisible" ref="ChartView" @refreshDataList="getDataList"></ChartView>
+    <XmlView v-if="xmlViewVisible" ref="XmlView" @refreshDataList="getDataList"></XmlView>
+    <History v-if="historyVisible" ref="History" @refreshDataList="getDataList"></History>
   </div>
 </template>
 
 <script>
-import Save from './Save'
+import ChartView from './ChartView'
+import XmlView from './XmlView'
+import History from './History'
 
 export default {
   data () {
     return {
       dataForm: {
-        name: '',
-        code: ''
+        key: '',
+        resourceName: '',
+        defState: ''
       },
       dataList: [],
       pageIndex: 1,
@@ -80,28 +79,71 @@ export default {
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      saveVisible: false
+      chartViewVisible: false,
+      xmlViewVisible: false,
+      historyVisible: false
     }
   },
   components: {
-    Save
+    ChartView,
+    XmlView,
+    History
   },
   activated () {
     this.getDataList()
   },
   methods: {
+    changeStatus (status, processDefinitionId) {
+      if (status) {
+        this.$http({
+          url: this.$http.adornUrl('/api-oa/processDef/active'),
+          method: 'post',
+          params: this.$http.adornParams(
+            {
+              processDefinitionId: processDefinitionId
+            },
+            false
+          )
+        }).then(({ data }) => {
+          if (data && data.code === 0) {
+            this.$message.success('操作成功')
+            this.getDataList()
+          } else {
+            this.$message.warning(data.msg)
+          }
+        })
+      } else {
+        this.$http({
+          url: this.$http.adornUrl('/api-oa/processDef/suspend'),
+          method: 'post',
+          params: this.$http.adornParams(
+            {
+              processDefinitionId: processDefinitionId
+            },
+            false
+          )
+        }).then(({ data }) => {
+          if (data && data.code === 0) {
+            this.$message.success('操作成功')
+            this.getDataList()
+          } else {
+            this.$message.warning(data.msg)
+          }
+        })
+      }
+    },
     // 获取数据列表
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api-oa/model/list'),
+        url: this.$http.adornUrl('/api-oa/process/list'),
         method: 'post',
         params: this.$http.adornParams(
           {
             pageNo: this.pageIndex,
             pageSize: this.pageSize,
-            name: this.dataForm.name,
-            code: this.dataForm.code
+            key: this.dataForm.key,
+            resourceName: this.dataForm.resourceName
           },
           false
         )
@@ -153,16 +195,23 @@ export default {
       this.dataListSelections = val
     },
     // 新增 / 修改
-    addOrUpdateHandle (id) {
-      this.saveVisible = true
+    chartView (id) {
+      this.chartViewVisible = true
       this.$nextTick(() => {
-        this.$refs.Save.init(id)
+        this.$refs.ChartView.init(id)
       })
-      // if (id) {
-      //   this.$router.push({ name: 'system-workflow-model-save', query: { modelId: id } })
-      // } else {
-      //   this.$router.push({ name: 'system-workflow-model-save' })
-      // }
+    },
+    xmlView (id) {
+      this.xmlViewVisible = true
+      this.$nextTick(() => {
+        this.$refs.XmlView.init(id)
+      })
+    },
+    history (key) {
+      this.historyVisible = true
+      this.$nextTick(() => {
+        this.$refs.History.init(key)
+      })
     },
     // 删除
     deleteHandle (id) {
