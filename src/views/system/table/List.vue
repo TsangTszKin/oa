@@ -98,7 +98,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dyctable/list'),
+        url: this.$http.adornUrl('/api-flow/dyctable/list'),
         method: 'post',
         params: this.$http.adornParams(
           {
@@ -163,7 +163,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/api-oa/dyctable/delete/' + id),
+          url: this.$http.adornUrl('/api-flow/dyctable/delete/' + id),
           method: 'delete'
         }).then(({ data }) => {
           if (data && data.code === 0) {

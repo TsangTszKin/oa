@@ -499,7 +499,7 @@ export default {
       this.columnList = []
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dycform/save'),
+        url: this.$http.adornUrl('/api-flow/dycform/save'),
         method: 'put',
         data: this.$http.adornData(this.saveData)
       })
@@ -522,7 +522,7 @@ export default {
       this.$nextTick(() => {
         if (common.isEmpty(id)) return
         this.$http({
-          url: this.$http.adornUrl('/api-oa/dycform/get'),
+          url: this.$http.adornUrl('/api-flow/dycform/get'),
           method: 'get',
           params: this.$http.adornParams({ id })
         })
@@ -562,7 +562,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dyctable/list'),
+        url: this.$http.adornUrl('/api-flow/dyctable/list'),
         method: 'post',
         params: this.$http.adornParams(
           {

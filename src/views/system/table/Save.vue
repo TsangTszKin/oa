@@ -111,7 +111,7 @@ export default {
       if (!this.verify()) return
       // this.dataListLoading = true;
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dyctable/save'),
+        url: this.$http.adornUrl('/api-flow/dyctable/save'),
         method: 'put',
         data: this.$http.adornData(this.saveData)
       })
@@ -134,7 +134,7 @@ export default {
     },
     getData (id) {
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dyctable/get/' + id),
+        url: this.$http.adornUrl('/api-flow/dyctable/get/' + id),
         method: 'get'
       }).then(({ data }) => {
         if (data && data.code === 0) {

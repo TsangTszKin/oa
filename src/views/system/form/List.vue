@@ -150,7 +150,7 @@ export default {
     },
     save () {
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dycform/save'),
+        url: this.$http.adornUrl('/api-flow/dycform/save'),
         method: 'put',
         data: this.$http.adornData(this.dycform)
       })
@@ -176,7 +176,7 @@ export default {
     },
     getTableDetails (id) {
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dyctable/get/' + id),
+        url: this.$http.adornUrl('/api-flow/dyctable/get/' + id),
         method: 'get'
       })
         .then(({ data }) => {
@@ -191,7 +191,7 @@ export default {
     },
     getFormDetails (id) {
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dycform/get'),
+        url: this.$http.adornUrl('/api-flow/dycform/get'),
         method: 'get',
         params: this.$http.adornParams({ id })
       })
@@ -208,7 +208,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dycform/list'),
+        url: this.$http.adornUrl('/api-flow/dycform/list'),
         method: 'post',
         params: this.$http.adornParams(
           {
@@ -247,7 +247,7 @@ export default {
     getTableList () {
       // this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dyctable/list'),
+        url: this.$http.adornUrl('/api-flow/dyctable/list'),
         method: 'post',
         params: this.$http.adornParams(
           {
@@ -309,7 +309,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/api-oa/dycform/delete/' + id),
+          url: this.$http.adornUrl('/api-flow/dycform/delete/' + id),
           method: 'delete'
         }).then(({ data }) => {
           if (data && data.code === 0) {

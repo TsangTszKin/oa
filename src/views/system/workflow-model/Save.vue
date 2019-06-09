@@ -1,11 +1,12 @@
 <template>
   <el-dialog
-    :title="!id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
     append-to-body
     fullscreen
+    :show-close="false"
     @close="close"
+    custom-class="model-design"
   >
     <iframe width="100%" src="/static/workflow/modeler.html" frameborder="0" id="iframe"></iframe>
 
@@ -22,9 +23,9 @@
       frameborder="0"
       id="iframe"
     ></iframe>-->
-    <span slot="footer" class="dialog-footer">
+    <!-- <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">返回</el-button>
-    </span>
+    </span> -->
 
     <el-dialog
       title="选择表"
@@ -141,7 +142,7 @@ export default {
     // 获取数据列表
     getFormList () {
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dycform/list'),
+        url: this.$http.adornUrl('/api-flow/dycform/list'),
         method: 'post',
         params: this.$http.adornParams(
           {
@@ -196,6 +197,9 @@ export default {
         self.$nextTick(() => {
           self.$refs.OrgPicker1.init(data.value)
         })
+      } else if (data.code === 6) {
+        self.close()
+        self.closeEditor()
       } else {
         console.log()
       }
@@ -207,31 +211,15 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
-.form-design .el-tabs__nav {
-  width: 100%;
+<style lang="css">
+.model-design {
 }
-.form-design .el-tabs__nav .el-tabs__active-bar {
-  width: 50%;
-  transform: translateX(0px);
+.model-design .el-dialog__header {
+  display: none;
 }
-.form-design .el-tabs__nav .el-tabs__item {
-  width: 50%;
-  text-align: center;
+.model-design .el-dialog__body {
+  padding: 0;
 }
-.form-design .el-tabs__header {
-  position: fixed;
-  width: 232px;
-  height: 40px;
-  z-index: 1;
-  background-color: #fff;
-}
-.form-design .el-tabs__content {
-  position: relative;
-  top: 55px;
-}
-.form-design .el-form-item__label {
-  line-height: 20px;
-}
+
 </style>
 

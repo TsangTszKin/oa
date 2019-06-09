@@ -45,7 +45,7 @@ export default {
       if (!this.id) return
       this.$nextTick(() => {
         // this.$http({
-        //   url: this.$http.adornUrl('/api-oa/processDef/viewGraph'),
+        //   url: this.$http.adornUrl('/api-flow/processDef/viewGraph'),
         //   method: 'get',
         //   params: this.$http.adornParams(
         //     {
@@ -59,7 +59,7 @@ export default {
         // })
 
         this.imgData = this.$http.adornUrl(
-        `/api-oa/processDef/viewGraph?processDefinitionId=${this.id}`
+        `/api-flow/processDef/viewGraph?processDefinitionId=${this.id}`
       )
       })
     }

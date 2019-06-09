@@ -99,7 +99,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api-oa/processDef/list'),
+        url: this.$http.adornUrl('/api-flow/processDef/list'),
         method: 'post',
         params: this.$http.adornParams(
           {

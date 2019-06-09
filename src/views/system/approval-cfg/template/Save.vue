@@ -41,7 +41,7 @@
         </el-col>
       </el-row>
 
-      <el-row :gutter="10" v-show="dataForm.templateType === 1">
+      <el-row :gutter="10" v-show="dataForm.templateType === 2">
         <el-col :span="12">
           <el-alert title="勾选该项则不嘛企业申请，可在内部替企业申请" type="warning"></el-alert>
         </el-col>
@@ -52,7 +52,7 @@
         </el-col>
       </el-row>
 
-      <el-row :gutter="10" v-if="dataForm.templateType === 1" style="margin-bottom: 20px;">
+      <el-row :gutter="10" v-if="dataForm.templateType === 2" style="margin-bottom: 20px;">
         <el-col :span="24">
           <el-alert title="外部申请或窗口受理类业务（如企业端或网站端申请类业务）" type="warning"></el-alert>
         </el-col>
@@ -65,11 +65,11 @@
           <el-option label="延期" value="3"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="工作流" prop="workFlowId">
+      <!-- <el-form-item label="工作流" prop="workFlowId">
         <el-select class="select" v-model="dataForm.workFlowId" placeholder="请选择" filterable>
           <el-option :label="item.name" :value="item.id" v-for="(item, i) in workFlowList" :key="i"></el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="表单" prop="dyncFormId">
         <el-select class="select" v-model="dataForm.dyncFormId" placeholder="请选择">
           <el-option :label="item.name" :value="item.id" v-for="(item, i) in workFlowList" :key="i"></el-option>

@@ -109,7 +109,7 @@ export default {
     changeStatus (status, processDefinitionId) {
       if (status) {
         this.$http({
-          url: this.$http.adornUrl('/api-oa/processDef/active'),
+          url: this.$http.adornUrl('/api-flow/processDef/active'),
           method: 'post',
           params: this.$http.adornParams(
             {
@@ -127,7 +127,7 @@ export default {
         })
       } else {
         this.$http({
-          url: this.$http.adornUrl('/api-oa/processDef/suspend'),
+          url: this.$http.adornUrl('/api-flow/processDef/suspend'),
           method: 'post',
           params: this.$http.adornParams(
             {
@@ -149,7 +149,7 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api-oa/processDef/list'),
+        url: this.$http.adornUrl('/api-flow/processDef/list'),
         method: 'post',
         params: this.$http.adornParams(
           {
@@ -177,7 +177,7 @@ export default {
     // 流程发布（部署）
     modelDeploy (modelId) {
       this.$http({
-        url: this.$http.adornUrl('/api-oa/modelDeploy'),
+        url: this.$http.adornUrl('/api-flow/modelDeploy'),
         method: 'post',
         params: this.$http.adornParams(
           {
@@ -241,7 +241,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/api-oa/model/delete/' + id),
+          url: this.$http.adornUrl('/api-flow/model/delete/' + id),
           method: 'delete'
         }).then(({ data }) => {
           if (data && data.code === 0) {

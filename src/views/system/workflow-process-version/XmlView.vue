@@ -70,7 +70,7 @@ export default {
       if (!this.id) return
       this.$nextTick(() => {
         this.$http({
-          url: this.$http.adornUrl('/api-oa/processDef/viewXml'),
+          url: this.$http.adornUrl('/api-flow/processDef/viewXml'),
           method: 'get',
           params: this.$http.adornParams(
             {
@@ -84,7 +84,7 @@ export default {
         })
 
       //   this.xmlData = this.$http.adornUrl(
-      //   `/api-oa/processDef/viewXml?processDefinitionId=${this.id}`
+      //   `/api-flow/processDef/viewXml?processDefinitionId=${this.id}`
       // )
       })
     }
