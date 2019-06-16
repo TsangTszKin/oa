@@ -19,8 +19,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label prop="beAgent">
-            <el-checkbox>启用固定环节</el-checkbox>
+          <el-form-item label prop="fixStepModel">
+            <el-checkbox v-model="dataForm.fixStepModel">启用固定环节</el-checkbox>
           </el-form-item>
         </el-col>
       </el-row>
@@ -35,8 +35,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label prop="beAgent">
-            <el-checkbox>允许在新建业务中显示</el-checkbox>
+          <el-form-item label prop="crtModelIndependent">
+            <el-checkbox v-model="dataForm.crtModelIndependent">允许在新建业务中显示</el-checkbox>
           </el-form-item>
         </el-col>
       </el-row>
@@ -69,10 +69,10 @@
         <el-select class="select" v-model="dataForm.workFlowId" placeholder="请选择" filterable>
           <el-option :label="item.name" :value="item.id" v-for="(item, i) in workFlowList" :key="i"></el-option>
         </el-select>
-      </el-form-item> -->
+      </el-form-item>-->
       <el-form-item label="表单" prop="dyncFormId">
-        <el-select class="select" v-model="dataForm.dyncFormId" placeholder="请选择">
-          <el-option :label="item.name" :value="item.id" v-for="(item, i) in workFlowList" :key="i"></el-option>
+        <el-select class="select" v-model="dataForm.dyncFormId" placeholder="请选择" @change="changeDyncForm">
+          <el-option :label="item.name" :value="item.id" v-for="(item, i) in formList" :key="i"></el-option>
         </el-select>
       </el-form-item>
 
@@ -95,10 +95,13 @@
 
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="归档机构" prop="orderOrgLink">
-            <el-select class="select" placeholder="请选择" v-model="dataForm.orderOrgLink">
-              <el-option label="调接口" value="0"></el-option>
-            </el-select>
+          <el-form-item label="归档机构" prop="orgLinkId">
+            <el-input
+              :value="dataForm.orgLinkName"
+              placeholder="请选择"
+              :readonly="true"
+              @click.native="showOrgPicker"
+            ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -107,8 +110,13 @@
       </el-row>
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="关联人员" prop="crtUser">
-            <el-input placeholder="请选择" :readonly="true" v-model="dataForm.crtUser"></el-input>
+          <el-form-item label="关联人员" prop="viewUserList">
+            <el-input
+              :value="dataForm.viewUserList | arrayToString"
+              placeholder="请选择"
+              :readonly="true"
+              @click.native="showPeoplePicker"
+            ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -118,10 +126,13 @@
 
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="受理人员" prop="agentType">
-            <el-select class="select" placeholder="请选择" :readonly="true" v-model="dataForm.orderOrgLink">
-              <el-option label="调接口" value="0"></el-option>
-            </el-select>
+          <el-form-item label="受理人员" prop="prejudgeUserList">
+            <el-input
+              :value="dataForm.prejudgeUserList | arrayToString"
+              placeholder="请选择"
+              :readonly="true"
+              @click.native="showPeoplePicker2"
+            ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -131,10 +142,13 @@
 
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="监察人员" prop="agentType">
-            <el-select class="select" placeholder="请选择" :readonly="true" v-model="dataForm.orderOrgLink">
-              <el-option label="调接口" value="0"></el-option>
-            </el-select>
+          <el-form-item label="监察人员" prop="overSeeUserList">
+            <el-input
+              :value="dataForm.overSeeUserList | arrayToString"
+              placeholder="请选择"
+              :readonly="true"
+              @click.native="showPeoplePicker3"
+            ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -145,9 +159,14 @@
       <div v-show="dataForm.templateType === 2">
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="申请表单域" prop="agentType">
-              <el-select class="select" placeholder="请选择" :readonly="true" v-model="dataForm.orderOrgLink">
-                <el-option label="调接口" value="0"></el-option>
+            <el-form-item label="申请表单域" prop="applyFormId">
+              <el-select class="select" placeholder="请选择" v-model="dataForm.applyFormId" @change="changeApplyForm">
+                <el-option
+                  :label="item.name"
+                  :value="item.id"
+                  v-for="(item, i) in formList"
+                  :key="i"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -157,19 +176,27 @@
         </el-row>
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="预审人员" prop="agentType">
-              <el-select class="select" placeholder="请选择" :readonly="true" v-model="dataForm.orderOrgLink">
-                <el-option label="调接口" value="0"></el-option>
-              </el-select>
+            <el-form-item label="预审人员" prop="prejudgeUserList">
+              <el-input
+                :value="dataForm.prejudgeUserList | arrayToString"
+                placeholder="请选择"
+                :readonly="true"
+                @click.native="showPeoplePicker4"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12"></el-col>
         </el-row>
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="预审表单域" prop="agentType">
-              <el-select class="select" placeholder="请选择" :readonly="true" v-model="dataForm.orderOrgLink">
-                <el-option label="调接口" value="0"></el-option>
+            <el-form-item label="预审表单域" prop="precheckFormId">
+              <el-select class="select" placeholder="请选择" v-model="dataForm.precheckFormId" @change="changePrecheckForm">
+                <el-option
+                  :label="item.name"
+                  :value="item.id"
+                  v-for="(item, i) in formList"
+                  :key="i"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -179,58 +206,73 @@
         </el-row>
         <el-row :gutter="10">
           <el-col :span="9">
-            <el-form-item label="审批事项编号" prop="agent">
-              <el-input placeholder="请输入"></el-input>
+            <el-form-item label="审批事项编号" prop="expSpsxbh">
+              <el-input placeholder="请输入" v-model="dataForm.tapprovalTemplateExpVo.expSpsxbh"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item label="子项编号" prop="agent">
-              <el-input placeholder="请输入"></el-input>
+            <el-form-item label="子项编号" prop="expSpsxzxbh">
+              <el-input placeholder="请输入" v-model="dataForm.tapprovalTemplateExpVo.expSpsxzxbh"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label prop="beAgent">
-              <el-checkbox>是否交换到电子监察或网上办事大厅</el-checkbox>
+            <el-form-item label prop="expIsTranZxzk">
+              <el-checkbox v-model="dataForm.tapprovalTemplateExpVo.expIsTranZxzk">是否交换到电子监察或网上办事大厅</el-checkbox>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="审批事项ID" prop="agent">
-              <el-input placeholder="请输入"></el-input>
+            <el-form-item label="审批事项ID" prop="expSpsxid">
+              <el-input placeholder="请输入" v-model="dataForm.tapprovalTemplateExpVo.expSpsxid"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="审批事项版本号" prop="agent">
-              <el-input placeholder="请输入"></el-input>
+            <el-form-item label="审批事项版本号" prop="expSpsxbbh">
+              <el-input placeholder="请输入" v-model="dataForm.tapprovalTemplateExpVo.expSpsxbbh"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="审批事项名称" prop="agentType">
-              <el-input placeholder="请输入"></el-input>
+            <el-form-item label="审批事项名称" prop="expSpsxmc">
+              <el-input placeholder="请输入" v-model="dataForm.tapprovalTemplateExpVo.expSpsxmc"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-alert title="假如审批事项有子项，指审批事项子项名称" type="warning"></el-alert>
           </el-col>
         </el-row>
-        <el-form-item label="规定收费" prop="remarks" v-if="dataForm.agentType == 1">
-          <el-input :rows="2" type="textarea" v-model="dataForm.remarks" placeholder="规定收费"></el-input>
+        <el-form-item label="规定收费" prop="expGdsf" v-if="dataForm.templateType == 2">
+          <el-input
+            :rows="2"
+            type="textarea"
+            v-model="dataForm.tapprovalTemplateExpVo.expGdsf"
+            placeholder="规定收费"
+          ></el-input>
         </el-form-item>
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="收费金额" prop="agent">
-              <el-input-number :min="0" :max="9999999999" label="收费金额"></el-input-number>元人民币
+            <el-form-item label="收费金额" prop="expSfje">
+              <el-input-number
+                v-model="dataForm.tapprovalTemplateExpVo.expSfje"
+                :min="0"
+                :max="9999999999"
+                label="收费金额"
+              ></el-input-number>元人民币
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="规定办理时限" prop="beAgent">
-              <el-input-number :min="0" :max="9999999999" label="收费金额"></el-input-number>
-              <el-radio-group>
-                <el-radio :label="0">工作日</el-radio>
-                <el-radio :label="1">自然日</el-radio>
+            <el-form-item label="规定办理时限" prop="expGdblsx">
+              <el-input-number
+                v-model="dataForm.tapprovalTemplateExpVo.expGdblsx"
+                :min="0"
+                :max="9999999999"
+                label="规定办理时限"
+              ></el-input-number>
+              <el-radio-group v-model="dataForm.tapprovalTemplateExpVo.expGdblsxdw">
+                <el-radio label="G">工作日</el-radio>
+                <el-radio label="Z">自然日</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -241,51 +283,120 @@
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
+
+    <OrgPicker
+      selectType="radio"
+      v-if="orgPickerVisible"
+      ref="OrgPicker"
+      @callBack="orgPickerCallBack"
+    />
+    <PeoplePicker v-if="peoplePickerVisible" ref="PeoplePicker" @callBack="peoplePickerCallBack"/>
+    <PeoplePicker
+      v-if="peoplePickerVisible2"
+      ref="PeoplePicker2"
+      @callBack="peoplePickerCallBack2"
+    />
+    <PeoplePicker
+      v-if="peoplePickerVisible3"
+      ref="PeoplePicker3"
+      @callBack="peoplePickerCallBack3"
+    />
+    <PeoplePicker
+      v-if="peoplePickerVisible4"
+      ref="PeoplePicker4"
+      @callBack="peoplePickerCallBack4"
+    />
   </el-dialog>
 </template>
 
 <script>
+import OrgPicker from '@/components/OrgPicker'
+import PeoplePicker from '@/components/PeoplePicker'
+import common from '@/utils/common'
+
 export default {
   components: {
-    // Upload
+    OrgPicker,
+    PeoplePicker
   },
   data () {
     return {
       visible: false,
+      orgPickerVisible: true,
+      peoplePickerVisible: false,
+      peoplePickerVisible2: false,
+      peoplePickerVisible3: false,
+      peoplePickerVisible4: false,
       dataForm: {
         businessType: '',
         crtUser: '',
         disableCorpPort: 0,
-        dyncFormId: 'string',
+        dyncFormId: '',
+        dyncFormName: '',
         fixStepModel: 0,
         groupKey: '',
         linkFlag: 0,
         mappingType: 1,
         orderFileModel: 0,
-        orderFileName: 'string',
+        orderFileName: '',
         orderOrgLink: 0,
-        orgLinkId: 'string',
-        platformCode: 'string',
-        putinRightFieldXml: 'string',
+        orgLinkId: '',
+        platformCode: '',
+        putinRightFieldXml: '',
         sortOrder: 0,
         sptAppType: 0,
         state: 0,
         templateCrtModel: 0,
-        templateId: 'string',
-        templateName: 'string',
-        templateNote: 'string',
+        templateId: '',
+        templateName: '',
+        templateNote: '',
         templateType: 1,
         transitioned: 0,
-        workFlowId: ''
+        workFlowId: '',
+        prejudgeUserList: [
+          // {
+          //   'realname': '',
+          //   'userId': '',
+          //   'username': ''
+          // }
+        ], // 预审人员列表
+        overSeeUserList: [], // 监察人员列表
+        viewUserList: [], // 关联人员列表
+        acceptUserList: [], // 受理人员列表
+        tapprovalTemplateExpVo: {
+          expGdblsx: 0, // 规定办理时限
+          expGdblsxdw: 'G', // 时限类型，G工作日Z自然日
+          expGdsf: '', // 规定收费
+          expIsTenu: 0,
+          expIsTranZxzk: 0, // 是否交换到电子监察或网上办事大厅
+          expSfje: 0, // 收费金额
+          expSpsxbbh: '', // 审批事项版本号
+          expSpsxbh: '', // 审批事项编号
+          expSpsxid: '', // 审批事项ID
+          expSpsxmc: '', // 审批事项名称
+          expSpsxzxbh: '', // 子项编号
+          expTenuJsonConfig: '', // 十统一配置
+          templateId: ''
+        },
+        applyFormId: '', // 申请表单ID
+        applyFormList: [],
+        precheckFormId: '', // 预审表单ID
+        precheckFormList: [],
+        crtModelIndependent: 0, // 允许在新建业务中显示,1允许0不允许
+        orgLinkName: '' // 回显
       },
       dataRule: {
-        // agent: [{ required: true, message: '代理人不能为空', trigger: 'blur' }],
-        // beAgent: [
-        //   { required: true, message: '被代理人不能为空', trigger: 'blur' }
-        // ],
-        // startTime: [
-        //   { required: true, message: '开始时间不能为空', trigger: 'blur' }
-        // ]
+        templateName: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        templateType: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        businessType: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        workFlowId: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        dyncFormId: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       formList: [],
       workFlowList: []
@@ -299,16 +410,38 @@ export default {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           this.$http({
-            url: this.$http.adornUrl(
-              `/api-oa/approval/Template/get`
-            ),
+            url: this.$http.adornUrl(`/api-oa/approval/Template/get`),
             method: 'get',
-            params: this.$http.adornParams({
-              id: this.dataForm.id
-            }, false)
+            params: this.$http.adornParams(
+              {
+                id: this.dataForm.id
+              },
+              false
+            )
           }).then(({ data }) => {
             if (data && data.code === 0) {
-              this.dataForm = data.tProductClass
+              if (data.resultData.approvalTemplate.fixStepModel === 1) {
+                data.resultData.approvalTemplate.fixStepModel = true
+              } else if (data.resultData.approvalTemplate.fixStepModel === 0) {
+                data.resultData.approvalTemplate.fixStepModel = false
+              }
+              if (data.resultData.approvalTemplate.disableCorpPort === 1) {
+                data.resultData.approvalTemplate.disableCorpPort = true
+              } else if (data.resultData.approvalTemplate.disableCorpPort === 0) {
+                data.resultData.approvalTemplate.disableCorpPort = false
+              }
+              if (data.resultData.approvalTemplate.crtModelIndependent === 1) {
+                data.resultData.approvalTemplate.crtModelIndependent = true
+              } else if (data.resultData.approvalTemplate.crtModelIndependent === 0) {
+                data.resultData.approvalTemplate.crtModelIndependent = false
+              }
+
+              if (data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTranZxzk === 1) {
+                data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTranZxzk = true
+              } else if (data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTranZxzk === 0) {
+                data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTranZxzk = false
+              }
+              this.dataForm = data.resultData.approvalTemplate
             }
           })
         }
@@ -318,12 +451,36 @@ export default {
     dataFormSubmit () {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
+          let data = common.deepClone(this.dataForm)
+
+          if (data.fixStepModel === true) {
+            data.fixStepModel = 1
+          } else if (data.fixStepModel === false) {
+            data.fixStepModel = 0
+          }
+
+          if (data.disableCorpPort === true) {
+            data.disableCorpPort = 1
+          } else if (data.disableCorpPort === false) {
+            data.disableCorpPort = 0
+          }
+
+          if (data.crtModelIndependent === true) {
+            data.crtModelIndependent = 1
+          } else if (data.crtModelIndependent === false) {
+            data.crtModelIndependent = 0
+          }
+
+          if (data.tapprovalTemplateExpVo.expIsTranZxzk === true) {
+            data.tapprovalTemplateExpVo.expIsTranZxzk = 1
+          } else if (data.tapprovalTemplateExpVo.expIsTranZxzk === false) {
+            data.tapprovalTemplateExpVo.expIsTranZxzk = 0
+          }
+
           this.$http({
-            url: this.$http.adornUrl(
-              `/api-oa/approval/Template/save`
-            ),
+            url: this.$http.adornUrl(`/api-oa/approval/Template/save`),
             method: 'put',
-            data: this.$http.adornData(this.dataForm)
+            data: this.$http.adornData(data)
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
@@ -342,9 +499,31 @@ export default {
         }
       })
     },
+    changeApplyForm (value) {
+      this.formList.forEach(element => {
+        if (element.id === value) {
+          this.dataForm.applyFormList = [element.code]
+        }
+      })
+    },
+    changePrecheckForm (value) {
+      this.formList.forEach(element => {
+        if (element.id === value) {
+          this.dataForm.precheckFormList = [element.code]
+        }
+      })
+    },
+    changeDyncForm (value) {
+      console.log(value)
+      this.formList.forEach(element => {
+        if (element.id === value) {
+          this.dataForm.dyncFormName = element.name
+        }
+      })
+    },
     getFormList () {
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dycform/list'),
+        url: this.$http.adornUrl('/api-flow/dycform/list'),
         method: 'post',
         params: this.$http.adornParams(
           {
@@ -384,11 +563,112 @@ export default {
     },
     changePepple (value, direction, key) {
       console.log('value, direction, key', value, direction, key)
+    },
+    orgPickerCallBack (data) {
+      this.dataForm.orgLinkId = data.id
+      this.dataForm.orgLinkName = data.name
+      console.log(data)
+    },
+    peoplePickerCallBack (data) {
+      let tempData = []
+      data.forEach(element => {
+        tempData.push({
+          realname: element.label,
+          userId: element.id,
+          username: element.label
+        })
+      })
+      this.dataForm.viewUserList = tempData
+      console.log(data)
+      console.log(tempData)
+    },
+    peoplePickerCallBack2 (data) {
+      let tempData = []
+      data.forEach(element => {
+        tempData.push({
+          realname: element.label,
+          userId: element.id,
+          username: element.label
+        })
+      })
+      this.dataForm.prejudgeUserList = tempData
+      console.log(data)
+    },
+    peoplePickerCallBack3 (data) {
+      let tempData = []
+      data.forEach(element => {
+        tempData.push({
+          realname: element.label,
+          userId: element.id,
+          username: element.label
+        })
+      })
+      this.dataForm.overSeeUserList = tempData
+      console.log(data)
+    },
+    peoplePickerCallBack4 (data) {
+      let tempData = []
+      data.forEach(element => {
+        tempData.push({
+          realname: element.label,
+          userId: element.id,
+          username: element.label
+        })
+      })
+      this.dataForm.prejudgeUserList = tempData
+      console.log(data)
+    },
+    showOrgPicker () {
+      this.orgPickerVisible = true
+      this.$nextTick(() => {
+        this.$refs.OrgPicker.init()
+      })
+    },
+    showPeoplePicker () {
+      this.peoplePickerVisible = true
+      this.$nextTick(() => {
+        this.$refs.PeoplePicker.init()
+      })
+    },
+    showPeoplePicker2 () {
+      this.peoplePickerVisible2 = true
+      this.$nextTick(() => {
+        this.$refs.PeoplePicker2.init()
+      })
+    },
+    showPeoplePicker3 () {
+      this.peoplePickerVisible3 = true
+      this.$nextTick(() => {
+        this.$refs.PeoplePicker3.init()
+      })
+    },
+    showPeoplePicker4 () {
+      this.peoplePickerVisible4 = true
+      this.$nextTick(() => {
+        this.$refs.PeoplePicker4.init()
+      })
     }
   },
   mounted () {
     this.getFormList()
-    this.getWorkFlowList()
+    // this.getWorkFlowList()
+  },
+  filters: {
+    arrayToString (value) {
+      let name = []
+      value.forEach(element => {
+        name.push(element.realname)
+      })
+      return name.join(',')
+    }
+  },
+  watch: {
+    dataForm: {
+      handler: function (value) {
+        console.log('dataForm', value)
+      },
+      deep: true
+    }
   }
 }
 </script>

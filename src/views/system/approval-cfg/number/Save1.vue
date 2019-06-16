@@ -24,43 +24,36 @@
         ></el-alert>
         <el-alert title="4.修改配号范围时，如果起始号大于当前最大号时，下一编号将从起始号开始。请谨慎使用！ " type="warning"></el-alert>
       </div>
-      <el-form-item label="审批类型" prop="templateName">证号</el-form-item>
-      <el-form-item label="编号模式" prop="templateType">
-        <el-radio-group v-model="dataForm.templateType">
+      <el-form-item label="审批类型" prop="orderType">证号</el-form-item>
+      <el-form-item label="编号模式" prop="orderKey">
+        <el-radio-group v-model="dataForm.orderKey">
           <el-radio :label="1">普通</el-radio>
           <el-radio :label="2">动态产生</el-radio>
           <el-radio :label="3">动态内容</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="编号范围" prop="beAgent">
-        <el-row :gutter="10">
-          <el-col :span="12">
-            <el-input v-model="dataForm.groupKey" placeholder></el-input>至
-          </el-col>
-          <el-col :span="12">
-            <el-input v-model="dataForm.groupKey" placeholder></el-input>
-          </el-col>
-        </el-row>
+      <el-form-item label="编号范围" prop="orderRandBegin">
+            <el-input-number v-model="dataForm.orderRandBegin" placeholder :min="1" :max="10"></el-input-number>至<el-input-number v-model="dataForm.orderRandEnd" placeholder :min="1" :max="10"></el-input-number>
       </el-form-item>
 
-      <el-form-item label="唯一标识" prop="beAgent">
-        <el-input v-model="dataForm.groupKey" placeholder="唯一标识"></el-input>
+      <el-form-item label="唯一标识" prop="orderParaName">
+        <el-input v-model="dataForm.orderParaName" placeholder="唯一标识"></el-input>
       </el-form-item>
 
-      <el-form-item label="审批编号" prop="beAgent">
-        <el-input v-model="dataForm.groupKey" placeholder="审批编号"></el-input>
+      <el-form-item label="审批编号" prop="orderValue">
+        <el-input v-model="dataForm.orderValue" placeholder="审批编号"></el-input>
       </el-form-item>
 
-      <el-form-item label="编号定义说明" prop="beAgent">
-        <el-input :rows="2" type="textarea" v-model="dataForm.remarks" placeholder="编号定义说明"></el-input>
+      <el-form-item label="编号定义说明" prop="orderNote">
+        <el-input :rows="2" type="textarea" v-model="dataForm.orderNote" placeholder="编号定义说明"></el-input>
       </el-form-item>
 
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="编号模式" prop="templateType">
-            <el-radio-group v-model="dataForm.templateType">
-              <el-radio :label="1">审批业务</el-radio>
-              <el-radio :label="2">多种审批业务公用</el-radio>
+          <el-form-item label="编号模式" prop="orderKey">
+            <el-radio-group v-model="dataForm.orderKey">
+              <el-radio :label="'1'">审批业务</el-radio>
+              <el-radio :label="'2'">多种审批业务公用</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -69,11 +62,15 @@
         </el-col>
       </el-row>
 
-      <el-form-item label="选择业务类型" prop="businessType">
-        <el-select class="select" v-model="dataForm.businessType" placeholder="请选择">
-          <el-option label="读接口" value="1"></el-option>
-          <el-option label="无" value="0"></el-option>
-        </el-select>
+      <el-form-item label="选择业务类型" prop="templateId">
+        <el-select class="select" placeholder="请选择" v-model="dataForm.templateId">
+                <el-option
+                  :label="item.templateName"
+                  :value="item.templateId"
+                  v-for="(item, i) in templateList"
+                  :key="i"
+                ></el-option>
+              </el-select>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -92,53 +89,42 @@ export default {
     return {
       visible: false,
       dataForm: {
-        businessType: '',
-        crtUser: '',
-        disableCorpPort: 0,
-        dyncFormId: 'string',
-        fixStepModel: 0,
-        groupKey: '',
-        linkFlag: 0,
-        mappingType: 1,
-        orderFileModel: 0,
-        orderFileName: 'string',
-        orderOrgLink: 0,
-        orgLinkId: 'string',
-        platformCode: 'string',
-        putinRightFieldXml: 'string',
-        sortOrder: 0,
-        sptAppType: 0,
-        state: 0,
-        templateCrtModel: 0,
-        templateId: 'string',
-        templateName: 'string',
-        templateNote: 'string',
-        templateType: 1,
-        transitioned: 0,
-        workFlowId: ''
+        'orderDefyId': '',
+        'orderKey': '1',
+        'orderMaxNum': 0,
+        'orderModel': 0,
+        'orderNote': '',
+        'orderParaName': '',
+        'orderRandBegin': 0,
+        'orderRandEnd': 0,
+        'orderType': 1,
+        'orderValue': '',
+        'orderYear': 0,
+        'orgLinkId': '',
+        'selTemplates': [
+          // {
+          //   'templateId': 'string',
+          //   'templateName': 'string'
+          // }
+        ],
+        'templateId': ''
       },
       dataRule: {
-        // agent: [{ required: true, message: '代理人不能为空', trigger: 'blur' }],
-        // beAgent: [
-        //   { required: true, message: '被代理人不能为空', trigger: 'blur' }
-        // ],
-        // startTime: [
-        //   { required: true, message: '开始时间不能为空', trigger: 'blur' }
-        // ]
+        orderValue: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
-      formList: [],
-      workFlowList: []
+      templateList: []
     }
   },
   methods: {
     init (id) {
+      this.getTemplateList()
       this.dataForm.id = id || 0
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           this.$http({
-            url: this.$http.adornUrl(`/api-oa/approval/Template/get`),
+            url: this.$http.adornUrl(`/api-oa/approval/orderDefine/get`),
             method: 'get',
             params: this.$http.adornParams(
               {
@@ -148,7 +134,7 @@ export default {
             )
           }).then(({ data }) => {
             if (data && data.code === 0) {
-              this.dataForm = data.tProductClass
+              this.dataForm = data.resultData
             }
           })
         }
@@ -162,7 +148,7 @@ export default {
             url: this.$http.adornUrl(`/api-oa/approval/Template/save`),
             method: 'put',
             data: this.$http.adornData(this.dataForm)
-          }).then(({ data }) => {
+          }, false).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
                 message: '操作成功',
@@ -180,9 +166,9 @@ export default {
         }
       })
     },
-    getFormList () {
+    getTemplateList () {
       this.$http({
-        url: this.$http.adornUrl('/api-oa/dycform/list'),
+        url: this.$http.adornUrl('/api-oa/approval/Template/list'),
         method: 'post',
         params: this.$http.adornParams(
           {
@@ -193,31 +179,10 @@ export default {
         )
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          this.formList = data.resultData.resultList
+          this.templateList = data.resultData.pageList.resultList
         } else {
-          this.formList = []
+          this.templateList = []
         }
-        this.dataListLoading = false
-      })
-    },
-    getWorkFlowList () {
-      this.$http({
-        url: this.$http.adornUrl('/api-oa/model/list'),
-        method: 'post',
-        params: this.$http.adornParams(
-          {
-            pageNo: 1,
-            pageSize: 999
-          },
-          false
-        )
-      }).then(({ data }) => {
-        if (data && data.code === 0) {
-          this.workFlowList = data.resultData.resultList
-        } else {
-          this.workFlowList = []
-        }
-        this.dataListLoading = false
       })
     },
     changePepple (value, direction, key) {
@@ -225,8 +190,7 @@ export default {
     }
   },
   mounted () {
-    this.getFormList()
-    this.getWorkFlowList()
+    this.getTemplateList()
   }
 }
 </script>

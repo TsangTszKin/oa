@@ -15,16 +15,16 @@
     >
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="公文类型" prop="name">
-            <el-input v-model="dataForm.name" placeholder="公文类型"></el-input>
+          <el-form-item label="公文类型" prop="templateName">
+            <el-input v-model="dataForm.templateName" placeholder="公文类型"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="公文类别" prop="type">
-            <el-radio-group v-model="dataForm.type">
-              <el-radio :label="1">收文</el-radio>
-              <el-radio :label="2">发文</el-radio>
-              <el-radio :label="3">自有文件</el-radio>
+          <el-form-item label="公文类别" prop="categoryId">
+            <el-radio-group v-model="dataForm.categoryId">
+              <el-radio :label="'1'">收文</el-radio>
+              <el-radio :label="'2'">发文</el-radio>
+              <el-radio :label="'3'">自有文件</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -43,22 +43,22 @@
       </el-row>
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="工作流" prop="workflow">
-            <el-select class="select" v-model="dataForm.workflow" placeholder="请选择">
+          <el-form-item label="工作流" prop="workFlowId">
+            <el-select class="select" v-model="dataForm.workFlowId" placeholder="请选择">
               <el-option :value="1" label="test">test</el-option>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="文种	" prop="cate">
-            <el-select class="select" v-model="dataForm.cate" placeholder="请选择">
+          <el-form-item label="文种	" prop="docFinishedPrtTaohong">
+            <el-select class="select" v-model="dataForm.docFinishedPrtTaohong" placeholder="请选择">
               <el-option :value="1" label="test">test</el-option>
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="表单	" prop="formCode">
-        <el-select class="select" v-model="dataForm.formCode" placeholder="请选择">
+      <el-form-item label="表单	" prop="dyncFormId">
+        <el-select class="select" v-model="dataForm.dyncFormId" placeholder="请选择">
           <el-option :value="1" label="test">test</el-option>
         </el-select>
       </el-form-item>
@@ -143,8 +143,8 @@
         </el-col>
       </el-row>
 
-      <el-form-item label="备注" prop="remarks">
-        <el-input :rows="2" type="textarea" v-model="dataForm.remarks" placeholder="备注"></el-input>
+      <el-form-item label="备注" prop="templateNote">
+        <el-input :rows="2" type="textarea" v-model="dataForm.templateNote" placeholder="备注"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -190,11 +190,11 @@ export default {
       orgPickerVisible5: false,
       dataForm: {
         id: 0,
-        name: '',
-        type: 1,
-        workflow: '',
-        cate: '',
-        formCode: '',
+        templateName: '',
+        categoryId: '1',
+        workFlowId: '',
+        docFinishedPrtTaohong: '',
+        dyncFormId: '',
         relatedOrg: '',
         relatedOrgName: '',
         forwardedRange: '',
@@ -205,12 +205,12 @@ export default {
         relatedPeopleName: '',
         monitor: '',
         monitorName: '',
-        remarks: '',
+        templateNote: '',
         zhengwenmoban: '',
         taohong: ''
       },
       dataRule: {
-        name: [
+        templateName: [
           { required: true, message: '公文类型不能为空', trigger: 'blur' }
         ],
         relatedOrg: [{ required: true, message: '关联机构不能为空', trigger: 'blur' }],

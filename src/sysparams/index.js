@@ -1,9 +1,9 @@
 const sysparams = {
   params: {
-    sysbase_sysname: '系统加载中...',
-    sysbase_sysname_short: '...',
-    sysbase_login_welcome: '',
-    sysbase_home_welcome: '',
+    oa_sysbase_sysname: '系统加载中...',
+    oa_sysbase_sysname_short: '...',
+    oa_sysbase_login_welcome: '',
+    oa_sysbase_home_welcome: '',
     sysbase_licens: '',
     sysbase_phone: '',
     sysbase_adminmail: '',

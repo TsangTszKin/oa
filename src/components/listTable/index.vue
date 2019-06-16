@@ -63,12 +63,12 @@
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <el-button v-if="items.type === 'view'" class="iviewTextBtn" type="text" @click="viewHandle(scope.row.id, scope.row.orgId)" :style="{'fontWeight': scope.row.isBold ? 'bold' : 'none'}">
+                <el-button v-if="items.type === 'view'" class="iviewTextBtn" type="text" @click="viewHandle(scope.row.id, scope.row.orgId)" :style="{'fontWeight': scope.row.isBold ? 'bold' : '100'}">
                   <icon-svg v-if="scope.row[item.columnName+'Icon']" :name="scope.row[item.columnName+'Icon'] ? scope.row[item.columnName+'Icon'] : ''" class="svgiconButton"></icon-svg>
                   {{scope.row[item.columnName] === null || scope.row[item.columnName] === '' ? '—' : scope.row[item.columnName]}}
                 </el-button>
                 <icon-svg v-if="items.type === 'iconSvg' && scope.row[item.columnName][items.name+'Icon'] !== ''" :name="scope.row[item.columnName][items.name+'Icon']" class="svgiconButton"></icon-svg>
-                <el-tag v-if="items.type === 'tag'" size="small" :type="scope.row[item.columnName+'type']">{{scope.row[item.columnName] ? scope.row[item.columnName] : '—'}}</el-tag>
+                <el-tag v-if="items.type === 'tag'" size="mini" :type="scope.row[item.columnName+'type']">{{scope.row[item.columnName] ? scope.row[item.columnName] : '—'}}</el-tag>
               </span>
             </span>
             <span v-if="item.type === 'index'">

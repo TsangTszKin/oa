@@ -45,6 +45,8 @@ const mainRoutes = {
     { path: '/system-workflow-process-online', component: _import('system/workflow-process-online/List'), name: 'system-workflow-process-online', meta: { title: '在线流程列表', isTab: true } }, // ,
     { path: '/system-approval-template', component: _import('system/approval-cfg/template/List'), name: 'system-approval-template', meta: { title: '模板定义', isTab: true } }, // ,
     { path: '/system-approval-orderDefine', component: _import('system/approval-cfg/number/List'), name: 'system-approval-orderDefine', meta: { title: '编号定义', isTab: true } }, // ,
+    { path: '/system-approval-orderDefine2', component: _import('system/approval-cfg/number-cfg/List'), name: 'system-approval-orderDefine2', meta: { title: '编号管理', isTab: true } }, // ,
+    { path: '/system-approval-baseinfo', component: _import('system/approval-cfg/base-data/List'), name: 'system-approval-baseinfo', meta: { title: '基础数据', isTab: true } }, // ,
     // { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts', meta: { title: 'demo-echarts', isTab: true } },
     // { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } }
     { path: '/system-', component: _import('system/doc-cfg/doc-type/List'), name: 'system-', meta: { title: '公文类型管理', isTab: true } },
@@ -71,7 +73,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  document.title = sysparams.params.sysbase_sysname
+  document.title = sysparams.params.oa_sysbase_sysname
   // 添加动态(菜单)路由
   // 1. 已经添加 or 全局路由, 直接访问
   // 2. 获取菜单列表, 添加并保存本地存储

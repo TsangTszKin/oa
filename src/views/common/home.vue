@@ -1,6 +1,6 @@
 <template>
   <div class="mod-home">
-    <div v-html="sysparams.params.sysbase_home_welcome"></div>
+    <div v-html="sysparams.params.oa_sysbase_home_welcome"></div>
 
     <!--<h3>项目介绍</h3>
     <ul>

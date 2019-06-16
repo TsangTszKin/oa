@@ -22,12 +22,24 @@
         <template slot-scope="scope">{{scope.$index+1}}</template>
       </el-table-column>
       <el-table-column prop="templateName" header-align="center" align="center" label="名称"></el-table-column>
-      <el-table-column prop="templateType" header-align="center" align="center" label="类型"></el-table-column>
-      <el-table-column prop="workFlowId" header-align="center" align="center" label="工作流"></el-table-column>
-      <el-table-column prop="dyncFormId" header-align="center" align="center" label="表单"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="归档机构"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="关联人员"></el-table-column>
-      <el-table-column prop="state" header-align="center" align="center" label="状态"></el-table-column>
+      <el-table-column prop="templateType" header-align="center" align="center" label="类型">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.templateType === 1">内部</el-tag>
+          <el-tag v-if="scope.row.templateType === 2">外部</el-tag>
+          </template>
+      </el-table-column>
+      <!-- <el-table-column prop="workFlowId" header-align="center" align="center" label="工作流"></el-table-column> -->
+      <el-table-column prop="dyncFormName" header-align="center" align="center" label="表单"></el-table-column>
+      <el-table-column prop="orgLinkName" header-align="center" align="center" label="归档机构"></el-table-column>
+      <el-table-column prop="viewUserList" header-align="center" align="center" label="关联人员">
+        <template slot-scope="scope">{{scope.row.viewUserList | arrayToString}}</template>
+      </el-table-column>
+      <el-table-column prop="state" header-align="center" align="center" label="状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.state === 0">停用</el-tag>
+          <el-tag v-if="scope.row.state === 1">启用</el-tag>
+          </template>
+      </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="200" label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.templateId)">修改</el-button>
@@ -108,9 +120,9 @@ export default {
         )
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          this.dataList = data.resultData.resultList
+          this.dataList = data.resultData.pageList.resultList
           this.totalPage = Math.ceil(
-            data.resultData.sum / data.resultData.offset
+            data.resultData.pageList.sum / data.resultData.pageList.offset
           )
         } else {
           this.dataList = []
@@ -172,6 +184,15 @@ export default {
           }
         })
       })
+    }
+  },
+  filters: {
+    arrayToString (value) {
+      let name = []
+      value.forEach(element => {
+        name.push(element.realname)
+      })
+      return name.join(',')
     }
   }
 }

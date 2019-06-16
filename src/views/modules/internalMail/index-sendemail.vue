@@ -206,6 +206,7 @@
           this.clearAutosave()
           this.$refs['dataForm'].resetFields()
           this.dataForm.id = ''
+          this.dataForm.thisId = ''
           this.dataForm.receiveUserDtoList = []
           this.dataForm.ccUserDtoList = []
           this.dataForm.ccMail = 0
@@ -244,6 +245,7 @@
         this.ueRemoveAdd('update')
         this.ueRemoveAdd('add')
         this.dataForm.id = id || ''
+        this.dataForm.thisId = ''
         this.dataForm.ccMail = 0
         this.dataForm.partSend = 0
         this.dataForm.receiveUserDtoList = []
@@ -259,7 +261,7 @@
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.thisId = data.resultData.thisId ? data.resultData.thisId : ''
+                this.dataForm.thisId = data.resultData.id ? data.resultData.id : ''
                 this.dataForm.receiveUserDtoList = data.resultData.receiveUserDtoList ? data.resultData.receiveUserDtoList : []
                 this.dataForm.ccUserDtoList = data.resultData.ccUserDtoList ? data.resultData.ccUserDtoList : []
                 this.dataForm.theme = data.resultData.theme ? data.resultData.theme : ''
@@ -305,6 +307,7 @@
         this.ueRemoveAdd('forwarding')
         this.ueRemoveAdd('add')
         this.dataForm.srcMailid = id || ''
+        this.dataForm.thisId = ''
         this.dataForm.ccMail = 0
         this.dataForm.partSend = 0
         this.dataForm.receiveUserDtoList = []
@@ -461,21 +464,32 @@
       },
       // 清空最近联系人
       clearLinkman () {
-        this.$http({
-          url: this.$http.adornUrl(this.moduleApi + '/recentContact/empty'),
-          method: 'get',
-          params: this.$http.adornParams()
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.linkmanList = []
-            this.$message({
-              message: '操作成功',
-              type: 'success',
-              duration: 1500
-            })
-          } else {
-            this.$message.error(data.msg)
+        this.$confirm(
+          `确定清空最近联系人?`,
+          '提示',
+          {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
           }
+        )
+        .then(() => {
+          this.$http({
+            url: this.$http.adornUrl(this.moduleApi + '/recentContact/empty'),
+            method: 'get',
+            params: this.$http.adornParams()
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.linkmanList = []
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1500
+              })
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
         })
       },
       // 选取最近联系人输入框设置
@@ -604,7 +618,8 @@
         if (this.dataForm.partSend === 0) {
           this.dataForm.partSend = 1
           if (this.dataForm.ccUserDtoList) {
-            this.changeManWidth('ccUserDto')
+            this.dataForm.receiveUserDtoList = this.dataForm.receiveUserDtoList.concat(this.dataForm.ccUserDtoList)
+            this.changeManWidth('receiveUserDto')
           }
         } else {
           this.dataForm.ccUserDtoList = []
@@ -728,7 +743,9 @@
             if (this.dataForm.mailContext === '') {
               document.getElementById('mailContextBox').childNodes[1].innerHTML = document.getElementById('mailContextBox').childNodes[1].innerHTML + '<div class="el-form-item__error">不能为空</div>'
             } else {
-              document.getElementById('mailContextBox').childNodes[1].innerHTML = document.getElementById('mailContextBox').childNodes[1].innerHTML
+              if (document.getElementById('mailContextBox').childNodes[1].childNodes[1]) {
+                document.getElementById('mailContextBox').childNodes[1].removeChild(document.getElementById('mailContextBox').childNodes[1].childNodes[1])
+              }
               setTimeout(() => {
                 this.ue.ready(() => {
                   this.ue.setContent(this.dataForm.mailContext)
@@ -749,6 +766,7 @@
                   url: this.$http.adornUrl(this.moduleApi + portApi),
                   method: this.ueId === 'add' || this.ueId === 'update' ? 'put' : 'post',
                   data: this.$http.adornData({
+                    'id': this.dataForm.thisId,
                     'internalMailLinkUserDto': {
                       'id': this.dataForm.id || undefined
                     },
@@ -821,6 +839,7 @@
           url: this.$http.adornUrl(this.moduleApi + portApi),
           method: this.ueId === 'add' || this.ueId === 'update' ? 'put' : 'post',
           data: this.$http.adornData({
+            'id': this.dataForm.thisId,
             'internalMailLinkUserDto': {
               'id': this.dataForm.id || undefined
             },
@@ -854,6 +873,7 @@
         this.sendSuccessShow = false
         this.submitAble = true
         this.dataForm.id = ''
+        this.dataForm.thisId = ''
         this.dataForm.receiveUserDtoList = []
         this.dataForm.ccUserDtoList = []
         this.dataForm.ccMail = 0
@@ -961,6 +981,7 @@
   }
   .add-rightlist-ulli {
     // height: calc(60vh - 70px);
+    margin: 0;
     list-style: none;
     overflow-y: auto;
     padding: 0 10px;

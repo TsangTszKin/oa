@@ -127,7 +127,6 @@
         this.dataForm.id = id || ''
         this.dataForm.internalMailFileDtoList = []
         this.fileList()
-        this.visible = true
         this.$nextTick(() => {
           this.initDialogHeight()
           if (this.dataForm.id) {

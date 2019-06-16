@@ -7,10 +7,11 @@
           v-model="totalCount"
           fileheight="240px"
           dirKey="oa-mail"
-          :defaultExpandAll="true"
+          :defaultExpandAll="false"
           adduseDirKeyLabel="发件人关键字"
           filelistApi="/api-base/base/baseDir/dirKey"
           filedataApi="/api-base/base/baseDir/data"
+          deleteHaveDateHint="请先删除文件夹下的邮件记录！"
           @file-list="fileList"
           @handle-node-click="handleNodeClick"
         ></file-list>
@@ -265,6 +266,7 @@
         }).then(({data}) => {
           if (data && data.code === 0) {
             data.resultData.list.forEach(item => {
+              item.isBold = !item.internalMailLinkUserVo.readMail
               item.internalMailLinkUserVo.readMailIcon = item.internalMailLinkUserVo.readMail ? '' : 'duanxin'
               item.internalMailLinkUserVo.topMailIcon = item.internalMailLinkUserVo.topMail ? 'upload' : ''
               item.internalMailLinkUserVo.attentionMailIcon = item.internalMailLinkUserVo.attentionMail ? 'flag' : ''

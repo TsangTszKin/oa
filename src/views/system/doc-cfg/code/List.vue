@@ -6,10 +6,16 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button
-          type="primary"
-          @click="addOrUpdateHandle()"
-        >新增</el-button>
+        <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-radio-group v-model="dataForm.type" size="mini">
+          <el-radio-button :label="0">全部</el-radio-button>
+          <el-radio-button :label="1">占用编号</el-radio-button>
+          <el-radio-button :label="2">重用编号</el-radio-button>
+          <el-radio-button :label="3">已用编号</el-radio-button>
+          <el-radio-button :label="4">编号定义</el-radio-button>
+        </el-radio-group>
       </el-form-item>
     </el-form>
     <el-table
@@ -23,7 +29,14 @@
       <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column> -->
       <el-table-column prop="name" header-align="center" align="center" label="序号" width="50"></el-table-column>
       <el-table-column prop="name" header-align="center" align="center" label="占用编号"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="类别"></el-table-column>
+      <el-table-column
+        prop="name"
+        header-align="center"
+        align="center"
+        label="类别"
+        :filters="[{ text: '公文', value: '公文' }, { text: '行政审批', value: '行政审批' }, { text: '其他', value: '其他' }]"
+        filter-placement="bottom-end"
+      ></el-table-column>
       <el-table-column prop="name" header-align="center" align="center" label="发起单位"></el-table-column>
       <el-table-column prop="name" header-align="center" align="center" label="占用说明"></el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="100" label="操作">
@@ -54,7 +67,8 @@ export default {
     return {
       dataForm: {
         name: '',
-        code: ''
+        code: '',
+        type: 0
       },
       dataList: [],
       pageIndex: 1,
@@ -98,6 +112,7 @@ export default {
       //       pageSize: this.pageSize,
       //       name: this.dataForm.name,
       //       code: this.dataForm.code
+      //       type: this.dataForm.type
       //     },
       //     false
       //   )

@@ -112,7 +112,7 @@ export default {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           this.$http({
-            url: this.$http.adornUrl(`/api-oa/approval/Template/get`),
+            url: this.$http.adornUrl(`/api-oa/approval/orderDefine/get`),
             method: 'get',
             params: this.$http.adornParams(
               {
@@ -122,7 +122,7 @@ export default {
             )
           }).then(({ data }) => {
             if (data && data.code === 0) {
-              this.dataForm = data.tProductClass
+              this.dataForm = data.resultData
             }
           })
         }

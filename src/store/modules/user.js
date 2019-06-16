@@ -9,8 +9,14 @@ export default {
     updateId (state, id) {
       state.id = id
     },
-    updateName (state, name) {
-      state.name = name
+    updateUserName (state, username) {
+      state.userName = username
+    },
+    updateRealName (state, realName) {
+      state.realName = realName
+    },
+    updateOrgId (state, orgId) {
+      state.orgId = orgId
     },
     updateOrgName (state, orgName) {
       state.orgName = orgName

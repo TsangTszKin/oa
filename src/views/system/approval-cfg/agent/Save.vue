@@ -3,7 +3,6 @@
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    width="750px"
   >
     <el-form
       :model="dataForm"
@@ -14,58 +13,58 @@
     >
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="分类" prop="cate">
-            <el-radio-group v-model="dataForm.cate">
-              <el-radio :label="1">公文</el-radio>
-              <el-radio :label="2">行政审批</el-radio>
-              <el-radio :label="3">其他</el-radio>
-            </el-radio-group>
+          <el-form-item label="代理人" prop="agent">
+            <el-input v-model="dataForm.agent" placeholder="代理人"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item :label="dataForm.cate == 1?'文号定义':'审批号定义'" prop="symbol">
-            <el-select class="select" v-model="dataForm.symbol" placeholder="请选择">
-              <el-option :value="1" label="test">test</el-option>
-            </el-select>
+          <el-form-item label="被代理人" prop="beAgent">
+            <el-input v-model="dataForm.beAgent" placeholder="被代理人"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
+
+      <el-form-item label="代理类型" prop="agentType">
+        <el-radio-group v-model="dataForm.agentType">
+          <el-radio :label="1">代理全部</el-radio>
+          <el-radio :label="0">部分代理</el-radio>
+        </el-radio-group>
+      </el-form-item>
+
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item label="年份" prop="year">
-            <el-input v-model="dataForm.year" placeholder="年份"></el-input>
+          <el-form-item label="开始时间" prop="startTime">
+            <el-date-picker v-model="dataForm.startTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="流水号	" prop="number">
-            <el-input v-model="dataForm.number" placeholder="流水号"></el-input>
+          <el-form-item label="结束时间" prop="endTime">
+            <el-date-picker v-model="dataForm.endTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="占用编号	" prop="code">
-        <el-input v-model="dataForm.code" placeholder="占用编号"></el-input>
-      </el-form-item>
-      <el-form-item label="发起单位	" prop="initiateUnits">
-        <el-select class="select" v-model="dataForm.initiateUnits" placeholder="请选择">
-          <el-option :value="1" label="test">test</el-option>
-        </el-select>
+
+      <el-form-item label="备注" prop="remarks" v-if="dataForm.agentType == 1">
+        <el-input :rows="2" type="textarea" v-model="dataForm.remarks" placeholder="备注"></el-input>
       </el-form-item>
 
-      <el-form-item label="说明" prop="remarks">
-        <el-input :rows="2" type="textarea" v-model="dataForm.remarks" placeholder="说明"></el-input>
+      <el-form-item label="公文业务模板" prop="gongwenyewumoban" v-if="dataForm.agentType == 0">
+        <el-transfer
+          v-model="dataForm.gongwenyewumoban"
+          :titles="['未选', '已选']"
+          :data="rightData"
+          @change="changePepple"
+        ></el-transfer>
       </el-form-item>
 
-      <el-upload
-        class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        multiple
-        :limit="3"
-        :file-list="dataForm.fileList"
-      >
-        <el-button size="small" type="primary">点击上传</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传XXX/XXX文件，且不超过500kb</div>
-      </el-upload>
-
+      <el-form-item label="行政业务模板" prop="xingzhengyewumoban" v-if="dataForm.agentType == 0">
+        <el-transfer
+          v-model="dataForm.xingzhengyewumoban"
+          :titles="['未选', '已选']"
+          :data="rightData"
+          @change="changePepple"
+        ></el-transfer>
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -75,42 +74,54 @@
 </template>
 
 <script>
-// import Upload from '@/views/modules/oss/oss-upload'
+const generateData = _ => {
+  const data = []
+  const peopleList = [{
+    id: '1',
+    name: '李白1'
+  }, {
+    id: '2',
+    name: '李白2'
+  }, {
+    id: '3',
+    name: '李白3'
+  }]
+  peopleList.forEach((item, index) => {
+    data.push({
+      label: item.name,
+      id: item.id,
+      key: index
+    })
+  })
+  return data
+}
 export default {
   components: {
     // Upload
   },
   data () {
     return {
+      rightData: generateData(),
       visible: false,
       dataForm: {
         id: 0,
-        cate: 1,
-        symbol: '',
-        year: '',
-        number: '',
-        code: '',
-        initiateUnits: '',
+        agent: '',
+        beAgent: '',
+        agentType: 1,
+        startTime: '',
+        endTime: '',
         remarks: '',
-        fileList: []
+        gongwenyewumoban: [],
+        xingzhengyewumoban: []
       },
       dataRule: {
-        year: [
-          { required: true, message: '年份不能为空', trigger: 'blur' }
+        agent: [{ required: true, message: '代理人不能为空', trigger: 'blur' }],
+        beAgent: [
+          { required: true, message: '被代理人不能为空', trigger: 'blur' }
         ],
-        number: [
-          { required: true, message: '流水号不能为空', trigger: 'blur' }
-        ],
-        code: [
-          { required: true, message: '占用编号不能为空', trigger: 'blur' }
-        ],
-        initiateUnits: [
-          { required: true, message: '发起单位不能为空', trigger: 'blur' }
+        startTime: [
+          { required: true, message: '开始时间不能为空', trigger: 'blur' }
         ]
-        // ,
-        // remarks: [
-        //   { required: true, message: '备注不能为空', trigger: 'blur' }
-        // ]
       }
     }
   },
@@ -162,6 +173,9 @@ export default {
           })
         }
       })
+    },
+    changePepple (value, direction, key) {
+      console.log('value, direction, key', value, direction, key)
     }
   }
 }

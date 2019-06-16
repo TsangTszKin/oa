@@ -7,10 +7,11 @@
           v-model="totalCount"
           fileheight="240px"
           dirKey="oa-sendmail"
-          :defaultExpandAll="true"
+          :defaultExpandAll="false"
           adduseDirKeyLabel="收件人关键字"
           filelistApi="/api-base/base/baseDir/dirKey"
           filedataApi="/api-base/base/baseDir/data"
+          deleteHaveDateHint="请先删除文件夹下的邮件记录！"
           @file-list="fileList"
           @handle-node-click="handleNodeClick"
         ></file-list>

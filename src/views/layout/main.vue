@@ -42,8 +42,16 @@
         set (val) { this.$store.commit('user/updateId', val) }
       },
       userName: {
-        get () { return this.$store.state.user.name },
-        set (val) { this.$store.commit('user/updateName', val) }
+        get () { return this.$store.state.user.userName },
+        set (val) { this.$store.commit('user/updateUserName', val) }
+      },
+      realName: {
+        get () { return this.$store.state.user.realName },
+        set (val) { this.$store.commit('user/updateRealName', val) }
+      },
+      orgId: {
+        get () { return this.$store.state.user.orgId },
+        set (val) { this.$store.commit('user/updateOrgId', val) }
       },
       orgName: {
         get () { return this.$store.state.user.orgName },
@@ -77,7 +85,9 @@
           if (data && data.code === 0) {
             this.loading = false
             this.userId = data.resultData.userId
-            this.userName = data.resultData.realname
+            this.userName = data.resultData.username
+            this.realName = data.resultData.realname
+            this.orgId = data.resultData.orgId
             this.orgName = data.resultData.orgName
           } else {
             // this.me()

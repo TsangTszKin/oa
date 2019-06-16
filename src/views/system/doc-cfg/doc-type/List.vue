@@ -18,21 +18,28 @@
       size="mini"
     >
       <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column> -->
-      <el-table-column prop="name" header-align="center" align="center" label="序号" width="50"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="公文类型"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="公文类别"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="工作流"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="表单"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="文种"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="业务说明"></el-table-column>
-      <el-table-column prop="name" header-align="center" align="center" label="状态"></el-table-column>
+      <el-table-column prop="name" header-align="center" align="center" label="序号" width="50">
+        <template slot-scope="scope">{{scope.$index+1}}</template>
+      </el-table-column>
+      <el-table-column prop="templateType" header-align="center" align="center" label="公文类型"></el-table-column>
+      <el-table-column prop="categoryId" header-align="center" align="center" label="公文类别"></el-table-column>
+      <el-table-column prop="workFlowId" header-align="center" align="center" label="工作流"></el-table-column>
+      <el-table-column prop="dyncFormId" header-align="center" align="center" label="表单"></el-table-column>
+      <el-table-column prop="docFinishedPrtTaohong" header-align="center" align="center" label="文种"></el-table-column>
+      <el-table-column prop="templateNote" header-align="center" align="center" label="业务说明"></el-table-column>
+      <el-table-column prop="state" header-align="center" align="center" label="状态">
+         <template slot-scope="scope">
+          <el-tag v-if="scope.row.state === 0">停用</el-tag>
+          <el-tag v-if="scope.row.state === 1">启用</el-tag>
+          </template>
+      </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="250" label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">停用</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">上移</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">下移</el-button>
+          <el-button type="text" size="small" @click="order(scope.$index, 'up')">上移</el-button>
+          <el-button type="text" size="small" @click="order(scope.$index, 'down')">下移</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -91,32 +98,29 @@ export default {
     },
     // 获取数据列表
     getDataList () {
-      this.dataList = [{ name: 'test' }]
-      // this.dataListLoading = true
-      // this.$http({
-      //   url: this.$http.adornUrl('/api-oa/dyctable/list'),
-      //   method: 'post',
-      //   params: this.$http.adornParams(
-      //     {
-      //       pageNo: this.pageIndex,
-      //       pageSize: this.pageSize,
-      //       name: this.dataForm.name,
-      //       code: this.dataForm.code
-      //     },
-      //     false
-      //   )
-      // }).then(({ data }) => {
-      //   if (data && data.code === 0) {
-      //     this.dataList = data.resultData.resultList
-      //     this.totalPage = Math.ceil(
-      //       data.resultData.sum / data.resultData.offset
-      //     )
-      //   } else {
-      //     this.dataList = []
-      //     this.totalPage = 0
-      //   }
-      //   this.dataListLoading = false
-      // })
+      this.dataListLoading = true
+      this.$http({
+        url: this.$http.adornUrl('/api-oa/document/template/list'),
+        method: 'post',
+        params: this.$http.adornParams(
+          {
+            pageNo: this.pageIndex,
+            pageSize: this.pageSize
+          },
+          false
+        )
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.dataList = data.resultData.resultList
+          this.totalPage = Math.ceil(
+            data.resultData.sum / data.resultData.offset
+          )
+        } else {
+          this.dataList = []
+          this.totalPage = 0
+        }
+        this.dataListLoading = false
+      })
     },
     // 每页数
     sizeChangeHandle (val) {
@@ -148,13 +152,13 @@ export default {
         : this.dataListSelections.map(item => {
           return item.id
         })
-      this.$confirm(`确定进行${id ? '删除' : '批量删除'}操作?`, '提示', {
+      this.$confirm(`确定进行删除操作?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/api-oa/dyctable/delete/' + id),
+          url: this.$http.adornUrl('/api-oa/document/template/delete/' + id),
           method: 'delete'
         }).then(({ data }) => {
           if (data && data.code === 0) {

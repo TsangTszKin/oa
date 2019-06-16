@@ -60,7 +60,7 @@
     },
     computed: {
       userName: {
-        get () { return this.$store.state.user.name }
+        get () { return this.$store.state.user.userName }
       },
       mainTabs: {
         get () { return this.$store.state.common.mainTabs },

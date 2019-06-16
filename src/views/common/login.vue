@@ -3,8 +3,8 @@
     <div class="site-content__wrapper">
       <div class="site-content">
         <div class="brand-info">
-          <h2 class="brand-info__text">{{ sysparams.params.sysbase_sysname || '' }}</h2>
-          <p class="brand-info__intro">{{ sysparams.params.sysbase_login_welcome || '' }}</p>
+          <h2 class="brand-info__text">{{ sysparams.params.oa_sysbase_sysname || '' }}</h2>
+          <p class="brand-info__intro">{{ sysparams.params.oa_sysbase_login_welcome || '' }}</p>
           <div style="position: absolute;right: 470px; bottom: 2px; font-family: Arial, Helvetica, sans-serif; font-size: 12px; z-index: 101; display: block;text-align: right;">
             <el-tag type="info">
               <span v-if="sysparams.params.sysbase_licens">{{ sysparams.params.sysbase_licens }}&nbsp;&nbsp;</span>
@@ -152,7 +152,7 @@ export default {
     }
   },
   created () {
-    document.title = sysparams.params.sysbase_sysname
+    document.title = sysparams.params.oa_sysbase_sysname
     this.getCaptcha()
   },
   methods: {
@@ -162,7 +162,7 @@ export default {
         if (valid) {
           this.$http.removeAuthData()
           this.$http({
-            url: this.$http.adornUrl('/api-oa/pub/oa/login/token'),
+            url: this.$http.adornUrl('/api-admin/pub/admin/login/token'),
             method: 'post',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
@@ -203,7 +203,7 @@ export default {
       this.dataForm.refId = getUUID()
       this.dataForm.xcode = ''
       this.captchaPath = this.$http.adornUrl(
-        `/api-oa/pub/sys/captcha/jpg?refId=${this.dataForm.refId}`
+        `/api-admin/pub/captcha/jpg?refId=${this.dataForm.refId}`
       )
     }
   }

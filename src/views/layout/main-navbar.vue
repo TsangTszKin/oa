@@ -3,8 +3,8 @@
     <div class="site-navbar__header">
       <h1 class="site-navbar__brand" @click="$router.push({ name: 'home' })">
         <img src="~@/assets/img/logo_left.gif" height="40" alt="">
-        <a class="site-navbar__brand-lg" href="javascript:;">{{sysparams.params.sysbase_sysname || ''}}</a>
-        <!-- <a class="site-navbar__brand-mini" href="javascript:;">{{sysparams.params.sysbase_sysname_short || ''}}</a> -->
+        <a class="site-navbar__brand-lg" href="javascript:;">{{sysparams.params.oa_sysbase_sysname || ''}}</a>
+        <!-- <a class="site-navbar__brand-mini" href="javascript:;">{{sysparams.params.oa_sysbase_sysname_short || ''}}</a> -->
       </h1>
     </div>
     <div class="site-navbar__body clearfix">
@@ -50,7 +50,7 @@
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
-              <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}/{{ orgName }}
+              <img src="~@/assets/img/avatar.png" :alt="realName">{{ realName }}/{{ orgName }}
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
@@ -108,8 +108,11 @@
       themePickerColor: {
         get () { return this.$store.state.common.themeColors }
       },
-      userName: {
-        get () { return this.$store.state.user.name }
+      realName: {
+        get () { return this.$store.state.user.realName }
+      },
+      orgId: {
+        get () { return this.$store.state.user.orgId }
       },
       orgName: {
         get () { return this.$store.state.user.orgName }

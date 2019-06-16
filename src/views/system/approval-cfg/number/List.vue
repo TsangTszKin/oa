@@ -1,9 +1,9 @@
 <template>
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()" :size="'mini'">
-      <el-form-item>
+      <!-- <el-form-item>
         <el-input v-model="dataForm.templateName" placeholder="名称" clearable></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button type="primary" @click="addOrUpdateHandle1()">新增证号</el-button>
@@ -44,8 +44,8 @@
       <el-table-column prop="dyncFormId" header-align="center" align="center" label="业务名称"></el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="100" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.templateId)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.templateId)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -119,13 +119,12 @@ export default {
       //   this.dataList = [{ name: 'test' }]
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/api-oa/approval/Template/list'),
+        url: this.$http.adornUrl('/api-oa/approval/orderDefine/list'),
         method: 'post',
         params: this.$http.adornParams(
           {
             pageNo: this.pageIndex,
-            pageSize: this.pageSize,
-            templateName: this.dataForm.templateName
+            pageSize: this.pageSize
           },
           false
         )
@@ -202,7 +201,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/api-oa/approval/Template/delete/' + id),
+          url: this.$http.adornUrl('/api-oa/approval/orderDefine/delete/' + id),
           method: 'delete'
         }).then(({ data }) => {
           if (data && data.code === 0) {
@@ -218,6 +217,42 @@ export default {
             this.$message.error(data.msg)
           }
         })
+      })
+    },
+    order (index, type) {
+      // type up, down
+      let id, nextId
+      if (type === 'up') {
+        if (index !== 0) {
+          id = this.dataList[index].id
+          nextId = this.dataList[index - 1].id
+        }
+      }
+      if (type === 'down') {
+        if (index !== this.dataList.length - 1) {
+          id = this.dataList[index].id
+          nextId = this.dataList[index + 1].id
+        }
+      }
+      this.$http({
+        url: this.$http.adornUrl(
+          `/api-oa/approval/baseinfo/changeSortOrder/${id}/${nextId}`
+        ),
+        method: 'put'
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.$message({
+            message: '操作成功',
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.visible = false
+              this.$emit('refreshDataList')
+            }
+          })
+        } else {
+          this.$message.error(data.msg)
+        }
       })
     }
   }
