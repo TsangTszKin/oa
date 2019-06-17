@@ -3,6 +3,7 @@
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
+    append-to-body
     width="1150px"
   >
     <el-form
@@ -71,7 +72,12 @@
         </el-select>
       </el-form-item>-->
       <el-form-item label="表单" prop="dyncFormId">
-        <el-select class="select" v-model="dataForm.dyncFormId" placeholder="请选择" @change="changeDyncForm">
+        <el-select
+          class="select"
+          v-model="dataForm.dyncFormId"
+          placeholder="请选择"
+          @change="changeDyncForm"
+        >
           <el-option :label="item.name" :value="item.id" v-for="(item, i) in formList" :key="i"></el-option>
         </el-select>
       </el-form-item>
@@ -160,7 +166,12 @@
         <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item label="申请表单域" prop="applyFormId">
-              <el-select class="select" placeholder="请选择" v-model="dataForm.applyFormId" @change="changeApplyForm">
+              <el-select
+                class="select"
+                placeholder="请选择"
+                v-model="dataForm.applyFormId"
+                @change="initApplyFormCols"
+              >
                 <el-option
                   :label="item.name"
                   :value="item.id"
@@ -190,7 +201,12 @@
         <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item label="预审表单域" prop="precheckFormId">
-              <el-select class="select" placeholder="请选择" v-model="dataForm.precheckFormId" @change="changePrecheckForm">
+              <el-select
+                class="select"
+                placeholder="请选择"
+                v-model="dataForm.precheckFormId"
+                @change="initPrecheckFormList"
+              >
                 <el-option
                   :label="item.name"
                   :value="item.id"
@@ -306,6 +322,37 @@
       ref="PeoplePicker4"
       @callBack="peoplePickerCallBack4"
     />
+
+    <el-dialog title="申请表单域绑定" :close-on-click-modal="false" :visible.sync="visible2" append-to-body width="200px">
+      <el-checkbox
+        :indeterminate="isIndeterminate1"
+        v-model="checkAll1"
+        @change="handleCheckAllChange1"
+      >全选</el-checkbox>
+      <div style="margin: 15px 0;"></div>
+      <el-checkbox-group v-model="dataForm.applyFormList" @change="handleCheckedCitiesChange1">
+        <el-checkbox v-for="(item, i) in formCols" :label="item.code" :key="i" style="width: 100%;">{{item.name}}</el-checkbox>
+      </el-checkbox-group>
+      <span slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="visible2 = false">确定</el-button>
+    </span>
+    </el-dialog>
+
+    <el-dialog title="预审表单域绑定" :close-on-click-modal="false" :visible.sync="visible3" append-to-body width="200px">
+      <el-checkbox
+        :indeterminate="isIndeterminate2"
+        v-model="checkAll2"
+        @change="handleCheckAllChange2"
+      >全选</el-checkbox>
+      <div style="margin: 15px 0;"></div>
+      <el-checkbox-group v-model="dataForm.precheckFormList" @change="handleCheckedCitiesChange2">
+        <el-checkbox v-for="(item, i) in formCols" :label="item.code" :key="i" style="width: 100%;">{{item.name}}</el-checkbox>
+      </el-checkbox-group>
+      <span slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="log">确定</el-button>
+    </span>
+    </el-dialog>
+
   </el-dialog>
 </template>
 
@@ -322,6 +369,12 @@ export default {
   data () {
     return {
       visible: false,
+      visible2: false,
+      visible3: false,
+      checkAll1: false,
+      checkAll2: false,
+      isIndeterminate1: true,
+      isIndeterminate2: true,
       orgPickerVisible: true,
       peoplePickerVisible: false,
       peoplePickerVisible2: false,
@@ -385,6 +438,7 @@ export default {
         crtModelIndependent: 0, // 允许在新建业务中显示,1允许0不允许
         orgLinkName: '' // 回显
       },
+      formCols: [],
       dataRule: {
         templateName: [
           { required: true, message: '不能为空', trigger: 'blur' }
@@ -427,18 +481,28 @@ export default {
               }
               if (data.resultData.approvalTemplate.disableCorpPort === 1) {
                 data.resultData.approvalTemplate.disableCorpPort = true
-              } else if (data.resultData.approvalTemplate.disableCorpPort === 0) {
+              } else if (
+                data.resultData.approvalTemplate.disableCorpPort === 0
+              ) {
                 data.resultData.approvalTemplate.disableCorpPort = false
               }
               if (data.resultData.approvalTemplate.crtModelIndependent === 1) {
                 data.resultData.approvalTemplate.crtModelIndependent = true
-              } else if (data.resultData.approvalTemplate.crtModelIndependent === 0) {
+              } else if (
+                data.resultData.approvalTemplate.crtModelIndependent === 0
+              ) {
                 data.resultData.approvalTemplate.crtModelIndependent = false
               }
 
-              if (data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTranZxzk === 1) {
+              if (
+                data.resultData.approvalTemplate.tapprovalTemplateExpVo
+                  .expIsTranZxzk === 1
+              ) {
                 data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTranZxzk = true
-              } else if (data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTranZxzk === 0) {
+              } else if (
+                data.resultData.approvalTemplate.tapprovalTemplateExpVo
+                  .expIsTranZxzk === 0
+              ) {
                 data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTranZxzk = false
               }
               this.dataForm = data.resultData.approvalTemplate
@@ -499,20 +563,7 @@ export default {
         }
       })
     },
-    changeApplyForm (value) {
-      this.formList.forEach(element => {
-        if (element.id === value) {
-          this.dataForm.applyFormList = [element.code]
-        }
-      })
-    },
-    changePrecheckForm (value) {
-      this.formList.forEach(element => {
-        if (element.id === value) {
-          this.dataForm.precheckFormList = [element.code]
-        }
-      })
-    },
+
     changeDyncForm (value) {
       console.log(value)
       this.formList.forEach(element => {
@@ -647,6 +698,53 @@ export default {
       this.$nextTick(() => {
         this.$refs.PeoplePicker4.init()
       })
+    },
+    handleCheckAllChange1 (val) {
+      let cols = []
+      this.formCols.forEach(element => {
+        cols.push(element.code)
+      })
+      this.dataForm.applyFormList = val ? cols : []
+      this.isIndeterminate1 = false
+    },
+    handleCheckedCitiesChange1 (value) {
+      let checkedCount = value.length
+      this.checkAll1 = checkedCount === this.formCols.length
+      this.isIndeterminate1 = checkedCount > 0 && checkedCount < this.formCols.length
+    },
+    initApplyFormCols (value) {
+      alert(value)
+      this.formList.forEach(element => {
+        if (element.id === this.dataForm.applyFormId) {
+          this.formCols = element.columnList
+        }
+      })
+      this.visible2 = true
+    },
+    handleCheckAllChange2 (val) {
+      let cols = []
+      this.formCols.forEach(element => {
+        cols.push(element.code)
+      })
+      this.dataForm.precheckFormList = val ? cols : []
+      this.isIndeterminate2 = false
+    },
+    handleCheckedCitiesChange2 (value) {
+      let checkedCount = value.length
+      this.checkAll2 = checkedCount === this.formCols.length
+      this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.formCols.length
+    },
+    initPrecheckFormList (value) {
+      alert(value)
+      this.formList.forEach(element => {
+        if (element.id === this.dataForm.applyFormId) {
+          this.formCols = element.columnList
+        }
+      })
+      this.visible3 = true
+    },
+    log () {
+      console.log(this.dataForm)
     }
   },
   mounted () {
