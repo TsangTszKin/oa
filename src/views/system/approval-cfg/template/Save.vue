@@ -165,17 +165,12 @@
       <div v-show="dataForm.templateType === 2">
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="申请表单域" prop="applyFormId">
-              <el-select
-                class="select"
-                placeholder="请选择"
-                v-model="dataForm.applyFormId"
-                @change="initApplyFormCols"
-              >
+            <el-form-item label="申请表单域" prop="applyFormList">
+              <el-select class="select" placeholder="请选择" multiple v-model="dataForm.applyFormList">
                 <el-option
                   :label="item.name"
-                  :value="item.id"
-                  v-for="(item, i) in formList"
+                  :value="item.code"
+                  v-for="(item, i) in fieldList"
                   :key="i"
                 ></el-option>
               </el-select>
@@ -200,17 +195,17 @@
         </el-row>
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="预审表单域" prop="precheckFormId">
+            <el-form-item label="预审表单域" prop="precheckFormList">
               <el-select
                 class="select"
                 placeholder="请选择"
-                v-model="dataForm.precheckFormId"
-                @change="initPrecheckFormList"
+                multiple
+                v-model="dataForm.precheckFormList"
               >
                 <el-option
                   :label="item.name"
-                  :value="item.id"
-                  v-for="(item, i) in formList"
+                  :value="item.code"
+                  v-for="(item, i) in fieldList"
                   :key="i"
                 ></el-option>
               </el-select>
@@ -293,8 +288,68 @@
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-row :gutter="10">
+          <el-col :span="12">
+            <el-form-item label="十统一配置（json格式）" prop="expTenuJsonConfig">
+              <el-input
+                type="textarea"
+                :autosize="{ minRows: 6, maxRows: 15}"
+                placeholder="请输入内容"
+                v-model="dataForm.tapprovalTemplateExpVo.expTenuJsonConfig"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label prop="expIsTenu">
+              <el-checkbox v-model="dataForm.tapprovalTemplateExpVo.expIsTenu">是否十统一数据推送</el-checkbox>
+            </el-form-item>
+          </el-col>
+          
+          
+        </el-row>
+        <el-form-item label="发证业务" prop="orderFileModel">
+            <el-radio-group v-model="dataForm.orderFileModel">
+              <el-radio :label="0">否</el-radio>
+              <el-radio :label="1">是</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        <el-form-item label="其他配置" prop="sptAppType">
+            <el-checkbox v-model="dataForm.sptAppType">教育培训审批</el-checkbox>
+          </el-form-item>
+          <el-form-item label="业务概述" prop="templateNote">
+            <!-- <el-input
+              type="textarea"
+              :autosize="{ minRows: 6, maxRows: 15}"
+              placeholder="请输入内容"
+              v-model="dataForm.templateNote"
+            ></el-input>-->
+
+            <div class="edit_container">
+              <quill-editor v-model="dataForm.templateNote" ref="myQuillEditor"></quill-editor>
+            </div>
+          </el-form-item>
+        <el-upload
+          class="upload-demo"
+          ref="upload"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :file-list="fileList"
+          :auto-upload="false"
+        >
+          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+          <el-button
+            style="margin-left: 10px;"
+            size="small"
+            type="success"
+            @click="submitUpload"
+          >上传到服务器</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
       </div>
     </el-form>
+
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
@@ -323,7 +378,13 @@
       @callBack="peoplePickerCallBack4"
     />
 
-    <el-dialog title="申请表单域绑定" :close-on-click-modal="false" :visible.sync="visible2" append-to-body width="200px">
+    <el-dialog
+      title="申请表单域绑定"
+      :close-on-click-modal="false"
+      :visible.sync="visible2"
+      append-to-body
+      width="200px"
+    >
       <el-checkbox
         :indeterminate="isIndeterminate1"
         v-model="checkAll1"
@@ -331,14 +392,25 @@
       >全选</el-checkbox>
       <div style="margin: 15px 0;"></div>
       <el-checkbox-group v-model="dataForm.applyFormList" @change="handleCheckedCitiesChange1">
-        <el-checkbox v-for="(item, i) in formCols" :label="item.code" :key="i" style="width: 100%;">{{item.name}}</el-checkbox>
+        <el-checkbox
+          v-for="(item, i) in formCols"
+          :label="item.code"
+          :key="i"
+          style="width: 100%;"
+        >{{item.name}}</el-checkbox>
       </el-checkbox-group>
       <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="visible2 = false">确定</el-button>
-    </span>
+        <el-button type="primary" @click="visible2 = false">确定</el-button>
+      </span>
     </el-dialog>
 
-    <el-dialog title="预审表单域绑定" :close-on-click-modal="false" :visible.sync="visible3" append-to-body width="200px">
+    <el-dialog
+      title="预审表单域绑定"
+      :close-on-click-modal="false"
+      :visible.sync="visible3"
+      append-to-body
+      width="200px"
+    >
       <el-checkbox
         :indeterminate="isIndeterminate2"
         v-model="checkAll2"
@@ -346,13 +418,17 @@
       >全选</el-checkbox>
       <div style="margin: 15px 0;"></div>
       <el-checkbox-group v-model="dataForm.precheckFormList" @change="handleCheckedCitiesChange2">
-        <el-checkbox v-for="(item, i) in formCols" :label="item.code" :key="i" style="width: 100%;">{{item.name}}</el-checkbox>
+        <el-checkbox
+          v-for="(item, i) in formCols"
+          :label="item.code"
+          :key="i"
+          style="width: 100%;"
+        >{{item.name}}</el-checkbox>
       </el-checkbox-group>
       <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="log">确定</el-button>
-    </span>
+        <el-button type="primary" @click="log">确定</el-button>
+      </span>
     </el-dialog>
-
   </el-dialog>
 </template>
 
@@ -360,11 +436,16 @@
 import OrgPicker from '@/components/OrgPicker'
 import PeoplePicker from '@/components/PeoplePicker'
 import common from '@/utils/common'
+import { quillEditor } from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
 export default {
   components: {
     OrgPicker,
-    PeoplePicker
+    PeoplePicker,
+    quillEditor
   },
   data () {
     return {
@@ -390,19 +471,18 @@ export default {
         groupKey: '',
         linkFlag: 0,
         mappingType: 1,
-        orderFileModel: 0,
         orderFileName: '',
         orderOrgLink: 0,
         orgLinkId: '',
         platformCode: '',
         putinRightFieldXml: '',
         sortOrder: 0,
-        sptAppType: 0,
+        sptAppType: 0, // 教育培训审批，1是0否
         state: 0,
         templateCrtModel: 0,
         templateId: '',
         templateName: '',
-        templateNote: '',
+        templateNote: '', // 业务概述
         templateType: 1,
         transitioned: 0,
         workFlowId: '',
@@ -420,7 +500,6 @@ export default {
           expGdblsx: 0, // 规定办理时限
           expGdblsxdw: 'G', // 时限类型，G工作日Z自然日
           expGdsf: '', // 规定收费
-          expIsTenu: 0,
           expIsTranZxzk: 0, // 是否交换到电子监察或网上办事大厅
           expSfje: 0, // 收费金额
           expSpsxbbh: '', // 审批事项版本号
@@ -429,13 +508,26 @@ export default {
           expSpsxmc: '', // 审批事项名称
           expSpsxzxbh: '', // 子项编号
           expTenuJsonConfig: '', // 十统一配置
+          expIsTenu: 0, // 是否十统一数据推送
           templateId: ''
         },
+        orderFileModel: 0, // 是否发证业务
         applyFormId: '', // 申请表单ID
         applyFormList: [],
         precheckFormId: '', // 预审表单ID
         precheckFormList: [],
         crtModelIndependent: 0, // 允许在新建业务中显示,1允许0不允许
+        attachList: [
+          // {
+          //   'attachIndex': 'string', // 序号
+          //   'caption': 'string', // 标题
+          //   'downTimes': 0, // 下载次数
+          //   'fileName': 'string', // 附件名称
+          //   'filePath': 'string', // 附件路径
+          //   'fileSize': 0, // 附件大小
+          //   'fileStream': 'string'// 文件流
+          // }
+        ], // 附件
         orgLinkName: '' // 回显
       },
       formCols: [],
@@ -450,10 +542,30 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         workFlowId: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        dyncFormId: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        dyncFormId: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        templateNote: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       formList: [],
-      workFlowList: []
+      workFlowList: [],
+      fieldList: [],
+      fileList: [
+        {
+          name: 'food.jpeg',
+          url:
+            'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        },
+        {
+          name: 'food2.jpeg',
+          url:
+            'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        }
+      ],
+      editorOption: {height: '300px'}
+    }
+  },
+  computed: {
+    editor () {
+      return this.$refs.myQuillEditor.quill
     }
   },
   methods: {
@@ -479,6 +591,7 @@ export default {
               } else if (data.resultData.approvalTemplate.fixStepModel === 0) {
                 data.resultData.approvalTemplate.fixStepModel = false
               }
+
               if (data.resultData.approvalTemplate.disableCorpPort === 1) {
                 data.resultData.approvalTemplate.disableCorpPort = true
               } else if (
@@ -486,6 +599,7 @@ export default {
               ) {
                 data.resultData.approvalTemplate.disableCorpPort = false
               }
+
               if (data.resultData.approvalTemplate.crtModelIndependent === 1) {
                 data.resultData.approvalTemplate.crtModelIndependent = true
               } else if (
@@ -505,6 +619,25 @@ export default {
               ) {
                 data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTranZxzk = false
               }
+
+              if (
+                data.resultData.approvalTemplate.tapprovalTemplateExpVo
+                  .expIsTenu === 1
+              ) {
+                data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTenu = true
+              } else if (
+                data.resultData.approvalTemplate.tapprovalTemplateExpVo
+                  .expIsTenu === 0
+              ) {
+                data.resultData.approvalTemplate.tapprovalTemplateExpVo.expIsTenu = false
+              }
+
+              if (data.resultData.approvalTemplate.sptAppType === 1) {
+                data.resultData.approvalTemplate.sptAppType = true
+              } else if (data.resultData.approvalTemplate.sptAppType === 0) {
+                data.resultData.approvalTemplate.sptAppType = false
+              }
+
               this.dataForm = data.resultData.approvalTemplate
             }
           })
@@ -516,6 +649,18 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           let data = common.deepClone(this.dataForm)
+
+          if (data.sptAppType === true) {
+            data.sptAppType = 1
+          } else if (data.sptAppType === false) {
+            data.sptAppType = 0
+          }
+
+          if (data.tapprovalTemplateExpVo.expIsTenu === true) {
+            data.tapprovalTemplateExpVo.expIsTenu = 1
+          } else if (data.tapprovalTemplateExpVo.expIsTenu === false) {
+            data.tapprovalTemplateExpVo.expIsTenu = 0
+          }
 
           if (data.fixStepModel === true) {
             data.fixStepModel = 1
@@ -563,14 +708,25 @@ export default {
         }
       })
     },
-
+    submitUpload () {
+      this.$refs.upload.submit()
+    },
+    handleRemove (file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview (file) {
+      console.log(file)
+    },
     changeDyncForm (value) {
       console.log(value)
       this.formList.forEach(element => {
         if (element.id === value) {
           this.dataForm.dyncFormName = element.name
+          this.fieldList = element.columnList
         }
       })
+      this.dataForm.applyFormList = []
+      this.dataForm.precheckFormList = []
     },
     getFormList () {
       this.$http({
@@ -677,26 +833,50 @@ export default {
     },
     showPeoplePicker () {
       this.peoplePickerVisible = true
+      let peopleList = []
+      this.dataForm.viewUserList.forEach(element => {
+        peopleList.push({
+          value: element.userId
+        })
+      })
       this.$nextTick(() => {
-        this.$refs.PeoplePicker.init()
+        this.$refs.PeoplePicker.init(peopleList)
       })
     },
     showPeoplePicker2 () {
       this.peoplePickerVisible2 = true
+      let peopleList = []
+      this.dataForm.prejudgeUserList.forEach(element => {
+        peopleList.push({
+          value: element.userId
+        })
+      })
       this.$nextTick(() => {
-        this.$refs.PeoplePicker2.init()
+        this.$refs.PeoplePicker2.init(peopleList)
       })
     },
     showPeoplePicker3 () {
       this.peoplePickerVisible3 = true
+      let peopleList = []
+      this.dataForm.overSeeUserList.forEach(element => {
+        peopleList.push({
+          value: element.userId
+        })
+      })
       this.$nextTick(() => {
-        this.$refs.PeoplePicker3.init()
+        this.$refs.PeoplePicker3.init(peopleList)
       })
     },
     showPeoplePicker4 () {
       this.peoplePickerVisible4 = true
+      let peopleList = []
+      this.dataForm.prejudgeUserList.forEach(element => {
+        peopleList.push({
+          value: element.userId
+        })
+      })
       this.$nextTick(() => {
-        this.$refs.PeoplePicker4.init()
+        this.$refs.PeoplePicker4.init(peopleList)
       })
     },
     handleCheckAllChange1 (val) {
@@ -710,10 +890,10 @@ export default {
     handleCheckedCitiesChange1 (value) {
       let checkedCount = value.length
       this.checkAll1 = checkedCount === this.formCols.length
-      this.isIndeterminate1 = checkedCount > 0 && checkedCount < this.formCols.length
+      this.isIndeterminate1 =
+        checkedCount > 0 && checkedCount < this.formCols.length
     },
     initApplyFormCols (value) {
-      alert(value)
       this.formList.forEach(element => {
         if (element.id === this.dataForm.applyFormId) {
           this.formCols = element.columnList
@@ -732,10 +912,10 @@ export default {
     handleCheckedCitiesChange2 (value) {
       let checkedCount = value.length
       this.checkAll2 = checkedCount === this.formCols.length
-      this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.formCols.length
+      this.isIndeterminate2 =
+        checkedCount > 0 && checkedCount < this.formCols.length
     },
     initPrecheckFormList (value) {
-      alert(value)
       this.formList.forEach(element => {
         if (element.id === this.dataForm.applyFormId) {
           this.formCols = element.columnList
@@ -771,6 +951,7 @@ export default {
 }
 </script>
 
+
 <style scoped>
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
@@ -797,5 +978,8 @@ export default {
 }
 .select {
   width: 100%;
+}
+.edit_container .ql-container {
+  min-height: 150px !important;
 }
 </style>
