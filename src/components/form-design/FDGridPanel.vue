@@ -55,7 +55,7 @@ export default {
         return {
           title: '栅格布局',
           type: 'grid',
-          icon: '/src/assets/img/form-design/grid.png',
+          icon: '/static/img/form-design/grid.png',
           cols: [
             {
               span: 12,
@@ -63,7 +63,7 @@ export default {
                 // {
                 //   title: "多行文本",
                 //   type: "textarea",
-                //   icon: "/src/assets/img/form-design/textarea.png",
+                //   icon: "/static/img/form-design/textarea.png",
                 //   options: {
                 //     width: "100%",
                 //     defaultValue: "",
@@ -91,7 +91,7 @@ export default {
       data: {
         title: '栅格布局',
         type: 'grid',
-        icon: '/src/assets/img/form-design/grid.png',
+        icon: '/static/img/form-design/grid.png',
         cols: [
           {
             span: 12,
@@ -170,6 +170,7 @@ export default {
             const element2 = element.list[j]
             if (common.isEmpty(element2.key)) {
               element2.key = common.getGuid()
+              element2.code = `code_${common.getGuid2()}`
               this.$store.commit('formDesign/updateActiveKey', element2.key)
               haveEmptyKey = true
             }
@@ -209,6 +210,7 @@ export default {
           key: this.FDkey,
           value: common.deepClone(newData)
         })
+        this.$emit('syncList', this.$store.state.formDesign.formList)
       },
       deep: true
     },

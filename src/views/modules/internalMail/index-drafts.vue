@@ -34,7 +34,7 @@
       ></el-pagination>
     </div>
     <!-- 弹窗, 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" @closeUpdate="addOrUpdateVisible=false"></add-or-update>
     <!-- 弹窗, 查看 -->
     <!-- <check-details v-if="detailVisible" ref="checkDetails" @refreshDataList="getDataList"></check-details> -->
   </div>

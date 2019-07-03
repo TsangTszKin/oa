@@ -3,7 +3,7 @@
     <el-form-item label="标题">
       <el-input v-model="data.title" size="small"></el-input>
     </el-form-item>
-    <el-form-item label="表字段映射">
+    <el-form-item label="表字段code">
       <el-input v-model="data.code" size="small"></el-input>
     </el-form-item>
     <el-form-item label="宽度">
@@ -43,7 +43,7 @@ export default {
           title: '时间选择器',
           type: 'datetime',
           code: '',
-          icon: '/src/assets/img/form-design/datetime.png',
+          icon: '/static/img/form-design/datetime.png',
           options: {
             width: '100%',
             type: ['ymd', 'yyyy-MM-dd'],
@@ -63,7 +63,7 @@ export default {
         title: '时间选择器',
         type: 'datetime',
         code: '',
-        icon: '/src/assets/img/form-design/datetime.png',
+        icon: '/static/img/form-design/datetime.png',
         options: {
           width: '100%',
           type: ['ymd', 'yyyy-MM-dd'],

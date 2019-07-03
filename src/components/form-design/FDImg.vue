@@ -31,7 +31,7 @@ export default {
           title: '图片上传',
           type: 'img',
           code: '',
-          icon: '/src/assets/img/form-design/img.png',
+          icon: '/static/img/form-design/img.png',
           options: {
             defaultValue: '',
             required: false,
@@ -48,7 +48,7 @@ export default {
         title: '图片上传',
         type: 'img',
         code: '',
-        icon: '/src/assets/img/form-design/img.png',
+        icon: '/static/img/form-design/img.png',
         options: {
           defaultValue: '',
           required: false,

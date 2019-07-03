@@ -15,17 +15,32 @@
         <div slot="content">地区选择框用于选人组件、选机构组件，不选默认出全地区。</div>
         <i class="el-icon-warning"></i>
       </el-tooltip>
+      <el-checkbox v-model="expandAll">全部节点展开</el-checkbox>
+      <el-checkbox v-model="backfillIsDisabled">禁用回选项</el-checkbox>
+    </el-row>
+    <el-row style="padding-top: 10px;">
       <el-button @click="select(3);orgaFlag = true;">机构组件单选测试</el-button>
       <el-button @click="select(3);orgaFlag = false;">机构组件多选测试</el-button>
-      <el-button @click="select(2)">选人组件测试</el-button>
-      <el-tooltip placement="top" effect="light">
-        <div slot="content">只有第二个选人组件是组件嵌在对话框上，其它组件都是对话框。</div>
-        <el-button @click="select(4)">选人组件测试2</el-button>
+      <el-tooltip placement="right" effect="light">
+        <div slot="content">回填数据：局领导</div>
+        <el-button @click="select(3, true);orgaFlag = false;">企业组件企业回填测试</el-button>
       </el-tooltip>
     </el-row>
     <el-row style="padding-top: 10px;">
       <el-button @click="select(1);orgaFlag = true;">企业组件单选测试</el-button>
       <el-button @click="select(1);orgaFlag = false;">企业组件多选测试</el-button>
+      <!--<el-button @click="select(1, true);orgaFlag = false;">企业组件企业回填测试</el-button>-->
+      <el-tooltip placement="right" effect="light">
+        <div slot="content">回填数据：普莱克斯(大亚湾)工业气体有限公司,普莱克斯(惠州)工业气体有限公司</div>
+        <el-button @click="select(1, true);orgaFlag = false;">企业组件企业回填测试</el-button>
+      </el-tooltip>
+    </el-row>
+    <el-row style="padding-top: 10px;">
+      <el-button @click="select(2)">选人组件测试</el-button>
+      <!--<el-tooltip placement="right" effect="light">-->
+        <!--<div slot="content">只有第二个选人组件是组件嵌在对话框上，其它组件都是对话框。</div>-->
+        <!--<el-button @click="select(4)">选人组件测试2</el-button>-->
+      <!--</el-tooltip>-->
     </el-row>
 <div style="padding-top: 10px;">
     <span>返回JSON对象：</span>
@@ -35,7 +50,7 @@
     <!-- 选人组件 -->
     <personnel ref="personnel" @selectPersDate="selectDate"></personnel>
     <!-- 机构组件 -->
-    <organization ref="organization" @selectOrgaDate="selectDate"></organization>
+    <organization v-if="organizationFlag" ref="organization" :expandAll="expandAll" @selectOrgaDate="selectDate"></organization>
 </div>
     <el-dialog
       title="提示"
@@ -45,20 +60,20 @@
       <el-radio v-model="orgaFlag" :label="true">单选</el-radio>
       <el-radio v-model="orgaFlag" :label="false">多选</el-radio>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="select(3);dialogVisible = false">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible2"
-      width="60%"
+      width="80%"
       :before-close="handleClose">
       <!-- 选人组件2 -->
       <personnel2 v-if="personnel2Flag" ref="personnel2" @selectPesonDate="selectDate"></personnel2>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible2 = false">取 消</el-button>
         <el-button type="primary" @click="selectPeson2">确 定</el-button>
+        <el-button @click="dialogVisible2 = false">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -83,7 +98,10 @@
         },
         areaTree: [], // 地区树
         area: [],
-        personnel2Flag: false
+        personnel2Flag: false,
+        organizationFlag: false,
+        expandAll: true, // 全部节点展开标识
+        backfillIsDisabled: false // 禁用回选项
       }
     },
     components: {
@@ -96,18 +114,35 @@
       this.queryArea()
     },
     methods: {
-      select (n) {
+      select (n, flag) {
         this.personnel2Flag = false
+        this.organizationFlag = false
         this.$nextTick(() => {
           switch (n) {
             case 1:
-              this.$refs.corporation.init(this.orgaFlag)
+              if (flag) {
+                this.$refs.corporation.init(this.orgaFlag, [
+                  'b23ef63e-28b9-49ba-bbb9-01ca3dcee141',
+                  'b305e940-4c86-451e-9f8b-e6a6b7b42183'
+                ], this.backfillIsDisabled)
+              } else {
+                this.$refs.corporation.init(this.orgaFlag)
+              }
               break
             case 2:
               this.$refs.personnel.init(this.area[this.area.length - 1])
               break
             case 3:
-              this.$refs.organization.init(this.orgaFlag, this.area[this.area.length - 1])
+              this.organizationFlag = true
+              this.$nextTick(() => {
+                if (flag) {
+                  // this.$refs.organization.backfillIsDisabled = this.backfillIsDisabled
+                  // this.$refs.organization.backfillList = ['07574197-8861-4041-bbbf-b01fe9c1bb0a']
+                  this.$refs.organization.init(this.orgaFlag, ['07574197-8861-4041-bbbf-b01fe9c1bb0a'], this.backfillIsDisabled, this.area[this.area.length - 1])
+                } else {
+                  this.$refs.organization.init(this.orgaFlag, [], undefined, this.area[this.area.length - 1])
+                }
+              })
               break
             case 4:
               // 重新渲染组件

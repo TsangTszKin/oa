@@ -4,6 +4,8 @@
       :title="'值班信息'"
       :close-on-click-modal="false"
       width="80%"
+      class="dutylist-dialog"
+      top="10vh"
       :visible.sync="visible">
       <div v-loading="!submitAble">
         <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="140px">
@@ -11,12 +13,12 @@
           <div class="add-conflist">
             <el-form-item label="值班领导" prop="leader">
               <div class="inputbutton-div">
-                <span v-if="dataForm.leaderArr.length < 1">值班领导</span>
+                <!-- <span v-if="dataForm.leaderArr.length < 1">值班领导</span>v-else -->
                 <el-tag
-                  v-else
                   v-for="(tag, index) in dataForm.leaderArr"
                   :key="tag.leaderId"
                   closable
+                  style="margin-right:10px"
                   @close="manClose(tag, 'leader', index, '')"
                   type="success">
                   {{tag.leader}}
@@ -26,12 +28,12 @@
             </el-form-item>
             <el-form-item label="值班科长（主任）" prop="director">
               <div class="inputbutton-div">
-                <span v-if="dataForm.directorArr.length < 1">值班科长（主任）</span>
+                <!-- <span v-if="dataForm.directorArr.length < 1">值班科长（主任）</span> v-else-->
                 <el-tag
-                  v-else
                   v-for="(tag, index) in dataForm.directorArr"
                   :key="tag.leaderId"
                   closable
+                  style="margin-right:10px"
                   @close="manClose(tag, 'director', index, '')"
                   type="success">
                   {{tag.director}}
@@ -61,18 +63,18 @@
                   range-separator="至"
                   start-placeholder="开始时间"
                   end-placeholder="结束时间"
-                  placeholder="选择时间范围">
+                  placeholder="">
                 </el-time-picker>
                 <el-button type="danger" size="mini" class="deleteDutyDetail-button" @click="deleteRecRow(index)">删除</el-button>
               </el-form-item>
               <el-form-item label="值班人" :prop="'dutyDetailDtoList.' + index + '.watchman'" :rules="dataRule.watchman">
                 <div class="inputbutton-div inputbutton-div-float">
-                  <span v-if="item.watchmanArr.length < 1">值班人</span>
+                  <!-- <span v-if="item.watchmanArr.length < 1">值班人</span> v-else-->
                   <el-tag
-                    v-else
                     v-for="(tag, i) in item.watchmanArr"
                     :key="tag.leaderId"
                     closable
+                    style="margin-right:10px"
                     @close="manClose(tag, 'watchman', i, index)"
                     type="success">
                     {{tag.watchman}}
@@ -82,18 +84,18 @@
                 <el-button type="info" class="inputbutton-button" @click="openChangeMan('watchman', index)">选择</el-button>
               </el-form-item>
               <el-form-item label="值班司机" :prop="'dutyDetailDtoList.' + index + '.driver'" :rules="dataRule.driver">
-                <el-input v-model="item.driver" placeholder="值班司机" class="inputbutton-input"></el-input>
+                <el-input v-model="item.driver" placeholder="" class="inputbutton-input"></el-input>
                 <el-button type="info" class="inputbutton-button">选择</el-button>
               </el-form-item>
               <el-form-item label="值班车辆" :prop="'dutyDetailDtoList.' + index + '.vehicle'" :rules="dataRule.vehicle">
-                <el-input v-model="item.vehicle" placeholder="值班车辆" class="inputbutton-input"></el-input>
+                <el-input v-model="item.vehicle" placeholder="" class="inputbutton-input"></el-input>
                 <el-button type="info" class="inputbutton-button">选择</el-button>
               </el-form-item>
               <el-form-item label="值班说明" :prop="'dutyDetailDtoList.' + index + '.description'" :rules="dataRule.description">
                 <el-input
                   type="textarea"
                   :autosize="{ minRows: 2, maxRows: 5 }"
-                  placeholder="值班说明"
+                  placeholder=""
                   v-model="item.description">
                 </el-input>
               </el-form-item>
@@ -102,24 +104,24 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="success" @click="dataFormSubmit('addUpdate')" :loading="!submitAble">提交</el-button>
+        <el-button type="primary" @click="dataFormSubmit('addUpdate')" :loading="!submitAble">提交</el-button>
         <el-button type="danger" v-if="dataForm.id !== '' && isAuth('duty:data:delete')" @click="dataFormSubmit('delete',dataForm.id)" :loading="!submitAble">删除</el-button>
         <el-button @click="visible = false" :loading="!submitAble">取消</el-button>
       </span>
     </el-dialog>
     <!-- 弹窗, 选人 -->
-    <change-man v-if="changemanVisible" ref="changeman" @selectChemDate="selectManDate"></change-man>
+    <change-man v-if="changemanVisible" ref="changeman" @selectPersDate="selectManDate"></change-man>
   </div>
 </template>
 
 <script>
-  import changeMan from './index-changeman'
+  import changeMan from '../corporation/personnel'
   export default {
     data () {
       var checkTime = (rule, value, callback) => {
         if (value != null && value !== '') {
           if (new Date(value[0]).valueOf() === new Date(value[1]).valueOf()) {
-            callback(new Error('值班时间的开始和结束不可以相同'))
+            callback(new Error('开始和结束不可以相同'))
           // } else if (new Date(value[0]).valueOf() < new Date().valueOf()) {
           //   callback(new Error('值班时间的以过，不能安排值班'))
           }
@@ -132,7 +134,7 @@
             }
             if (data.time !== value) {
               if ((new Date(data.time[0]).getTime() < new Date(value[0]).getTime() && new Date(value[0]).getTime() < new Date(data.time[1]).getTime()) || (new Date(data.time[0]).getTime() < new Date(value[1]).getTime() && new Date(value[1]).getTime() < new Date(data.time[1]).getTime())) {
-                callback(new Error('值班时有重叠，请重新选择'))
+                callback(new Error('时间有重叠，请重新选择'))
               }
             }
           })
@@ -144,6 +146,8 @@
         visible: false,
         submitAble: false,
         changemanVisible: false, // 选人弹窗
+        changeManState: '',
+        changeManKey: '',
         remindersList: [{
           lable: '手机短信'
         }, {
@@ -169,20 +173,20 @@
         },
         dataRule: {
           time: [
-            { required: true, message: '值班时间 不能为空', trigger: 'blur' },
+            { required: true, message: '不能为空', trigger: 'blur' },
             { validator: checkTime, trigger: 'blur' }
           ],
           watchman: [
-            { required: true, message: '值班人 不能为空', trigger: 'blur' }
+            { required: true, message: '不能为空', trigger: 'blur' }
           ],
           driver: [
-            { min: 1, max: 200, message: '值班司机 字符数不能大于200个字符', trigger: 'blur' }
+            { min: 1, max: 200, message: '字符数不能大于200个字符', trigger: 'blur' }
           ],
           vehicle: [
-            { min: 1, max: 200, message: '值班车辆 字符数不能大于200个字符', trigger: 'blur' }
+            { min: 1, max: 200, message: '字符数不能大于200个字符', trigger: 'blur' }
           ],
           description: [
-            { min: 1, max: 400, message: '值班说明 字符数不能大于400个字符', trigger: 'blur' }
+            { min: 1, max: 400, message: '字符数不能大于400个字符', trigger: 'blur' }
           ]
         }
       }
@@ -443,33 +447,35 @@
       },
       // 打开选人页面
       openChangeMan (state, key, changeMan) {
+        this.changeManState = state
+        this.changeManKey = key
         this.changemanVisible = true
         this.$nextTick(() => {
-          this.$refs.changeman.init(state, key, changeMan)
+          this.$refs.changeman.init(changeMan)
         })
       },
       // 保存选中的人
-      selectManDate (data, state, key) {
+      selectManDate (data) {
         data.forEach(item => {
-          if (key === '') {
-            this.dataForm[state + 'Arr'].forEach(tablelist => {
-              if (!item.addSuccess && tablelist.id === '' && tablelist[state + 'Id'] === '' && tablelist.leader === '') {
+          if (this.changeManKey === '') {
+            this.dataForm[this.changeManState + 'Arr'].forEach(tablelist => {
+              if (!item.addSuccess && tablelist.id === '' && tablelist[this.changeManState + 'Id'] === '' && tablelist.leader === '') {
                 tablelist.id = ''
-                tablelist[state + 'Id'] = item.userId
-                tablelist[state] = item.realName
+                tablelist[this.changeManState + 'Id'] = item.userId
+                tablelist[this.changeManState] = item.realName
                 item.addSuccess = true
-              } else if (tablelist[state + 'Id'] === item.userId) {
+              } else if (tablelist[this.changeManState + 'Id'] === item.userId) {
                 item.addSuccess = true
               }
             })
           } else {
-            this.dataForm.dutyDetailDtoList[key][state + 'Arr'].forEach(tablelist => {
-              if (!item.addSuccess && tablelist.id === '' && tablelist[state + 'Id'] === '' && tablelist.leader === '') {
+            this.dataForm.dutyDetailDtoList[this.changeManKey][this.changeManState + 'Arr'].forEach(tablelist => {
+              if (!item.addSuccess && tablelist.id === '' && tablelist[this.changeManState + 'Id'] === '' && tablelist.leader === '') {
                 tablelist.id = ''
-                tablelist[state + 'Id'] = item.userId
-                tablelist[state] = item.realName
+                tablelist[this.changeManState + 'Id'] = item.userId
+                tablelist[this.changeManState] = item.realName
                 item.addSuccess = true
-              } else if (tablelist[state + 'Id'] === item.userId) {
+              } else if (tablelist[this.changeManState + 'Id'] === item.userId) {
                 item.addSuccess = true
               }
             })
@@ -477,19 +483,19 @@
         })
         data.forEach(item => {
           if (!item.addSuccess) {
-            if (key === '') {
+            if (this.changeManKey === '') {
               let abj = {}
               abj['id'] = ''
-              abj[state + 'Id'] = item.userId
-              abj[state] = item.realName
-              this.dataForm[state + 'Arr'].push(abj)
+              abj[this.changeManState + 'Id'] = item.userId
+              abj[this.changeManState] = item.realName
+              this.dataForm[this.changeManState + 'Arr'].push(abj)
             } else {
               let abj = {}
               abj['id'] = ''
-              abj[state + 'Id'] = item.userId
-              abj[state] = item.realName
-              this.dataForm.dutyDetailDtoList[key][state + 'Arr'].push(abj)
-              this.dataForm.dutyDetailDtoList[key][state] = '1'
+              abj[this.changeManState + 'Id'] = item.userId
+              abj[this.changeManState] = item.realName
+              this.dataForm.dutyDetailDtoList[this.changeManKey][this.changeManState + 'Arr'].push(abj)
+              this.dataForm.dutyDetailDtoList[this.changeManKey][this.changeManState] = '1'
             }
           }
         })
@@ -519,10 +525,12 @@
   .inputbutton-div {
     display: inline-block;
     border: 1px solid #c3d4da;
+    min-height: 29px;
     width: calc(100% - 60px);
     border-radius: 4px;
     padding: 0 15px;
     color: #c3d4da;
+    margin-bottom: -10px;
   }
   .inputbutton-div-float {
     border: 0px;
@@ -543,8 +551,15 @@
   }
 </style>
 <style>
-  .el-dialog__body{
+  .dutylist-dialog .el-dialog__body{
+    max-height: 60vh;
+    height: 460px;
+    overflow-y: auto;
+    padding: 20px 50px 0px 50px;
     padding: 0 20px;
+  }
+  .el-form-item.is-error .inputbutton-div {
+    border-color: #f56c6c;
   }
   .form-select-popper{
     max-width: 400px;

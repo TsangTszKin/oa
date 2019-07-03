@@ -1,3 +1,12 @@
 .edit_container .ql-container {
     min-height: 150px !important;
   }
+  
+.form-design-main {
+}
+.form-design-main .el-dialog__header {
+  display: none !important;
+}
+.form-design-main .el-dialog__body {
+  padding: 10px;
+}

@@ -3,7 +3,7 @@
     <el-form-item label="标题">
       <el-input v-model="data.title" size="small"></el-input>
     </el-form-item>
-    <el-form-item label="表字段映射">
+    <el-form-item label="表字段code">
       <el-input v-model="data.code" size="small"></el-input>
     </el-form-item>
     <el-form-item label="默认值">
@@ -38,7 +38,7 @@ export default {
           title: '开关',
           type: 'switch',
           code: '',
-          icon: '/src/assets/img/form-design/switch.png',
+          icon: '/static/img/form-design/switch.png',
           options: {
             defaultValue: false,
             required: false,
@@ -55,7 +55,7 @@ export default {
         title: '开关',
         type: 'switch',
         code: '',
-        icon: '/src/assets/img/form-design/switch.png',
+        icon: '/static/img/form-design/switch.png',
         options: {
           defaultValue: false,
           required: false,

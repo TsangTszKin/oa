@@ -11,6 +11,8 @@
       :closeOnSelect="closeOnSelect"
       :normalizer="normalizer"
       :maxHeight="maxHeight"
+      noOptionsText="暂无数据"
+      noResultsText="暂无匹配数据"
       @open="open"
       @input="validate"
       @select="selectData"
@@ -45,7 +47,10 @@
       }
     },
     props: {
-      operTypeKey: String,     // 业务key
+      operTypeKey: {           // 业务key
+        type: String,
+        default: 'commonOrgTypeModule'
+      },
       maxHeight: Number,   // 最大高度
       closeOnSelect: Boolean, // 选中时是否关闭
       placeholder: String  // 提示

@@ -8,7 +8,7 @@
     @close="close"
     custom-class="model-design"
   >
-    <iframe width="100%" src="/static/workflow/modeler.html" frameborder="0" id="iframe"></iframe>
+    <iframe width="100%" :src="this.workflowUrl" frameborder="0" id="iframe"></iframe>
 
     <!-- <iframe
       width="100%"
@@ -66,6 +66,7 @@ export default {
   },
   data () {
     return {
+      workflowUrl: localStorage.cdnUrl + '/static/workflow/modeler.html',
       visible: false,
       visibleTable: false,
       orgPickerVisible1: false,

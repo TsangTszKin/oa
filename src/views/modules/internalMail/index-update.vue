@@ -5,7 +5,7 @@
       :close-on-click-modal="false"
       custom-class="outsidePipeline-dialog"
       :visible.sync="visible"
-      @close="$refs.sendeMail.clearAutosave()"
+      @close="$refs.sendeMail.clearAutosave(); $emit('closeUpdate')"
       width="80%"
       top="50px">
       <div v-loading="!submitAble" :style="{paddingBottom: footerShow ? '' : '50px'}">
@@ -15,7 +15,7 @@
         <el-button size="mini" type="info" @click="beforeFormSubmit('save')" :loading="!submitAble">存草稿</el-button>
         <el-button type="primary" size="mini" @click="beforeFormSubmit('addUpdate')" :loading="!submitAble">发送</el-button>
         <!-- <el-button v-if="this.dataForm.id && isAuth('corp:safeEdu:delete')" size="mini" type="danger" @click="deleteHandle" :loading="!submitAble">删除</el-button> -->
-        <el-button @click="visible = false; $refs.sendeMail.clearAutosave()" :loading="!submitAble" size="mini">关闭</el-button>
+        <el-button @click="visible = false; $refs.sendeMail.clearAutosave(); $emit('closeUpdate')" :loading="!submitAble" size="mini">关闭</el-button>
       </span>
     </el-dialog>
     <!-- 弹窗, 选择企业 -->

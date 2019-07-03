@@ -4,7 +4,7 @@
       :title="'值班信息'"
       :close-on-click-modal="false"
       :visible.sync="visible"
-      width="70%"
+      width="80%"
       top="50px"
       class="emergency-store-detail"
     >
@@ -13,39 +13,47 @@
           <tr>
             <td class="zebra-table-label" width="150">值班领导</td>
             <td colspan="3">
-              <span v-if="dataList.dutyLeaderDtoList.length < 1">—</span>
-              <span v-else>
-                <span v-for="(item, index) in dataList.dutyLeaderDtoList" :key="index">{{index > 0 ? '，' : ''}}{{item.leader}}</span>
-              </span>
+              <div class="zebra-table-scoll">
+                <span v-if="dataList.dutyLeaderDtoList.length < 1">—</span>
+                <span v-else>
+                  <span v-for="(item, index) in dataList.dutyLeaderDtoList" :key="index">{{index > 0 ? ',' : ''}}{{item.leader}}</span>
+                </span>
+              </div>
             </td>
           </tr>
           <tr>
             <td class="zebra-table-label" width="150">值班科长（主任）</td>
             <td colspan="3">
-              <span v-if="dataList.dutyDirectorDtoList.length < 1">—</span>
-              <span v-else>
-                <span v-for="(item, index) in dataList.dutyDirectorDtoList" :key="index">{{index > 0 ? '，' : ''}}{{item.director}}</span>
-              </span>
+              <div class="zebra-table-scoll">
+                <span v-if="dataList.dutyDirectorDtoList.length < 1">—</span>
+                <span v-else>
+                  <span v-for="(item, index) in dataList.dutyDirectorDtoList" :key="index">{{index > 0 ? ',' : ''}}{{item.director}}</span>
+                </span>
+              </div>
             </td>
           </tr>
           <tr>
             <td class="zebra-table-label" width="150">值班提醒方式</td>
             <td colspan="3">
-              <span>
-                <span v-for="(item, index) in dataList.remindersList" :key="index">
-                  {{ item.isReminders === '1' ? item.remindersListSym + item.reminders : '' }}
+              <div class="zebra-table-scoll">
+                <span>
+                  <span v-for="(item, index) in dataList.remindersList" :key="index">
+                    {{ item.isReminders === '1' ? item.remindersListSym + item.reminders : '' }}
+                  </span>
                 </span>
-              </span>
+              </div>
             </td>
           </tr>
           <tr>
             <td class="zebra-table-label" width="150">立即通知值班人</td>
             <td colspan="3">
-              <span>
-                <span v-for="(item, index) in dataList.immediateNoticeList" :key="index">
-                  {{ item.isImmediateNotice === '1' ? item.immediateNoticeListSym + item.immediateNotice : '' }}
+              <div class="zebra-table-scoll">
+                <span>
+                  <span v-for="(item, index) in dataList.immediateNoticeList" :key="index">
+                    {{ item.isImmediateNotice === '1' ? item.immediateNoticeListSym + item.immediateNotice : '' }}
+                  </span>
                 </span>
-              </span>
+              </div>
             </td>
           </tr>
         </table>
@@ -54,27 +62,33 @@
             <table class="zebra-table zebra-table-space">
               <tr>
                 <td class="zebra-table-label" width="150">值班时间</td>
-                <td colspan="3"><span>{{item.timeStart ? formatDate(new Date(item.timeStart), 'yyyy-MM-dd hh:mm') : '—'}} 至 {{item.timeEnd ? formatDate(new Date(item.timeEnd), 'yyyy-MM-dd hh:mm') : '—'}}</span></td>
+                <td colspan="3"><div class="zebra-table-scoll"><span>{{item.timeStart ? formatDate(new Date(item.timeStart), 'yyyy-MM-dd hh:mm') : '—'}} 至 {{item.timeEnd ? formatDate(new Date(item.timeEnd), 'yyyy-MM-dd hh:mm') : '—'}}</span></div></td>
               </tr>
               <tr>
                 <td class="zebra-table-label" width="150">值班人</td>
                 <td colspan="3">
-                  <span v-if="item.dutyDetailWatchmanDtoList.length < 1">—</span>
-                  <span v-else v-for="(watchman, index) in item.dutyDetailWatchmanDtoList" :key="index">{{index > 0 ? '，' : ''}}{{watchman.watchman}}</span>
+                  <div class="zebra-table-scoll">
+                    <span v-if="item.dutyDetailWatchmanDtoList.length < 1">—</span>
+                    <span v-else v-for="(watchman, index) in item.dutyDetailWatchmanDtoList" :key="index">{{index > 0 ? ',' : ''}}{{watchman.watchman}}</span>
+                  </div>
                 </td>
               </tr>
               <tr>
                 <td class="zebra-table-label" width="150">值班司机</td>
                 <td colspan="3">
-                  <span v-if="item.dutyDetailDriverDtoList.length < 1">—</span>
-                  <span v-else v-for="(driver, index) in item.dutyDetailDriverDtoList" :key="index">{{index > 0 ? '，' : ''}}{{driver.driver}}</span>
+                  <div class="zebra-table-scoll">
+                    <span v-if="item.dutyDetailDriverDtoList.length < 1">—</span>
+                    <span v-else v-for="(driver, index) in item.dutyDetailDriverDtoList" :key="index">{{index > 0 ? ',' : ''}}{{driver.driver}}</span>
+                  </div>
                 </td>
               </tr>
               <tr>
                 <td class="zebra-table-label" width="150">值班车辆</td>
                 <td colspan="3">
-                  <span v-if="item.dutyDetailVehicleDtoList.length < 1">—</span>
-                  <span v-else v-for="(vehicle, index) in item.dutyDetailVehicleDtoList" :key="index">{{index > 0 ? '，' : ''}}{{vehicle.vehicle}}</span>
+                  <div class="zebra-table-scoll">
+                    <span v-if="item.dutyDetailVehicleDtoList.length < 1">—</span>
+                    <span v-else v-for="(vehicle, index) in item.dutyDetailVehicleDtoList" :key="index">{{index > 0 ? ',' : ''}}{{vehicle.vehicle}}</span>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -86,7 +100,7 @@
         </div>
         <div class="zebra-table-listTitle" v-if="isAuth('duty:log:data:list')">值班日志表格<i :class="listShow ? 'el-icon-caret-bottom' : 'el-icon-caret-top'" @click="openDatalist"></i></div>
         <div v-show="listShow" v-if="isAuth('duty:log:data:list')">
-          <el-table
+          <!-- <el-table
             :data="datatableList"
             border
             tooltip-effect="light"
@@ -137,13 +151,22 @@
                 <el-button class="column-text" type="text" @click="addOrUpdateHandle(scope.row.id, dataList.dutyDirectorDtoList, dataList.dutyLeaderDtoList, dataList.dutyDetailDtoList, dataForm)">{{scope.row.contentOpinion}}</el-button>
               </template>
             </el-table-column>
-          </el-table>
+          </el-table> -->
+          <list-table
+            ref="listTables"
+            :dataList="datatableList"
+            :columnList="columnList"
+            :stripe="false"
+            :size="'small'"
+            :tooltipEffect="'light'"
+            @view-handle="addOrUpdateHandle"
+          ></list-table>
         </div>
         <div class="zebra-table-listTitle" v-if="isAuth('duty:log:data:add')">填写值班日志</div>
         <el-form ref="datalogForm" :model="datalogForm" :rules="datalogRule" label-width="130px" v-if="isAuth('duty:log:data:add')">
           <div class="add-table-list-trborder">
             <div class="add-table-list-50">选择发送方式发送给值班领导、值班科长</div>
-            <div class="add-table-list-50"><el-button class="list-buttom" size="small" @click="openSendeare">{{sendShow ? '取消自定义内容' : '自定义发送内容'}}</el-button></div>
+            <div class="add-table-list-50"><el-button class="list-buttom" size="mini" @click="openSendeare">{{sendShow ? '取消自定义内容' : '自定义发送内容'}}</el-button></div>
             <div class="add-table-list-50">
               <el-checkbox-group v-model="datalogForm.remindersArr">
                 <el-checkbox v-for="(item, index) in remindersList" :key="index" :label="item.lable"></el-checkbox>
@@ -166,52 +189,52 @@
                   style="width:100%"
                   format="yyyy-MM-dd HH:mm"
                   @blur="selectLogDate"
-                  placeholder="时间">
+                  placeholder="">
                 </el-date-picker>
               </el-form-item>
             </div>
             <div class="add-table-list-50">
               <el-form-item label="来电（来访）单位" prop="callVisitUnit">
-                <el-input v-model="datalogForm.callVisitUnit" placeholder="来电（来访）单位"></el-input>
+                <el-input v-model="datalogForm.callVisitUnit" placeholder=""></el-input>
               </el-form-item>
             </div>
             <div class="add-table-list-50 add-table-list-rb-50">
               <el-form-item label="来电（来访）人员" prop="callVisitPerson">
-                <el-input v-model="datalogForm.callVisitPerson" placeholder="来电（来访）人员"></el-input>
+                <el-input v-model="datalogForm.callVisitPerson" placeholder=""></el-input>
               </el-form-item>
             </div>
             <div class="add-table-list-50">
               <el-form-item label="联系电话" prop="contactNumber">
-                <el-input v-model="datalogForm.contactNumber" placeholder="联系电话"></el-input>
+                <el-input v-model="datalogForm.contactNumber" placeholder=""></el-input>
               </el-form-item>
             </div>
             <div class="add-table-list-100">
               <el-form-item label="值班登记内容及拟办意见" prop="contentOpinion">
-                <el-input v-model="datalogForm.contentOpinion" type="textarea" placeholder="值班登记内容及拟办意见" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+                <el-input v-model="datalogForm.contentOpinion" type="textarea" placeholder="" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
               </el-form-item>
             </div>
             <div class="add-table-list-100">
               <el-form-item label="科长（主任）意见" prop="directorOpinion" style="position: relative">
                 <el-button size="mini" class="textarea-button" v-show="directorOpinionAble" @click="fillout('director')">代写</el-button>
-                <el-input v-model="datalogForm.directorOpinion" type="textarea" :disabled="directorOpinionEnable" placeholder="科长（主任）意见" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+                <el-input v-model="datalogForm.directorOpinion" type="textarea" :disabled="directorOpinionEnable" placeholder="" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
               </el-form-item>
             </div>
             <div class="add-table-list-100">
               <el-form-item label="值班领导批示" prop="leaderInstructions" style="position: relative">
                 <el-button size="mini" class="textarea-button" v-show="leaderInstructionsAble" @click="fillout('leader')">代写</el-button>
-                <el-input v-model="datalogForm.leaderInstructions" type="textarea" :disabled="leaderInstructionsEnable" placeholder="值班领导批示" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+                <el-input v-model="datalogForm.leaderInstructions" type="textarea" :disabled="leaderInstructionsEnable" placeholder="" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
               </el-form-item>
             </div>
             <div class="add-table-list-100">
               <el-form-item label="处理过程或处理结果" prop="processResult">
-                <el-input v-model="datalogForm.processResult" type="textarea" :disabled="processResultEnable" placeholder="处理过程或处理结果" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+                <el-input v-model="datalogForm.processResult" type="textarea" :disabled="processResultEnable" placeholder="" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
               </el-form-item>
             </div>
           </div>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="success" @click="saveDutylog" v-if="isAuth('duty:log:data:add')" :loading="!submitAble">提交</el-button>
+        <el-button type="primary" @click="saveDutylog" v-if="isAuth('duty:log:data:add')" :loading="!submitAble">提交</el-button>
         <el-button @click="visible = false" :loading="!submitAble">关闭</el-button>
       </span>
     </el-dialog>
@@ -242,7 +265,6 @@ export default {
       moduleDutyApi: '/api-oa/duty/duty',
       moduleLogApi: '/api-oa/duty/log',
       visible: false, // 显示弹窗控件，默认false不显示，true显示
-      tableHeaderStyle: { 'background': '#f6f6f6' }, // 表头样式
       activeName: '',
       dataForm: {
         id: '', // ID
@@ -267,30 +289,30 @@ export default {
       },
       datalogRule: {
         logTime: [
-          { required: true, message: '时间 不能为空', trigger: 'blur' },
+          { required: true, message: '不能为空', trigger: 'blur' },
           { validator: checklogTime, trigger: 'blur' }
         ],
         callVisitUnit: [
-          { min: 1, max: 100, message: '来电（来访）单位 字符数不能大于100个字符', trigger: 'blur' }
+          { min: 1, max: 100, message: '字符数不能大于100个字符', trigger: 'blur' }
         ],
         callVisitPerson: [
-          { min: 1, max: 100, message: '来电（来访）人员 字符数不能大于100个字符', trigger: 'blur' }
+          { min: 1, max: 100, message: '字符数不能大于100个字符', trigger: 'blur' }
         ],
         contactNumber: [
-          { min: 1, max: 100, message: '联系电话 字符数不能大于100个字符', trigger: 'blur' }
+          { min: 1, max: 100, message: '字符数不能大于100个字符', trigger: 'blur' }
         ],
         contentOpinion: [
-          { required: true, message: '值班登记内容及拟办意见 不能为空', trigger: 'blur' },
-          { min: 1, max: 1000, message: '值班登记内容及拟办意见 字符数不能大于1000个字符', trigger: 'blur' }
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { min: 1, max: 1000, message: '字符数不能大于1000个字符', trigger: 'blur' }
         ],
         directorOpinion: [
-          { min: 1, max: 1000, message: '科长（主任）意见 字符数不能大于1000个字符', trigger: 'blur' }
+          { min: 1, max: 1000, message: '字符数不能大于1000个字符', trigger: 'blur' }
         ],
         leaderInstructions: [
-          { min: 1, max: 1000, message: '值班领导批示 字符数不能大于1000个字符', trigger: 'blur' }
+          { min: 1, max: 1000, message: '字符数不能大于1000个字符', trigger: 'blur' }
         ],
         processResult: [
-          { min: 1, max: 1000, message: '处理过程或处理结果 字符数不能大于1000个字符', trigger: 'blur' }
+          { min: 1, max: 1000, message: '字符数不能大于1000个字符', trigger: 'blur' }
         ]
       },
       remindersList: [{
@@ -308,7 +330,23 @@ export default {
       leaderInstructionsAble: false,   // 值班领导批示代填按钮
       leaderInstructionsEnable: true,  // 值班领导批示
       processResultEnable: true,  // 处理过程或处理结果
-      submitAble: true  // 提交日志按钮
+      submitAble: true,  // 提交日志按钮
+      columnList: [
+        // {label: '序号', type: 'index', show: true, headerAlign: 'left', align: 'left', width: '50', pageIndex: this.pageIndex, pageSize: this.pageSize},
+        // {type: 'selection', show: true, headerAlign: 'left', align: 'left', width: '50', pageIndex: this.pageIndex, pageSize: this.pageSize},
+        // {label: '企业名称', prop: 'orgName', columnName: 'orgName', type: '', show: true, operation: [{ type: 'view' }], headerAlign: 'left', align: 'left', sortable: 'custom', minWidth: '120', showOverflowTooltip: true},
+        {label: '登记人', prop: 'registerPerson', columnName: 'registerPerson', type: '', show: true, operation: [{ type: 'view' }], headerAlign: 'left', align: 'left', minWidth: '50', showOverflowTooltip: true},
+        {label: '提交时间', prop: 'crtDateTime', columnName: 'crtDateTime', type: '', show: true, operation: [{ type: 'view' }], headerAlign: 'center', align: 'center', minWidth: '100', showOverflowTooltip: true},
+        {label: '编辑用户', prop: 'editUser', columnName: 'editUser', type: '', show: true, operation: [{ type: 'view' }], headerAlign: 'left', align: 'left', minWidth: '50', showOverflowTooltip: true},
+        {label: '编辑时间', prop: 'udtDateTime', columnName: 'udtDateTime', type: '', show: true, operation: [{ type: 'view' }], headerAlign: 'center', align: 'center', minWidth: '100', showOverflowTooltip: true},
+        {label: '值班登记内容及拟办意见', prop: 'contentOpinion', columnName: 'contentOpinion', type: '', show: true, operation: [{ type: 'view' }], headerAlign: 'left', align: 'left', minWidth: '160', showOverflowTooltip: true}
+        // {label: '已整改隐患数', prop: 'rectifiedNum', columnName: 'rectifiedNum', type: '', show: true, operation: [{ type: 'view' }], headerAlign: 'right', align: 'right', sortable: 'custom', minWidth: '120', showOverflowTooltip: true},
+        // {label: '待整改隐患数', prop: 'rectifingNum', columnName: 'rectifingNum', type: '', show: true, operation: [{ type: 'view' }], headerAlign: 'right', align: 'right', sortable: 'custom', minWidth: '120', showOverflowTooltip: true},
+        // {label: '整改状态', prop: 'rectifState', columnName: 'rectifStateName', type: '', fixed: 'right', show: true, operation: [{ type: 'tag' }], headerAlign: 'center', align: 'center', sortable: 'custom', minWidth: '100', showOverflowTooltip: true},
+        // {label: '上报状态', prop: 'state', columnName: 'stateName', type: '', fixed: 'right', show: this.isAuth('trouble:selfCheck:noSheet:add') || this.isAuth('trouble:selfCheck:noSheet:update') || this.isAuth('trouble:selfCheck:noSheet:delete'), operation: [{ type: 'tag' }], headerAlign: 'center', align: 'center', sortable: 'custom', minWidth: '100', showOverflowTooltip: true},
+        // {label: '操作', type: '', fixed: 'right', show: this.isAuth('trouble:selfCheck:noSheet:update') || this.isAuth('trouble:selfCheck:noSheet:delete'), operation: [{type: this.isAuth('trouble:selfCheck:noSheet:update') ? 'fill' : ''}, {type: this.isAuth('trouble:selfCheck:noSheet:delete') ? 'delete' : ''}], headerAlign: 'left', align: 'left', width: '80'},
+        // this.isAuth('trouble:selfCheck:noSheet:update')  this.isAuth('corp:safeEdu:update') ?  : ''
+      ]
     }
   },
   components: {
@@ -317,7 +355,7 @@ export default {
   methods: {
     // 查看
     init (id, date) {
-      this.visible = true
+      // this.visible = true
       this.listShow = false
       this.sendShow = false
       this.submitAble = true
@@ -342,9 +380,6 @@ export default {
       this.datalogForm.isLeaderInstructions = 0  // 值班领导批示是否代填(0否,1是)
       this.datalogForm.processResult = ''  // 处理过程结果
       this.$nextTick(() => {
-        if (this.isAuth('duty:log:data:add')) {
-          this.$refs['datalogForm'].resetFields()
-        }
         if (this.dataForm.dutyDate) {
           this.$http({
             url: this.$http.adornUrl(this.moduleDutyApi + `/data/${this.dataForm.dutyDate}`),
@@ -358,7 +393,7 @@ export default {
                 if (item.isReminders === '1') {
                   remindersListSym++
                   if (remindersListSym > 1) {
-                    item.remindersListSym = '，'
+                    item.remindersListSym = ','
                   } else {
                     item.remindersListSym = ''
                   }
@@ -369,7 +404,7 @@ export default {
                 if (item.isImmediateNotice === '1') {
                   immediateNoticeListSym++
                   if (immediateNoticeListSym > 1) {
-                    item.immediateNoticeListSym = '，'
+                    item.immediateNoticeListSym = ','
                   } else {
                     item.immediateNoticeListSym = ''
                   }
@@ -400,6 +435,11 @@ export default {
                 }
               })
               this.visible = true
+              this.$nextTick(() => {
+                if (this.isAuth('duty:log:data:add')) {
+                  this.$refs['datalogForm'].resetFields()
+                }
+              })
             } else {
               this.commonError()
             }
@@ -426,11 +466,11 @@ export default {
       })
     },
     // 打开修改日志
-    addOrUpdateHandle (id, dutyDirectorDtoList, dutyLeaderDtoList, dutyDetailDtoList, dataForm) {
+    addOrUpdateHandle (id) {
       if (this.isAuth('duty:log:data:update') || this.isAuth('duty:log:data:delete')) {
         this.logupdateVisible = true
         this.$nextTick(() => {
-          this.$refs.logupdate.init(id, dutyDirectorDtoList, dutyLeaderDtoList, dutyDetailDtoList, dataForm)
+          this.$refs.logupdate.init(id, this.dataList.dutyDirectorDtoList, this.dataList.dutyLeaderDtoList, this.dataList.dutyDetailDtoList, this.dataForm)
         })
       } else {
         this.$message({
@@ -579,15 +619,15 @@ export default {
 <style lang="scss" scoped>
 .zebra-table {
     width: 100%;
-    margin-bottom: 20px;
-    font-size: 14px;
+    margin-bottom: 10px;
+    font-size: 12px;
     border-spacing: 0;
     table-layout: fixed;
     border-top: 1px solid #eeeeee;
     border-left: 1px solid #eeeeee;
 }
 .zebra-table tr td {
-    padding: 8px 12px;
+    // padding: 8px 12px;
     border-right: 1px solid #eeeeee;
     border-bottom: 1px solid #eeeeee;
     word-break:break-all;
@@ -604,12 +644,20 @@ export default {
 }
 
 .zebra-table .zebra-table-label {
-    background: #f6f6f6;
+    // background: #f6f6f6;
+    padding: 8px 12px;
     text-align: right;
+}
+.zebra-table-scoll {
+  padding: 4px 12px;
+  height: 34px;
+  line-height: 26px;
+  overflow-y: auto;
 }
 .pre-font {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\5FAE\8F6F\96C5\9ED1", Arial, sans-serif;
   margin: 0;
+  padding: 8px 12px;
   word-break: break-all;
   white-space:pre-wrap;
   white-space:-moz-pre-wrap;

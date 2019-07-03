@@ -7,16 +7,16 @@
             v-model="dataForm.dutyDate"
             type="date" size="mini"
             placeholder="选择值班日期"
-            @blur="getWeekDateList (dataForm.dutyDate)"
-            clearable
+            @blur="getWeekDateList(dataForm.dutyDate)"
+            :clearable="false"
             value-format="yyyy-MM-dd"
             style="width: 90%">
           </el-date-picker>
         </el-form-item>
          <!-- v-if="isAuth('chemDir2015:data:add')" -->
-        <el-button size="mini" v-if="(isAuth('duty:data:add') && !dataList) || (isAuth('duty:data:update') && dataList)" type="primary" @click="addOrUpdateHandle()">{{(isAuth('duty:data:add') && !dataList) ? '新增' : (isAuth('duty:data:update') && dataList) ? '修改' : ''}}</el-button>
-        <el-button size="mini" @click="printList()">值班安排表打印</el-button>
-        <el-button size="mini" type="info" @click="printCount()">值班情况表打印</el-button>
+        <el-button size="mini" style="float: right;margin-left: 10px" v-if="(isAuth('duty:data:add') && !dataList) || (isAuth('duty:data:update') && dataList)" :icon="dataList ? 'el-icon-edit' : 'el-icon-plus'" type="primary" @click="addOrUpdateHandle()">{{(isAuth('duty:data:add') && !dataList) ? '新增' : (isAuth('duty:data:update') && dataList) ? '修改' : ''}}</el-button>
+        <el-button size="mini" style="float: right;" icon="el-icon-printer" @click="printList()">值班安排表打印</el-button>
+        <el-button size="mini" style="float: right;" icon="el-icon-printer" type="info" @click="printCount()">值班情况表打印</el-button>
       </el-form>
     </div>
     <div>
@@ -39,7 +39,7 @@
         </el-col>
       </el-row>
     </div>
-    <h3 v-if="dataList">值班详情</h3>
+    <h3 v-if="dataList" style="padding-bottom: 10px">值班详情</h3>
     <div v-if="dataList" class="bodyList">
       <div>
         <table class="dutylist-table dutylist-table-space">
@@ -48,52 +48,66 @@
               <!-- <td class="dutylist-table-label" width="150">值班部门</td> -->
               <!-- <td><span @click="viewHandle(dataList.id)">{{'—'}}</span></td>dataList.unitName ? dataList.unitName :  -->
               <td class="dutylist-table-label" width="150">值班领导</td>
-              <td colspan="2">
-                <span v-if="dataList.dutyLeaderDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
-                <span v-else @click="viewHandle(dataList.id)">
-                  <span v-for="(item, index) in dataList.dutyLeaderDtoList" :key="index">{{index > 0 ? '，' : ''}}{{item.leader}}</span>
+              <td colspan="2" class="dutylist-table-inputvaluetd" :title="addArray(dataList.dutyLeaderDtoList, 'leader')">
+                <span class="dutylist-table-inputvalue" v-if="dataList.dutyLeaderDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
+                <span class="dutylist-table-inputvalue" v-else @click="viewHandle(dataList.id)">
+                  <span v-for="(item, index) in dataList.dutyLeaderDtoList" :key="index">{{index > 0 ? ',' : ''}}{{item.leader}}</span>
                 </span>
               </td>
               <td class="dutylist-table-label" width="150">值班科长（主任）</td>
-              <td colspan="2">
-                <span v-if="dataList.dutyDirectorDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
-                <span v-else @click="viewHandle(dataList.id)">
-                  <span v-for="(item, index) in dataList.dutyDirectorDtoList" :key="index">{{index > 0 ? '，' : ''}}{{item.director}}</span>
+              <td colspan="2" class="dutylist-table-inputvaluetd" :title="addArray(dataList.dutyDirectorDtoList, 'director')">
+                <span class="dutylist-table-inputvalue" v-if="dataList.dutyDirectorDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
+                <span class="dutylist-table-inputvalue" v-else @click="viewHandle(dataList.id)">
+                  <span v-for="(item, index) in dataList.dutyDirectorDtoList" :key="index">{{index > 0 ? ',' : ''}}{{item.director}}</span>
                 </span>
               </td>
             </tr>
           </thead>
-          <tbody v-for="(item, index) in dataList.dutyDetailDtoList" :key="index">
-            <tr>
-              <td colspan="6" style="border-top:1px solid #eeeeee"></td>
-            </tr>
-            <tr>
-              <td class="dutylist-table-label" width="150">值班时间</td>
-              <td colspan="5"><span @click="viewHandle(dataList.id)">{{item.timeStart ? formatDate(new Date(item.timeStart), 'hh:mm') : '—'}} 至 {{item.timeEnd ? formatDate(new Date(item.timeEnd), 'hh:mm') : '—'}}</span></td>
-            </tr>
-            <tr>
-              <td class="dutylist-table-label" width="150">值班人</td>
-              <td>
-                <span v-if="item.dutyDetailWatchmanDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
-                <span v-else v-for="(watchman, index) in item.dutyDetailWatchmanDtoList" :key="index" @click="viewHandle(dataList.id)">{{index > 0 ? '，' : ''}}{{watchman.watchman}}</span>
-              </td>
-              <td class="dutylist-table-label" width="150">值班司机</td>
-              <td>
-                <span v-if="item.dutyDetailDriverDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
-                <span v-else v-for="(driver, index) in item.dutyDetailDriverDtoList" :key="index" @click="viewHandle(dataList.id)">{{index > 0 ? '，' : ''}}{{driver.driver}}</span>
-              </td>
-              <td class="dutylist-table-label" width="150">值班车辆</td>
-              <td>
-                <span v-if="item.dutyDetailVehicleDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
-                <span v-else v-for="(vehicle, index) in item.dutyDetailVehicleDtoList" :key="index" @click="viewHandle(dataList.id)">{{index > 0 ? '，' : ''}}{{vehicle.vehicle}}</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="dutylist-table-label" width="150">值班说明</td>
-              <td colspan="5"><pre class="textarea-pre" @click="viewHandle(dataList.id)">{{item.description ? item.description : '—'}}</pre></td>
-            </tr>
-          </tbody>
         </table>
+        <span v-for="(item, index) in dataList.dutyDetailDtoList" :key="index">
+          <table class="dutylist-table dutylist-table-space">
+            <thead>
+              <!-- <tr>
+                <td colspan="6" style="border-top:1px solid #eeeeee"></td>
+              </tr> -->
+              <tr>
+                <td class="dutylist-table-label" width="150">值班时间</td>
+                <td colspan="5" class="dutylist-table-inputvaluetd"><span class="dutylist-table-inputvalue" @click="viewHandle(dataList.id)">{{item.timeStart ? formatDate(new Date(item.timeStart), 'hh:mm') : '—'}} 至 {{item.timeEnd ? formatDate(new Date(item.timeEnd), 'hh:mm') : '—'}}</span></td>
+              </tr>
+            </thead>
+          </table>
+          <table class="dutylist-table dutylist-table-space" style="margin-top: -11px;">
+            <tbody>
+              <tr>
+                <td class="dutylist-table-label" width="150">值班人</td>
+                <td class="dutylist-table-inputvaluetd" :title="addArray(item.dutyDetailWatchmanDtoList, 'watchman')">
+                  <span class="dutylist-table-inputvalue" v-if="item.dutyDetailWatchmanDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
+                  <span class="dutylist-table-inputvalue" v-else @click="viewHandle(dataList.id)">
+                    <span v-for="(watchman, index) in item.dutyDetailWatchmanDtoList" :key="index">{{index > 0 ? ',' : ''}}{{watchman.watchman}}</span>
+                  </span>
+                </td>
+                <td class="dutylist-table-label" width="150">值班司机</td>
+                <td class="dutylist-table-inputvaluetd" :title="addArray(item.dutyDetailDriverDtoList, 'driver')">
+                  <span class="dutylist-table-inputvalue" v-if="item.dutyDetailDriverDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
+                  <span class="dutylist-table-inputvalue" v-else @click="viewHandle(dataList.id)">
+                    <span v-for="(driver, index) in item.dutyDetailDriverDtoList" :key="index">{{index > 0 ? ',' : ''}}{{driver.driver}}</span>
+                  </span>
+                </td>
+                <td class="dutylist-table-label" width="150">值班车辆</td>
+                <td class="dutylist-table-inputvaluetd" :title="addArray(item.dutyDetailVehicleDtoList, 'vehicle')">
+                  <span class="dutylist-table-inputvalue" v-if="item.dutyDetailVehicleDtoList.length < 1" @click="viewHandle(dataList.id)">—</span>
+                  <span class="dutylist-table-inputvalue" v-else @click="viewHandle(dataList.id)">
+                    <span v-for="(vehicle, index) in item.dutyDetailVehicleDtoList" :key="index">{{index > 0 ? ',' : ''}}{{vehicle.vehicle}}</span>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="dutylist-table-label" width="150">值班说明</td>
+                <td colspan="5"><pre class="textarea-pre" @click="viewHandle(dataList.id)">{{item.description ? item.description : '—'}}</pre></td>
+              </tr>
+            </tbody>
+          </table>
+        </span>
       </div>
     </div>
     <!-- 弹窗, 新增、修改 -->
@@ -172,7 +186,7 @@
         this.dataForm.dutyDate = date.solar.year + '-' + date.solar.month + '-' + date.solar.day
         this.getWeekDateList(new Date(this.dataForm.dutyDate))
       },
-      // 切换一天
+      // 切换changekey天
       changeOneDay (changekey) {
         let dutyDate = this.getDateStr(new Date(this.dataForm.dutyDate), changekey)
         this.dataForm.dutyDate = dutyDate.year + '-' + dutyDate.month + '-' + dutyDate.day
@@ -240,6 +254,18 @@
           let state = 'count'
           this.$refs.printList.init(state)
         })
+      },
+      // 拼接数组字段
+      addArray (addr, title) {
+        let addrStr = ''
+        addr.forEach(item => {
+          if (addrStr === '') {
+            addrStr = item[title]
+          } else {
+            addrStr = addrStr + ',' + item[title]
+          }
+        })
+        return addrStr
       },
       // 新增 / 修改
       addOrUpdateHandle (id) {
@@ -316,14 +342,17 @@
 </script>
 
 <style lang="scss" scoped>
+  @import '../../../assets/scss/_variables.scss';
   .datelist-row {
+    // padding-left: 2.1%;
+    font-size: 12px;
     div:last-child {
       border-right: 1px solid #ebeef5;
     }
     .datelist-col {
       cursor: pointer;
       text-align: center;
-      padding: 4px;
+      padding: 6px;
       margin-bottom: 6px;
       border-top: 1px solid #ebeef5;
       border-left: 1px solid #ebeef5;
@@ -331,8 +360,9 @@
       div:last-child {
         border-right: 0px;
       }
-      .lunardate-div {
-        font-size: 12px;
+      .solardate-div {
+        font-size: 13px;
+        padding: 2px;
       }
     }
     div.el-col-1 {
@@ -352,7 +382,7 @@
   .dutylist-table {
     width: 100%;
     margin-bottom: 10px;
-    font-size: 14px;
+    font-size: 12px;
     border-spacing: 0;
     table-layout: fixed;
     border-top: 1px solid #eeeeee;
@@ -377,20 +407,30 @@
     border-left: 1px solid #eeeeee;
   }
   .dutylist-table .dutylist-table-label {
-    background: #f6f6f6;
+    // background: #f6f6f6;
     text-align: right;
+  }
+  .dutylist-table .dutylist-table-inputvaluetd {
+    overflow: hidden;
+    word-break:keep-all;
+    white-space: nowrap;
+  }
+  .dutylist-table .dutylist-table-inputvalue {
+    cursor: pointer;
+  }
+  .dutylist-table .dutylist-table-inputvalue:hover, .textarea-pre:hover {
+    color: $--color-primary;
   }
   .textarea-pre {
     padding: 0px;
     margin: 0px;
+    font-size: 12px;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\5FAE\8F6F\96C5\9ED1", Arial, sans-serif;
-  word-break: break-all;
-  white-space:pre-wrap;
-  white-space:-moz-pre-wrap;
-  white-space:-o-pre-wrap;
-  word-wrap:break-word;
+    word-break: break-all;
+    white-space:pre-wrap;
+    white-space:-moz-pre-wrap;
+    white-space:-o-pre-wrap;
+    word-wrap:break-word;
+    cursor: pointer;
   }
-</style>
-<style>
-
 </style>

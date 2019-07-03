@@ -12,11 +12,11 @@
         <thead>
           <tr>
             <td class="zebra-table-label" width="80">日期</td>
-            <td colspan="2">{{dataForm.dutyDate && dataForm.week ? dataForm.dutyDate + ' ' + dataForm.week : dataForm.dutyDate && !dataForm.week ? dataForm.dutyDate + ' ' + '—' : dataForm.dutyDate && !dataForm.week ? dataForm.dutyDate + ' ' + '—' : '—'}}</td>
+            <td colspan="2"><div class="zebra-table-scoll">{{dataForm.dutyDate && dataForm.week ? dataForm.dutyDate + ' ' + dataForm.week : dataForm.dutyDate && !dataForm.week ? dataForm.dutyDate + ' ' + '—' : dataForm.dutyDate && !dataForm.week ? dataForm.dutyDate + ' ' + '—' : '—'}}</div></td>
             <td class="zebra-table-label" width="100">值班领导</td>
-            <td colspan="2">{{dataForm.leader ? dataForm.leader : '—'}}</td>
+            <td colspan="2"><div class="zebra-table-scoll">{{dataForm.leader ? dataForm.leader : '—'}}</div></td>
             <td colspan="2" class="zebra-table-label" width="200">值班科长（主任）</td>
-            <td colspan="2">{{dataForm.director ? dataForm.director : '—'}}</td>
+            <td colspan="2"><div class="zebra-table-scoll">{{dataForm.director ? dataForm.director : '—'}}</div></td>
           </tr>
         </thead>
       </table>
@@ -24,15 +24,15 @@
         <tbody>
           <tr>
             <td class="zebra-table-label" width="80">时分</td>
-            <td>{{item.logTime ? item.logTime : '—'}}</td>
+            <td><div class="zebra-table-scoll">{{item.logTime ? item.logTime : '—'}}</div></td>
             <td class="zebra-table-label" width="90">值班人员</td>
-            <td>{{item.watchman ? item.watchman : '—'}}</td>
+            <td><div class="zebra-table-scoll">{{item.watchman ? item.watchman : '—'}}</div></td>
             <td class="zebra-table-label" width="140">来电（来访）单位</td>
-            <td>{{item.callVisitUnit ? item.callVisitUnit : '—'}}</td>
+            <td><div class="zebra-table-scoll">{{item.callVisitUnit ? item.callVisitUnit : '—'}}</div></td>
             <td class="zebra-table-label" width="140">来电（来访）人员</td>
-            <td>{{item.callVisitPerson ? item.callVisitPerson : '—'}}</td>
+            <td><div class="zebra-table-scoll">{{item.callVisitPerson ? item.callVisitPerson : '—'}}</div></td>
             <td class="zebra-table-label" width="90">联系电话</td>
-            <td>{{item.contactNumber ? item.contactNumber : '—'}}</td>
+            <td><div class="zebra-table-scoll">{{item.contactNumber ? item.contactNumber : '—'}}</div></td>
           </tr>
           <tr>
             <td colspan="3" class="zebra-table-header" width="150">值班登记内容及拟办意见</td>
@@ -157,7 +157,7 @@ export default {
 .zebra-table {
     width: 100%;
     margin-bottom: 10px;
-    font-size: 14px;
+    font-size: 12px;
     border-spacing: 0;
     table-layout: fixed;
     border-top: 1px solid #eeeeee;
@@ -174,7 +174,7 @@ export default {
 //   width: 100%;
 // } 
 .zebra-table thead tr td,.zebra-table tbody tr td {
-    padding: 8px 12px;
+    // padding: 8px 12px;
     border-right: 1px solid #eeeeee;
     border-bottom: 1px solid #eeeeee;
     word-break:break-all;
@@ -191,12 +191,20 @@ export default {
 }
 
 .zebra-table .zebra-table-label {
-    background: #f6f6f6;
+    // background: #f6f6f6;
+    padding: 4px 12px;
     text-align: right;
 }
 .zebra-table .zebra-table-header {
-  background: #f6f6f6;
+  // background: #f6f6f6;
+    padding: 8px 12px;
   text-align: center;
+}
+.zebra-table-scoll {
+  padding: 4px 12px;
+  height: 34px;
+  line-height: 26px;
+  overflow-y: auto;
 }
 .el-date-editor.el-input, .el-date-editor.el-input__inner {
   width: 100%;
@@ -205,7 +213,7 @@ export default {
   position: relative;
 }
 .zebra-table .textarea-pre {
-  padding: 0px;
+  padding: 4px 12px;
   margin: 0px;
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\5FAE\8F6F\96C5\9ED1", Arial, sans-serif;
   word-break: break-all;

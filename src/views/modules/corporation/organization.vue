@@ -10,42 +10,30 @@
     :before-close="handleClose">
     <div class="orga-select-div" v-loading="!submitAble">
     <el-row>
-      <el-col :span="8">
-        <el-cascader
-          :props="props2"
-          expand-trigger="click"
-          :change-on-select="true"
-          :show-all-levels="false"
-          :options="areaTree"
-          v-model="area"
-          @change="areaSelectFilter"
-          clearable>
-        </el-cascader>
-      </el-col>
-      <el-col :span="8">
+      <!--<el-col :span="12">-->
+        <!--<el-cascader :props="props2" expand-trigger="click" :change-on-select="true" :show-all-levels="false"-->
+          <!--:options="areaTree" v-model="area" @change="areaSelectFilter" clearable>-->
+        <!--</el-cascader>-->
+      <!--</el-col>-->
+      <el-col :span="12">
         <el-input
           placeholder="输入关键字进行过滤"
           v-model="filterText"
-          @blur="selectData(filterText)">
+          @blur="selectData(filterText)"
+          clearable>
         </el-input>
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="24">
-        <el-card class="box-card height1">
-          <el-tree
-            ref="tree"
-            :data="dataTree"
-            :style="heightStyle"
-            :props="props"
-            node-key="id"
-            :default-expanded-keys="dataKeyList"
-            :filter-node-method="filterNode">
-            <span slot-scope="{ node, data }">
-              <span v-if="data.type !== 0">
-                <el-checkbox v-model="data.checked" @change="checkboxChange(data)"><i :class="node.icon"></i> {{ node.label }}</el-checkbox>
+        <el-card class="box-card height1" shadow="never" style="width: 100%">
+          <el-tree ref="tree" :data="dataTree" style="height: 300px" :default-expand-all="expandAll"
+            :props="props" node-key="id" :default-expanded-keys="dataKeyList" :filter-node-method="filterNode" :expand-on-click-node="false">
+            <span slot-scope="{ node, data }" style="margin-right: 10px;">
+              <span v-if="data.type === 1">
+                <el-checkbox v-model="data.checked" :disabled="data.disabled" @change="checkboxChange(data, data.checked)"><i :class="node.icon"></i> {{node.label}}</el-checkbox>
               </span>
-              <span v-else-if="data.type === 0">
+              <span v-else-if="data.type !== 1">
                 <i :class="node.icon"></i> {{ node.label }}
               </span>
             </span>
@@ -55,7 +43,7 @@
     </el-row>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button type="success" plain @click="submitSelect" :loading="!submitAble">提交</el-button>
+      <el-button type="primary" @click="submitSelect" :loading="!submitAble">提交</el-button>
       <el-button @click="visible = false" :loading="!submitAble">关闭</el-button>
     </span>
   </el-dialog>
@@ -63,16 +51,13 @@
 
 <script>
     export default {
+      props: {
+        expandAll: false // 树全展开标识
+      },
       data () {
         return {
           props: { // 绑定数据名称和子集
-            label: function (data, node) {
-              if (data.areaName) {
-                return data.areaName
-              } else {
-                return data.orgName
-              }
-            },
+            label: 'label',
             children: 'children'
           },
           props2: { // 绑定数据名称和子集
@@ -87,9 +72,6 @@
           screenText: '',
           flag: false,
           visible: false,
-          heightStyle: {
-            'height': '300px'
-          },
           areaTree: [], // 地区树
           area: [], // 地区树选中地区
           children: '',
@@ -100,21 +82,25 @@
           stylePrototype: '', // 样式原型
           submitAble: true,
           isRadio: false, // 是否单选
-          areaRoot: ''
+          areaRoot: '',
+          backfillList: [], // 回填list
+          backfillIsDisabled: false
         }
       },
       methods: {
-        init (isRadio, area) {
+        init (isRadio, arr, disableFlag, area) {
           this.visible = true
           this.isRadio = isRadio
+          if (arr && arr.length > 0) {
+            this.backfillIsDisabled = disableFlag
+            this.backfillList = arr
+          } else {
+            this.backfillIsDisabled = false
+            this.backfillList = []
+          }
           this.areaRoot = area
           this.queryArea(area)
           this.initTreeData(area)
-          // this.$nextTick(() => {
-          //   let height = document.getElementsByClassName('el-dialog__body')[0].clientHeight - 100
-          //   this.heightStyle.height = height - 90 + 'px'
-          //   // this.$refs.jg.style.setProperty('.test .el-tree-node', '100px')
-          // })
         },
         // 树型组件自带过滤器调用方法
         filterNode (value, data) {
@@ -127,8 +113,9 @@
         },
         // 加载初始化节点数据
         initTreeData (area) {
+          this.submitAble = false
           this.$http({
-            url: this.$http.adornUrl(`/api-admin/org/pickOrg/init/tree`),
+            url: this.$http.adornUrl(`/api-admin/org/pickOrg/fullModule/pickOrgModuleTest`), // /api-admin/org/pickOrg/init/tree
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
@@ -136,48 +123,84 @@
               for (let i in data.resultData) {
                 this.dataKeyList.push(data.resultData[i].id)
               }
-              this.resultDataSet(data.resultData)
+              this.resultDataHandle(data.resultData)
               this.dataTree = data.resultData
               this.enteTree = data.resultData
               if (area) {
                 this.areaSelect(this.enteTree, area)
               }
+              this.$nextTick(() => {
+                this.backfillMethod()
+              })
             } else {
               this.$message.error(data.msg)
             }
+            this.submitAble = true
           }).catch((e) => {
+            this.submitAble = true
             this.$message.error('初始化加载数据失败' + e)
           })
         },
-        resultDataSet (data) {
-          for (let i in data) {
-            let resultData = data[i]
-            resultData.checked = false
-            if (resultData['type'] === 0) {
-              resultData['disabled'] = true
+        resultDataHandle (data) {
+          // 地区：0，机构：1，类型：2
+          for (let i = 0; i < data.length; i++) {
+            data[i].children = data[i].children ? data[i].children : []
+            let children = data[i].children
+            for (let j = 0; j < children.length; j++) {
+              children[j]['type'] = data[i].type
             }
-            if (resultData['orgTreeVoList'] && resultData['orgTreeVoList'].length > 0) {
-              let arr = JSON.parse(JSON.stringify(resultData['orgTreeVoList']))
-              if (resultData['children']) {
-                arr.push(...resultData['children'])
-                resultData['children'] = arr
-              } else {
-                resultData['children'] = resultData['orgTreeVoList']
+            let arr = []
+            let typeList = data[i].typeTreeVoList
+            if (typeList && typeList.length > 0) {
+              for (let j = 0; j < typeList.length; j++) {
+                typeList[j]['type'] = 2
+                arr.push(JSON.parse(JSON.stringify(typeList[j])))
               }
-            } else {
-              resultData['orgTreeVoList'] = []
             }
-            if (resultData.type === 0) {
-              resultData['disabled'] = true
-              resultData['icon'] = 'el-icon-info'
-            } else if (resultData.type === 1) {
-              resultData['icon'] = 'el-icon-shouye'
+            let orgList = data[i].orgTreeVoList
+            if (orgList && orgList.length > 0) {
+              for (let j = 0; j < orgList.length; j++) {
+                orgList[j]['type'] = 1
+                arr.push(JSON.parse(JSON.stringify(orgList[j])))
+              }
             }
-            if (resultData['children'] && resultData['children'].length > 0) {
-              this.resultDataSet(resultData['children'])
-            } else {
-              resultData['children'] = []
+            data[i].children.unshift(...arr)
+            data[i]['checked'] = false
+            if (data[i]['type']) {
+              data[i]['icon'] = 'el-icon-info'
+            } else if (data[i].type === 1) {
+              data[i]['icon'] = 'el-icon-shouye'
             }
+            if (data[i].children.length > 0) {
+              this.resultDataHandle(data[i].children)
+            }
+            // let resultData = data[i]
+            // resultData.checked = false
+            // if (resultData['type'] === 0) {
+            //   resultData['disabled'] = true
+            // }
+            // if (resultData['orgTreeVoList'] && resultData['orgTreeVoList'].length > 0) {
+            //   let arr = JSON.parse(JSON.stringify(resultData['orgTreeVoList']))
+            //   if (resultData['children']) {
+            //     arr.push(...resultData['children'])
+            //     resultData['children'] = arr
+            //   } else {
+            //     resultData['children'] = resultData['orgTreeVoList']
+            //   }
+            // } else {
+            //   resultData['orgTreeVoList'] = []
+            // }
+            // if (resultData.type === 0) {
+            //   resultData['disabled'] = true
+            //   resultData['icon'] = 'el-icon-info'
+            // } else if (resultData.type === 1) {
+            //   resultData['icon'] = 'el-icon-shouye'
+            // }
+            // if (resultData['children'] && resultData['children'].length > 0) {
+            //   this.resultDataHandle(resultData['children'])
+            // } else {
+            //   resultData['children'] = []
+            // }
           }
         },
         handleClose (done) {
@@ -244,12 +267,6 @@
         // 确认提交
         submitSelect () {
           let dataRecieve = []
-          // if (this.isRadio) {
-          //   let arr = this.$refs.tree.getCheckedNodes(false, false)
-          //   dataRecieve = arr && arr.length > 0 ? [arr[0]] : ''
-          // } else {
-          //   dataRecieve = this.$refs.tree.getCheckedNodes()
-          // }
           this.getChecked(this.dataTree, dataRecieve)
           this.$nextTick(() => {
             this.$emit('selectOrgaDate', dataRecieve)
@@ -267,12 +284,20 @@
             }
           }
         },
+        // 回填方法
+        backfillMethod () {
+          for (let i in this.backfillList) {
+            this.setChecked2(this.dataTree, this.backfillList[i])
+          }
+        },
         // 勾选树节点
-        checkboxChange (node) {
-          if (this.isRadio) {
+        checkboxChange (node, check) {
+          this.submitAble = false
+          if (this.isRadio && check) {
             let id = node.id
             this.setChecked(this.dataTree, id)
           }
+          this.submitAble = true
         },
         setChecked (data, id) {
           for (let i in data) {
@@ -280,8 +305,22 @@
               data[i].checked = true
             } else {
               data[i].checked = false
+            }
+            if (data[i].children && data[i].children.length > 0) {
+              this.setChecked(data[i].children, id)
+            }
+          }
+        },
+        setChecked2 (data, id) {
+          for (let i in data) {
+            if (data[i].id === id) {
+              data[i].checked = true
+              if (this.backfillIsDisabled) {
+                data[i]['disabled'] = true
+              }
+            } else {
               if (data[i].children && data[i].children.length > 0) {
-                this.setChecked(data[i].children, id)
+                this.setChecked2(data[i].children, id)
               }
             }
           }

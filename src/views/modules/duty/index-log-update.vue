@@ -3,7 +3,7 @@
     :title="'修改值班日志'"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    width="70%"
+    width="75%"
     top="50px"
     class="emergency-store-detail"
   >
@@ -11,7 +11,7 @@
       <el-form ref="datalogForm" :model="datalogForm" :rules="datalogRule" label-width="130px">
         <div class="add-table-list-trborder">
           <div class="add-table-list-50">选择发送方式发送给值班领导、值班科长</div>
-          <div class="add-table-list-50"><el-button class="list-buttom" size="big" @click="openSendeare">{{sendShow ? '取消自定义内容' : '自定义发送内容'}}</el-button></div>
+          <div class="add-table-list-50"><el-button class="list-buttom" size="mini" @click="openSendeare">{{sendShow ? '取消自定义内容' : '自定义发送内容'}}</el-button></div>
           <div class="add-table-list-50">
             <el-checkbox-group v-model="datalogForm.remindersArr">
               <el-checkbox v-for="(item, index) in remindersList" :key="index" :label="item.lable"></el-checkbox>
@@ -34,48 +34,48 @@
                 style="width:100%"
                 format="yyyy-MM-dd HH:mm"
                 @blur="selectLogDate"
-                placeholder="时间">
+                placeholder="">
               </el-date-picker>
             </el-form-item>
           </div>
           <div class="add-table-list-50">
             <el-form-item label="来电（来访）单位" prop="callVisitUnit">
-              <el-input v-model="datalogForm.callVisitUnit" placeholder="来电（来访）单位"></el-input>
+              <el-input v-model="datalogForm.callVisitUnit" placeholder=""></el-input>
             </el-form-item>
           </div>
           <div class="add-table-list-50 add-table-list-rb-50">
             <el-form-item label="来电（来访）人员" prop="callVisitPerson">
-              <el-input v-model="datalogForm.callVisitPerson" placeholder="来电（来访）人员"></el-input>
+              <el-input v-model="datalogForm.callVisitPerson" placeholder=""></el-input>
             </el-form-item>
           </div>
           <div class="add-table-list-50">
             <el-form-item label="联系电话" prop="contactNumber">
-              <el-input v-model="datalogForm.contactNumber" placeholder="联系电话"></el-input>
+              <el-input v-model="datalogForm.contactNumber" placeholder=""></el-input>
             </el-form-item>
           </div>
           <div class="add-table-list-100">
             <el-form-item label="值班登记内容及拟办意见" prop="contentOpinion">
-              <el-input v-model="datalogForm.contentOpinion" type="textarea" placeholder="值班登记内容及拟办意见" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+              <el-input v-model="datalogForm.contentOpinion" type="textarea" placeholder="" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
               <div v-if="datalogForm.crtDutyPersonSign || datalogForm.udtDirectorSign" class="table-list-sign"><span>{{datalogForm.crtDutyPersonSign && datalogForm.udtDutyPersonSign ? datalogForm.crtDutyPersonSign + ' ' + datalogForm.udtDutyPersonSign : datalogForm.crtDutyPersonSign ? datalogForm.crtDutyPersonSign : '—' }}</span></div>
             </el-form-item>
           </div>
           <div class="add-table-list-100">
             <el-form-item label="科长（主任）意见" prop="directorOpinion" style="position: relative">
               <el-button size="mini" class="textarea-button" v-show="directorOpinionAble" @click="fillout('director')">代写</el-button>
-              <el-input v-model="datalogForm.directorOpinion" type="textarea" :disabled="directorOpinionEnable" placeholder="科长（主任）意见" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+              <el-input v-model="datalogForm.directorOpinion" type="textarea" :disabled="directorOpinionEnable" placeholder="" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
               <div v-if="datalogForm.crtDirectorSign || datalogForm.udtDirectorSign" class="table-list-sign"><span>{{datalogForm.crtDirectorSign && datalogForm.udtDirectorSign ? datalogForm.crtDirectorSign + ' ' + datalogForm.udtDirectorSign : datalogForm.crtDirectorSign ? datalogForm.crtDirectorSign : '—' }}</span></div>
             </el-form-item>
           </div>
           <div class="add-table-list-100">
             <el-form-item label="值班领导批示" prop="leaderInstructions" style="position: relative">
               <el-button size="mini" class="textarea-button" v-show="leaderInstructionsAble" @click="fillout('leader')">代写</el-button>
-              <el-input v-model="datalogForm.leaderInstructions" type="textarea" :disabled="leaderInstructionsEnable" placeholder="值班领导批示" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+              <el-input v-model="datalogForm.leaderInstructions" type="textarea" :disabled="leaderInstructionsEnable" placeholder="" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
               <div v-if="datalogForm.crtLeaderSign || datalogForm.udtLeaderSign" class="table-list-sign"><span>{{datalogForm.crtLeaderSign && datalogForm.udtLeaderSign ? datalogForm.crtLeaderSign + ' ' + datalogForm.udtLeaderSign : datalogForm.crtLeaderSign ? datalogForm.crtLeaderSign : '—' }}</span></div>
             </el-form-item>
           </div>
           <div class="add-table-list-100">
             <el-form-item label="处理过程或处理结果" prop="processResult">
-              <el-input v-model="datalogForm.processResult" type="textarea" :disabled="processResultEnable" placeholder="处理过程或处理结果" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+              <el-input v-model="datalogForm.processResult" type="textarea" :disabled="processResultEnable" placeholder="" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
               <div v-if="datalogForm.crtProcessSign || datalogForm.udtProcessSign" class="table-list-sign"><span>{{datalogForm.crtProcessSign && datalogForm.udtProcessSign ? datalogForm.crtProcessSign + ' ' + datalogForm.udtProcessSign : datalogForm.crtProcessSign ? datalogForm.crtProcessSign : '—' }}</span></div>
             </el-form-item>
           </div>
@@ -83,7 +83,7 @@
       </el-form>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button type="success" v-if="isAuth('duty:log:data:update')" @click="saveDutylog" :loading="!submitAble">提交</el-button>
+      <el-button type="primary" v-if="isAuth('duty:log:data:update')" @click="saveDutylog" :loading="!submitAble">提交</el-button>
       <el-button type="danger" v-if="isAuth('duty:log:data:delete')" @click="deleteDutylog" :loading="!submitAble">删除</el-button>
       <el-button @click="visible = false" :loading="!submitAble">关闭</el-button>
     </span>
@@ -133,33 +133,33 @@ export default {
       },
       datalogRule: {
         logTime: [
-          { required: true, message: '时间 不能为空', trigger: 'blur' },
+          { required: true, message: '不能为空', trigger: 'blur' },
           { validator: checklogTime, trigger: 'blur' }
         ],
         sendContent: [
-          { min: 1, max: 5000, message: '发送内容 字符数不能大于5000个字符', trigger: 'blur' }
+          { min: 1, max: 5000, message: ' 字符数不能大于5000个字符', trigger: 'blur' }
         ],
         callVisitUnit: [
-          { min: 1, max: 100, message: '来电（来访）单位 字符数不能大于100个字符', trigger: 'blur' }
+          { min: 1, max: 100, message: '字符数不能大于100个字符', trigger: 'blur' }
         ],
         callVisitPerson: [
-          { min: 1, max: 100, message: '来电（来访）人员 字符数不能大于100个字符', trigger: 'blur' }
+          { min: 1, max: 100, message: '字符数不能大于100个字符', trigger: 'blur' }
         ],
         contactNumber: [
-          { min: 1, max: 100, message: '联系电话 字符数不能大于100个字符', trigger: 'blur' }
+          { min: 1, max: 100, message: '字符数不能大于100个字符', trigger: 'blur' }
         ],
         contentOpinion: [
-          { required: true, message: '值班登记内容及拟办意见 不能为空', trigger: 'blur' },
-          { min: 1, max: 1000, message: '值班登记内容及拟办意见 字符数不能大于1000个字符', trigger: 'blur' }
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { min: 1, max: 1000, message: '字符数不能大于1000个字符', trigger: 'blur' }
         ],
         directorOpinion: [
-          { min: 1, max: 1000, message: '科长（主任）意见 字符数不能大于1000个字符', trigger: 'blur' }
+          { min: 1, max: 1000, message: '字符数不能大于1000个字符', trigger: 'blur' }
         ],
         leaderInstructions: [
-          { min: 1, max: 1000, message: '值班领导批示 字符数不能大于1000个字符', trigger: 'blur' }
+          { min: 1, max: 1000, message: '字符数不能大于1000个字符', trigger: 'blur' }
         ],
         processResult: [
-          { min: 1, max: 1000, message: '处理过程结果 字符数不能大于1000个字符', trigger: 'blur' }
+          { min: 1, max: 1000, message: '字符数不能大于1000个字符', trigger: 'blur' }
         ]
       },
       remindersList: [{

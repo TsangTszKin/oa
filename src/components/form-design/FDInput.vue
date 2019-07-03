@@ -3,7 +3,7 @@
     <el-form-item label="标题">
       <el-input v-model="data.title" size="small"></el-input>
     </el-form-item>
-    <el-form-item label="表字段映射">
+    <el-form-item label="表字段code">
       <el-input v-model="data.code" size="small"></el-input>
     </el-form-item>
     <el-form-item label="宽度">
@@ -62,7 +62,7 @@ export default {
           title: '单行文本',
           type: 'input',
           code: '',
-          icon: '/src/assets/img/form-design/input.png',
+          icon: '/static/img/form-design/input.png',
           options: {
             width: '100%',
             defaultValue: '',
@@ -110,7 +110,7 @@ export default {
         title: '单行文本',
         type: 'input',
         code: '',
-        icon: '/src/assets/img/form-design/input.png',
+        icon: '/static/img/form-design/input.png',
         options: {
           width: '100%',
           defaultValue: '',
@@ -156,7 +156,6 @@ export default {
   watch: {
     data: {
       handler: function (value, oldValue) {
-        console.log('FDinput watch')
         let newFormList = common.deepClone(
           this.$store.state.formDesign.formList
         )

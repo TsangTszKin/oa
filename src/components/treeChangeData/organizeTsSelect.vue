@@ -1,13 +1,17 @@
 <template>
   <div class="organizeTsSelect-container">
     <treeselect
+      ref="organizeTsSelect"
       :options="typeList"
       :disable-branch-nodes="false"
+      :flat="true"
       :load-options="loadTypeList" 
       :auto-load-root-options="false"
       :closeOnSelect="closeOnSelect"
       :normalizer="normalizer"
       :maxHeight="maxHeight"
+      noOptionsText="暂无数据"
+      noResultsText="暂无匹配数据"
       @open="open"
       @input="validate"
       @select="selectData"
@@ -34,13 +38,17 @@
             id: node.id,
             label: node.orgName,
             children: node.children,
+            isDisabled: !node.permission,
             isDefaultExpanded: true
           }
         }
       }
     },
     props: {
-      operTypeKey: String,     // 业务key
+      operTypeKey: {           // 业务key
+        type: String,
+        default: 'commonOrgModule'
+      },
       maxHeight: Number,      // 最大高度
       closeOnSelect: Boolean, // 选中时是否关闭
       placeholder: String     // 提示

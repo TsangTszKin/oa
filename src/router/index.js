@@ -38,7 +38,6 @@ const mainRoutes = {
     { path: '/system-form', component: _import('system/form/List'), name: 'system-form', meta: { title: '表单列表', isTab: true } }, // ,
     { path: '/system-table', component: _import('system/table/List'), name: 'system-table', meta: { title: '业务表列表', isTab: true } }, // ,
 
-    { path: '/system-form-save/:id?', component: _import('system/form/Save'), name: 'system-form-save', meta: { title: '表单设计', isTab: false } }, // ,
     { path: '/system-table-save/:id?', component: _import('system/table/Save'), name: 'system-table-save', meta: { title: '业务表设计', isTab: true } }, // ,
     { path: '/system-workflow-model', component: _import('system/workflow-model/List'), name: 'system-workflow-model', meta: { title: '流程设计列表', isTab: true } }, // ,
     { path: '/system-workflow-process-version', component: _import('system/workflow-process-version/List'), name: 'system-workflow-process-version', meta: { title: '流程管版本列表', isTab: true } }, // ,

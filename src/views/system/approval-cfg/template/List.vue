@@ -26,7 +26,7 @@
         <template slot-scope="scope">
           <el-tag v-if="scope.row.templateType === 1">内部</el-tag>
           <el-tag v-if="scope.row.templateType === 2">外部</el-tag>
-          </template>
+        </template>
       </el-table-column>
       <!-- <el-table-column prop="workFlowId" header-align="center" align="center" label="工作流"></el-table-column> -->
       <el-table-column prop="dyncFormName" header-align="center" align="center" label="表单"></el-table-column>
@@ -38,13 +38,14 @@
         <template slot-scope="scope">
           <el-tag v-if="scope.row.state === 0">停用</el-tag>
           <el-tag v-if="scope.row.state === 1">启用</el-tag>
-          </template>
+        </template>
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="200" label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.templateId)">修改</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.templateId)">删除</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.templateId)">启用</el-button>
+          <el-button type="text" size="small" @click="changeStatus(scope.row.templateId, 1)" v-if="scope.row.state === 0">启用</el-button>
+            <el-button type="text" size="small" @click="changeStatus(scope.row.templateId, 0)" v-if="scope.row.state === 1">停用</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.templateId)">上移</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.templateId)">下移</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.templateId)">受理材料</el-button>
@@ -105,7 +106,7 @@ export default {
     },
     // 获取数据列表
     getDataList () {
-    //   this.dataList = [{ name: 'test' }]
+      //   this.dataList = [{ name: 'test' }]
       this.dataListLoading = true
       this.$http({
         url: this.$http.adornUrl('/api-oa/approval/Template/list'),
@@ -183,6 +184,27 @@ export default {
             this.$message.error(data.msg)
           }
         })
+      })
+    },
+    changeStatus (id, status) {
+      this.$http({
+        url: this.$http.adornUrl(
+          `/api-oa//approval/Template/changeState/${id}/${status}`
+        ),
+        method: 'post'
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.$message({
+            message: '操作成功',
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.getDataList()
+            }
+          })
+        } else {
+          this.$message.error(data.msg)
+        }
       })
     }
   },

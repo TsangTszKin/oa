@@ -20,9 +20,9 @@
           @blur="selectData(filterText)">
         </el-input>
       </el-col>
-      <el-col :span="4">
-        <el-button @click="selectAllForOne">选取整项</el-button>
-      </el-col>
+      <!--<el-col :span="4">-->
+        <!--<el-button @click="selectAllForOne">选取整项</el-button>-->
+      <!--</el-col>-->
     </el-row>
     <el-row>
       <el-col :span="8">
@@ -85,7 +85,7 @@
               <span>主办</span>
             </div>
             <div v-for="(item, index) in cardBodyListSelected1" class="text item">
-              <span><el-checkbox v-model="item.flag" @change="cancelPerson(index, '1')">{{item.username}}</el-checkbox><a class="card-a" @click="clickA(index, '1')">转阅知</a></span>
+              <span><el-checkbox v-model="item.flag" @change="cancelPerson(index, '1')">{{item.realName}}</el-checkbox><a class="card-a" @click="clickA(index, '1')">转阅知</a></span>
             </div>
           </el-card>
         </el-row>
@@ -95,7 +95,7 @@
               <span>阅知</span>
             </div>
             <div v-for="(item, index) in cardBodyListSelected2" class="text item">
-              <span><el-checkbox v-model="item.flag" @change="cancelPerson(index, '2')">{{item.username}}</el-checkbox><a class="card-a" @click="clickA(index, '2')">转主办</a></span>
+              <span><el-checkbox v-model="item.flag" @change="cancelPerson(index, '2')">{{item.realName}}</el-checkbox><a class="card-a" @click="clickA(index, '2')">转主办</a></span>
             </div>
           </el-card>
         </el-row>
@@ -351,7 +351,7 @@
           if (data.type === 1) { // && data.id !== this.selectedListObj.id
             this.selectedListObj = {
               id: data.id,
-              username: data.orgName
+              realName: data.orgName
             }
             this.$http({
               url: this.$http.adornUrl(`/api-admin/person/orgFindPerson/list`),
@@ -415,7 +415,7 @@
           if (this.screenText) {
             let arr = []
             for (let i in this.cardBodyListPrototype) {
-              if (this.cardBodyListPrototype[i].username.indexOf(this.screenText) > -1) {
+              if (this.cardBodyListPrototype[i].realName.indexOf(this.screenText) > -1) {
                 arr.push(this.cardBodyListPrototype[i])
               }
             }
@@ -430,7 +430,7 @@
           for (let i in this.cardBodyList) {
             let divDOM = document.getElementById(this.cardBodyList[i].id)
             let lableDOM = divDOM.getElementsByClassName('el-checkbox__label')[0]
-            if (this.cardBodyList[i].username === this.screenText) {
+            if (this.cardBodyList[i].realName === this.screenText) {
               this.stylePrototype = JSON.parse(JSON.stringify(lableDOM.style))
               document.getElementsByClassName('card-div2')[0].scrollTop = divDOM.offsetTop + lableDOM.offsetTop - 270
               lableDOM.setAttribute('style', 'color: red')

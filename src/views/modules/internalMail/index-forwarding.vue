@@ -5,7 +5,7 @@
       :close-on-click-modal="false"
       custom-class="outsidePipeline-dialog"
       :visible.sync="visible"
-      @close="$refs.sendeMail.clearAutosave()"
+      @close="$refs.sendeMail.clearAutosave(); $emit('closeForwarding')"
       width="80%"
       top="50px">
       <div v-loading="!submitAble" :style="{paddingBottom: footerShow ? '' : '50px'}">

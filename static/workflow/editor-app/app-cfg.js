@@ -21,6 +21,6 @@
 var ACTIVITI = ACTIVITI || {}
 
 ACTIVITI.CONFIG = {
-  'contextRoot': localStorage.baseUrl + '/api-oa'
+  'contextRoot': localStorage.baseUrl + '/api-flow'
 
 }

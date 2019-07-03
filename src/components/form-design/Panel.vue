@@ -95,6 +95,7 @@ export default {
         form = evt.added.element
         let newIndex = evt.added.newIndex
         form.key = common.getGuid()
+        form.code = `code_${common.getGuid2()}`
         newFormList.splice(newIndex, 0, form)
         this.$store.commit('formDesign/updateShowType', form.type)
         this.$store.commit('formDesign/updateActiveKey', form.key)
@@ -127,6 +128,12 @@ export default {
     syncList (value) {
       this.list = common.deepClone(value)
       bus.$emit('formMenu.init')
+      this.$emit('callBack', value)
+    },
+    init (value) {
+      this.list = value
+      bus.$emit('formMenu.init')
+      this.$store.dispatch('formDesign/setFormList', common.deepClone(value))
     }
   },
   watch: {

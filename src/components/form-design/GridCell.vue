@@ -2,7 +2,7 @@
   <div class="cell" :class="{'cell-active': data.key === $store.state.formDesign.activeKey}">
     <div @click="activeCell">
       <el-form-item
-        v-if="data.type"
+        v-if="data.type !== 'title'"
         :label="data.title+`${data.options.required?'（必填）':''}`"
         :prop="data.key"
       >
@@ -99,6 +99,11 @@
           <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
       </el-form-item>
+       <p
+        v-if="data.type === 'title'"
+        :style="{'text-align': data.options.align, 'font-size': data.options.fontSize}"
+        @click="activeCell"
+      >{{data.value}}</p>
     </div>
     <i
       class="action-copy"
@@ -178,6 +183,7 @@ export default {
       }
       let copyForm = common.deepClone(formList[newIndex])
       copyForm.key = common.getGuid()
+      copyForm.code = `code_${common.getGuid2()}`
       formList.splice(newIndex + 1, 0, copyForm)
       this.$store.commit(
         'formDesign/updateActiveForm',

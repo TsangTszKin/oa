@@ -29,7 +29,7 @@ export default {
         return {
           title: '栅格布局',
           type: 'grid',
-          icon: '/src/assets/img/form-design/grid.png',
+          icon: '/static/img/form-design/grid.png',
           cols: [{
             span: 12,
             list: [
@@ -47,7 +47,7 @@ export default {
       data: {
         title: '栅格布局',
         type: 'grid',
-        icon: '/src/assets/img/form-design/grid.png',
+        icon: '/static/img/form-design/grid.png',
         cols: [{
           span: 12,
           list: [

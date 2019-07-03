@@ -2,8 +2,8 @@
   <div class="cell" :class="{'cell-active': data.key === $store.state.formDesign.activeKey}">
     <div>
       <el-form-item
-        v-if="data.type !== 'grid'"
-        :label="data.title+`${data.options.required?'（必填）':''}`"
+        v-if="data.type !== 'grid' && data.type !== 'title'"
+        :label="data.title"
         :prop="data.key"
         @click.native="activeCell"
       >
@@ -100,6 +100,11 @@
           <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
       </el-form-item>
+      <p
+        v-if="data.type === 'title'"
+        :style="{'text-align': data.options.align, 'font-size': data.options.fontSize}"
+        @click="activeCell"
+      >{{data.value}}</p>
       <FDGridPanel
         v-else
         :propData="data"
@@ -126,6 +131,7 @@
 <script>
 import common from '@/utils/common'
 import FDGridPanel from '@/components/form-design/FDGridPanel'
+import bus from '@/utils/bus'
 
 export default {
   components: {
@@ -148,6 +154,7 @@ export default {
         return {
           type: '',
           name: '',
+          code: '',
           options: {
             width: '100%',
             defaultValue: '',
@@ -181,6 +188,7 @@ export default {
       }
       let copyForm = common.deepClone(formList[newIndex])
       copyForm.key = common.getGuid()
+      copyForm.code = `code_${common.getGuid2()}`
       formList.splice(newIndex + 1, 0, copyForm)
       this.$store.commit(
         'formDesign/updateActiveForm',
@@ -228,6 +236,7 @@ export default {
       }
     },
     activeCell () {
+      bus.$emit('update.activeName', '1')
       this.$store.commit('formDesign/updateActiveKey', this.data.key)
       this.$store.commit('formDesign/updateShowType', this.data.type)
       this.$store.commit(

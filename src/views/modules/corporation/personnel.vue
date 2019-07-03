@@ -3,44 +3,26 @@
     title="人员选择"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    width="60%"
+    width="80%"
     top="50px"
     append-to-body
     class="person-select"
     :before-close="handleClose">
     <div class="person-select-div" v-if="visible" v-loading="!submitAble">
-    <el-row>
-      <el-col :span="4">
-        <el-cascader
-          :props="props2"
-          expand-trigger="click"
-          :change-on-select="true"
-          :show-all-levels="false"
-          :options="areaTree"
-          v-model="area"
-          @change="areaSelectFilter"
-          placeholder="请选择区域"
-          clearable>
-        </el-cascader>
-      </el-col>
-      <el-col :span="4">
-        <el-input
-          placeholder="输入关键字"
-          v-model="filterText"
-          @blur="selectData(filterText)">
-        </el-input>
-      </el-col>
-      <el-col :span="4">
-        <el-button @click="selectAllForOne">选取整项</el-button>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="8">
-        <el-card class="box-card height1">
+    <el-row style="height: 100%;">
+      <el-col :span="8" style="height: 100%;">
+        <el-card class="box-card" shadow="never" align="left" style="height: 100%;">
+          <div slot="header" class="clearfix">
+            <el-input
+              placeholder="输入关键字"
+              v-model="filterText"
+              @blur="selectData(filterText)">
+            </el-input>
+          </div>
           <el-tree
             ref="tree"
             :data="dataTree"
-            :style="heightStyle"
+            style="width: 100%;height: 100%;"
             node-key="id"
             :props="props"
             @node-click="nodeClick"
@@ -54,50 +36,67 @@
           </el-tree>
         </el-card>
       </el-col>
-      <el-col :span="8">
-        <el-row style="padding-top: 10px">
-          <el-col :span="12">
-            <el-input
-              placeholder="输入关键字"
-              v-model="screenText">
-            </el-input>
-          </el-col>
-          <el-col :span="5">
-            <el-button @click="selectScreen">查询</el-button>
-          </el-col>
-          <el-col :span="5">
-            <el-button @click="listLocation">定位</el-button>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-card class="box-card height2">
+      <el-col :span="8" style="height: 100%;">
+        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="selectPersonAll">可选人员列表</el-checkbox>
+        <el-row style="height: 93.5%;">
+          <el-col :span="24" style="height: 100%;">
+            <el-card class="box-card2" shadow="never" align="left" style="height: 100%;">
               <div slot="header" class="clearfix">
-                <span><el-checkbox v-model="checkAll" @change="selectPersonAll(checkAll)">可选人员列表</el-checkbox></span>
+                <el-row style="padding-top: 5px;">
+                  <el-col :span="12">
+                    <el-input
+                      placeholder="输入关键字"
+                      v-model="screenText"
+                      @change="screenTextChange"
+                      clearable>
+                    </el-input>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-button size="mini" type="primary" style="margin-left: 4px;" @click="selectScreen">查询</el-button>
+                    <el-button size="mini" type="primary" style="margin-left: 0px;" @click="listLocation">定位</el-button>
+                  </el-col>
+                </el-row>
               </div>
-              <div class="card-div">
-                <div v-for="(item, index) in cardBodyList" :id="item.id" class="text item">
-                  <el-checkbox v-model="item.flag" @change="selectPerson(index)">{{item.username}}</el-checkbox>
-                </div>
+              <div class="card-div text item">
+                <el-checkbox-group v-model="checkedPersons" @change="handleCheckedPersonsChange">
+                  <div v-for="(item, index) in cardBodyList" :id="item.id">
+                    <el-checkbox :label="item.id">{{item.realName}}</el-checkbox>
+                  </div>
+                </el-checkbox-group>
               </div>
             </el-card>
           </el-col>
         </el-row>
       </el-col>
-      <el-col :span="8">
-        <el-card class="box-card height1">
+      <el-col :span="8" style="height: 100%;">
+        <span>已选人员列表</span>
+        <el-card class="box-card2" shadow="never" align="left" style="height: 93.5%;">
           <div slot="header" class="clearfix">
-            <span>已选人员列表</span>
+            <el-row style="padding-top: 5px;">
+              <el-col :span="18">
+                <el-input
+                  placeholder="输入关键字"
+                  v-model="selectedScreenText"
+                  @change="selectedScreenTextChange"
+                  clearable>
+                </el-input>
+              </el-col>
+              <el-col :span="6">
+                <el-button size="mini" type="primary" style="margin-left: 4px;" @click="selectedScreen">查询</el-button>
+              </el-col>
+            </el-row>
           </div>
-          <div v-for="(item, index) in cardBodyListSelected" class="text item">
-            <el-checkbox v-model="item.flag" @change="cancelPerson(index)">{{item.username}}</el-checkbox>
-          </div>
+          <el-checkbox-group v-model="checkedPersonsSelected" @change="handleCheckedPersonsSelectedChange">
+            <div v-for="(item, index) in cardBodyListSelectedShow" :id="item.id">
+              <el-checkbox :label="item.id">{{item.realName}}</el-checkbox>
+            </div>
+          </el-checkbox-group>
         </el-card>
       </el-col>
     </el-row>
   </div>
   <span slot="footer" class="dialog-footer">
-    <el-button type="success" plain @click="submitSelect" :loading="!submitAble">提交</el-button>
+    <el-button type="primary" @click="submitSelect" :loading="!submitAble">提交</el-button>
     <el-button @click="visible = false" :loading="!submitAble">关闭</el-button>
   </span>
   </el-dialog>
@@ -127,12 +126,8 @@
           dataTree: [], // 树型组件数据
           dataKeyList: [], // 默认展开节点list
           filterText: '',
-          screenText: '',
           flag: false,
           visible: false,
-          heightStyle: {
-            'height': '300px'
-          },
           areaTree: [], // 地区树
           area: [], // 地区树选中地区
           children: '',
@@ -143,10 +138,74 @@
           stylePrototype: '', // 样式原型
           submitAble: true,
           areaRoot: '',
-          checkAll: false
+          screenText: '',
+          checkAll: false, // aaa
+          isIndeterminate: false,
+          checkedPersons: [],
+          selectedScreenText: '',
+          // checkAllSelected: false,
+          // isIndeterminateSelected: false,
+          checkedPersonsSelected: [],
+          cardBodyListSelectedShow: []
         }
       },
       methods: {
+        selectPersonAll (val) {
+          let arr = []
+          for (let i = 0; i < this.cardBodyList.length; i++) {
+            arr.push(this.cardBodyList[i].id)
+          }
+          this.checkedPersons = val ? arr : []
+          this.isIndeterminate = false
+          this.addSelectedList()
+        },
+        handleCheckedPersonsChange (val) {
+          let valLen = val.length
+          let carBodyLen = this.cardBodyList.length
+          this.checkAll = valLen === carBodyLen
+          this.isIndeterminate = valLen > 0 && valLen < carBodyLen
+          this.addSelectedList()
+        },
+        handleCheckedPersonsSelectedChange (val) {
+          let carBodySelectedLen = this.cardBodyListSelectedShow.length
+          let arr = []
+          for (let i = 0; i < carBodySelectedLen; i++) {
+            if (this.checkedPersonsSelected.indexOf(this.cardBodyListSelectedShow[i].id) > -1) {
+              arr.push(this.cardBodyListSelectedShow[i])
+            } else {
+              this.checkedPersons.splice(this.checkedPersons.indexOf(this.cardBodyListSelectedShow[i].id), 1)
+              for (let j = 0; j < this.cardBodyListSelected.length; j++) {
+                if (this.cardBodyListSelectedShow[i].id === this.cardBodyListSelected[j].id) {
+                  this.cardBodyListSelected.splice(j, 1)
+                  break
+                }
+              }
+              let valLen = this.checkedPersons.length
+              let carBodyLen = this.cardBodyList.length
+              this.checkAll = valLen === carBodyLen
+              this.isIndeterminate = valLen > 0 && valLen < carBodyLen
+            }
+          }
+          // this.cardBodyListSelected = arr
+          this.cardBodyListSelectedShow = arr
+        },
+        addSelectedList () {
+          let carBodyLen = this.cardBodyList.length
+          for (let i = 0; i < carBodyLen; i++) {
+            if (this.checkedPersons.indexOf(this.cardBodyList[i].id) > -1) {
+              if (this.checkedPersonsSelected.indexOf(this.cardBodyList[i].id) === -1) {
+                this.cardBodyListSelected.push(this.cardBodyList[i])
+                this.checkedPersonsSelected.push(this.cardBodyList[i].id)
+              }
+            } else {
+              if (this.checkedPersonsSelected.indexOf(this.cardBodyList[i].id) > -1) {
+                this.cardBodyListSelected.splice(this.checkedPersonsSelected.indexOf(this.cardBodyList[i].id), 1)
+                this.checkedPersonsSelected.splice(this.checkedPersonsSelected.indexOf(this.cardBodyList[i].id), 1)
+              }
+            }
+          }
+          this.cardBodyListSelectedShow = this.cardBodyListSelected
+        },
         init (area) {
           this.visible = true
           this.submitAble = false
@@ -162,21 +221,21 @@
           return data.label.indexOf(value) !== -1
         },
         // 修改文本出发过滤方法
-        filterTextFun () {
-          this.$refs.tree.filter(this.filterText)
-        },
+        // filterTextFun () {
+        //   this.$refs.tree.filter(this.filterText)
+        // },
         // 前端条件过滤数据
         selectData (name) {
           this.$refs.tree.filter(name)
         },
         // 加载节点数据
-        loadNode (node, resolve) {
-          if (node.level === 0) {
-            this.initTreeData(node, resolve)
-          } else {
-            resolve(node.data.children)
-          }
-        },
+        // loadNode (node, resolve) {
+        //   if (node.level === 0) {
+        //     this.initTreeData(node, resolve)
+        //   } else {
+        //     resolve(node.data.children)
+        //   }
+        // },
         // 加载初始化节点数据
         initTreeData (area) {
           this.$http({
@@ -234,46 +293,46 @@
           }
         },
         // 加载子节点数据
-        getTreeChild (id, node, resolve) {
-          this.$http({
-            url: this.$http.adornUrl(`/api-admin/org/pickOrg/init/tree/${id}`),
-            method: 'get',
-            params: this.$http.adornParams()
-          }).then(({data}) => {
-            if (data && data.code === 0) {
-              let resultData = data.resultData[0]
-              if (resultData['orgTreeVoList'] && resultData['orgTreeVoList'].length > 0) {
-                if (resultData['children']) {
-                  resultData['children'].push(...resultData['orgTreeVoList'])
-                } else {
-                  resultData['children'] = resultData['orgTreeVoList']
-                }
-              }
-              try {
-                this.setChildren(this.dataTree, JSON.parse(JSON.stringify(resultData)))
-              } catch (throwInfo) {
-                console.info(throwInfo)
-              }
-              resolve(resultData.children)
-            } else {
-              this.$message.error(data.msg)
-            }
-          }).catch((e) => {
-            this.$message.error('加载子节点数据失败' + e)
-          })
-        },
+        // getTreeChild (id, node, resolve) {
+        //   this.$http({
+        //     url: this.$http.adornUrl(`/api-admin/org/pickOrg/init/tree/${id}`),
+        //     method: 'get',
+        //     params: this.$http.adornParams()
+        //   }).then(({data}) => {
+        //     if (data && data.code === 0) {
+        //       let resultData = data.resultData[0]
+        //       if (resultData['orgTreeVoList'] && resultData['orgTreeVoList'].length > 0) {
+        //         if (resultData['children']) {
+        //           resultData['children'].push(...resultData['orgTreeVoList'])
+        //         } else {
+        //           resultData['children'] = resultData['orgTreeVoList']
+        //         }
+        //       }
+        //       try {
+        //         this.setChildren(this.dataTree, JSON.parse(JSON.stringify(resultData)))
+        //       } catch (throwInfo) {
+        //         console.info(throwInfo)
+        //       }
+        //       resolve(resultData.children)
+        //     } else {
+        //       this.$message.error(data.msg)
+        //     }
+        //   }).catch((e) => {
+        //     this.$message.error('加载子节点数据失败' + e)
+        //   })
+        // },
         // 递归赋值
-        setChildren (treeData, nodeData) {
-          for (let i in treeData) {
-            if (treeData[i].id === nodeData.id) {
-              treeData[i].children = nodeData.children
-              let info = nodeData.areaName + ':set children success'
-              throw info
-            } else {
-              this.setChildren(treeData[i].children, nodeData)
-            }
-          }
-        },
+        // setChildren (treeData, nodeData) {
+        //   for (let i in treeData) {
+        //     if (treeData[i].id === nodeData.id) {
+        //       treeData[i].children = nodeData.children
+        //       let info = nodeData.areaName + ':set children success'
+        //       throw info
+        //     } else {
+        //       this.setChildren(treeData[i].children, nodeData)
+        //     }
+        //   }
+        // },
         handleClose (done) {
           done()
         },
@@ -326,9 +385,11 @@
         // 点击节点方法
         nodeClick (data) {
           if (data.type === 1 && data.id !== this.selectedListObj.id) {
+            this.screenText = ''
+            this.listLocation()
             this.selectedListObj = {
               id: data.id,
-              username: data.orgName
+              realName: data.orgName
             }
             this.$http({
               url: this.$http.adornUrl(`/api-admin/person/orgFindPerson/list`),
@@ -338,6 +399,9 @@
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
+                this.checkAll = false
+                this.isIndeterminate = false
+                this.checkedPersons = []
                 this.cardBodyList = data.resultData
                 this.cardBodyListPrototype = JSON.parse(JSON.stringify(data.resultData))
                 this.setFlag()
@@ -351,43 +415,69 @@
         },
         // 添加勾选标识
         setFlag () {
-          for (let i in this.cardBodyList) {
-            this.cardBodyList[i]['flag'] = false
-            for (let j in this.cardBodyListSelected) {
-              if (this.cardBodyListSelected[j].id === this.cardBodyList[i].id) {
-                this.cardBodyList[i]['flag'] = true
-              }
+          let carBodyLen = this.cardBodyList.length
+          for (let i = 0; i < carBodyLen; i++) {
+            if (this.checkedPersonsSelected.indexOf(this.cardBodyList[i].id) > -1) {
+              this.checkedPersons.push(this.cardBodyList[i].id)
             }
           }
+          let valLen = this.checkedPersons.length
+          this.checkAll = valLen === carBodyLen
+          this.isIndeterminate = valLen > 0 && valLen < carBodyLen
         },
+        // 添加勾选标识
+        // setFlag () {
+        //   for (let i in this.cardBodyList) {
+        //     this.cardBodyList[i]['flag'] = false
+        //     for (let j in this.cardBodyListSelected) {
+        //       if (this.cardBodyListSelected[j].id === this.cardBodyList[i].id) {
+        //         this.cardBodyList[i]['flag'] = true
+        //       }
+        //     }
+        //   }
+        // },
         // 选择列勾选方法
-        selectPerson (index) {
-          for (let i in this.cardBodyListSelected) {
-            if (this.cardBodyListSelected[i].id === this.cardBodyList[index].id) {
-              if (this.cardBodyList[index].flag === false) {
-                this.cardBodyListSelected.splice(i, 1)
-                this.checkAll = false
-              }
-              return
-            }
-          }
-          this.cardBodyListSelected.push(this.cardBodyList[index])
-        },
+        // selectPerson (index) {
+        //   for (let i in this.cardBodyListSelected) {
+        //     if (this.cardBodyListSelected[i].id === this.cardBodyList[index].id) {
+        //       if (this.cardBodyList[index].flag === false) {
+        //         this.cardBodyListSelected.splice(i, 1)
+        //         this.checkAll = false
+        //       }
+        //       return
+        //     }
+        //   }
+        //   this.cardBodyListSelected.push(this.cardBodyList[index])
+        // },
         // 已选列取消勾选方法
-        cancelPerson (index) {
-          for (let i in this.cardBodyList) {
-            if (this.cardBodyListSelected[index].id === this.cardBodyList[i].id) {
-              this.cardBodyList[i].flag = false
-            }
+        // cancelPerson (index) {
+        //   for (let i in this.cardBodyList) {
+        //     if (this.cardBodyListSelected[index].id === this.cardBodyList[i].id) {
+        //       this.cardBodyList[i].flag = false
+        //     }
+        //   }
+        //   this.cardBodyListSelected.splice(index, 1)
+        // },
+        screenTextChange () {
+          if (this.screenText === '') {
+            this.selectScreen()
+            this.$nextTick(() => {
+              this.listLocation()
+            })
           }
-          this.cardBodyListSelected.splice(index, 1)
+        },
+        selectedScreenTextChange () {
+          if (this.selectedScreenText === '') {
+            this.selectedScreen()
+          }
         },
         // 可选列筛选
         selectScreen () {
+          this.checkedPersons = []
           if (this.screenText) {
             let arr = []
-            for (let i in this.cardBodyListPrototype) {
-              if (this.cardBodyListPrototype[i].username.indexOf(this.screenText) > -1) {
+            for (let i = 0; i < this.cardBodyListPrototype.length; i++) {
+              if (this.cardBodyListPrototype[i].realName.indexOf(this.screenText) > -1) {
                 arr.push(this.cardBodyListPrototype[i])
               }
             }
@@ -397,32 +487,44 @@
           }
           this.setFlag()
         },
+        selectedScreen () {
+          if (this.selectedScreenText) {
+            let arr = []
+            for (let i in this.cardBodyListSelected) {
+              if (this.cardBodyListSelected[i].realName.indexOf(this.selectedScreenText) > -1) {
+                arr.push(this.cardBodyListSelected[i])
+              }
+            }
+            this.cardBodyListSelectedShow = arr
+          } else {
+            this.cardBodyListSelectedShow = this.cardBodyListSelected
+          }
+        },
         // 定位方法
         listLocation () {
+          let personSelectDOM = document.getElementsByClassName('person-select-div')[0]
           for (let i in this.cardBodyList) {
             let divDOM = document.getElementById(this.cardBodyList[i].id)
             let LableDOM = divDOM.getElementsByClassName('el-checkbox__label')[0]
-            if (this.cardBodyList[i].username === this.screenText) {
-              this.stylePrototype = JSON.parse(JSON.stringify(LableDOM.style))
-              this.$nextTick(() => {
-                document.getElementsByClassName('card-div')[0].scrollTop = divDOM.offsetTop + LableDOM.offsetTop - 270
-              })
+            if (this.cardBodyList[i].realName === this.screenText) {
+              // this.stylePrototype = JSON.parse(JSON.stringify(LableDOM.style))
+              personSelectDOM.getElementsByClassName('el-card__body')[1].scrollTop = divDOM.offsetTop + LableDOM.offsetTop - 270
               LableDOM.setAttribute('style', 'color: red')
             } else {
-              LableDOM.setAttribute('style', this.stylePrototype)
+              LableDOM.setAttribute('style', '')
             }
           }
         },
         // 选取整项
-        selectAllForOne () {
-          for (let i in this.cardBodyListSelected) {
-            if (this.cardBodyListSelected[i].id === this.selectedListObj.id) {
-              return
-            }
-          }
-          this.selectedListObj['flag'] = true
-          this.cardBodyListSelected.push(this.selectedListObj)
-        },
+        // selectAllForOne () {
+        //   for (let i in this.cardBodyListSelected) {
+        //     if (this.cardBodyListSelected[i].id === this.selectedListObj.id) {
+        //       return
+        //     }
+        //   }
+        //   this.selectedListObj['flag'] = true
+        //   this.cardBodyListSelected.push(this.selectedListObj)
+        // },
         // 确认提交
         submitSelect () {
           this.$nextTick(() => {
@@ -441,12 +543,12 @@
             }
           }
         },
-        selectPersonAll (flag) {
-          for (let i = 0; i < this.cardBodyList.length; i++) {
-            this.cardBodyList[i].flag = flag
-            this.selectPerson(i)
-          }
-        },
+        // selectPersonAll (flag) {
+        //   for (let i = 0; i < this.cardBodyList.length; i++) {
+        //     this.cardBodyList[i].flag = flag
+        //     this.selectPerson(i)
+        //   }
+        // },
         // 清除数据
         clearData () {
           this.enteTree = []
@@ -461,40 +563,67 @@
           this.cardBodyListSelected = [] // 已选列
           this.selectedListObj = '' // 已选列查询对象
           this.stylePrototype = '' // 样式原型
+          this.checkAll = false
+          this.isIndeterminate = false
+          this.checkedPersons = []
+          this.selectedScreenText = ''
+          this.checkedPersonsSelected = []
+          this.cardBodyListSelectedShow = []
         }
       }
     }
 </script>
 
 <style>
+  .person-select .el-dialog__body {
+    max-height: 60vh;
+    height: 460px;
+    overflow-y: auto;
+    padding: 20px 50px;
+  }
   .person-select-div {
-    height: 450px;
+    height: 100%;
   }
-  .person-select .el-tree {
-    width: 100%;
-    overflow: auto;
-  }
+  /*.person-select .el-tree {*/
+    /*width: 100%;*/
+    /*overflow: auto;*/
+  /*}*/
   .person-select .el-tree>.el-tree-node {
     display: inline-block;
     min-width: 100%;
   }
   .person-select .box-card {
-    margin-top: 10px;
-    width: 90%;
+    margin-top: 5px;
+    width: 95%;
   }
-  .person-select .height1 {
-    height: 410px;
+  .person-select .box-card2 {
+    margin-top: 5px;
+    width: 95%;
   }
-  .person-select .height2 {
-    height: 372px;
+  .person-select .el-card__header {
+    padding: 12px 15px;
   }
-  .person-select .card-div {
+  .person-select .box-card .el-card__body {
     overflow: auto;
-    height: 270px;
+    max-height: 85%;
   }
-  .person-select .card-div2 {
+  .person-select .box-card2 .el-card__body {
     overflow: auto;
-    height: 270px;
+    max-height: 82%;
   }
+  /*.person-select .height1 {*/
+    /*height: 410px;*/
+  /*}*/
+  /*.person-select .height2 {*/
+    /*height: 372px;*/
+  /*}*/
+  /*.person-select .card-div {*/
+    /*overflow: auto;*/
+    /*height: 270px;*/
+  /*}*/
+  /*.person-select .card-div2 {*/
+    /*overflow: auto;*/
+    /*height: 270px;*/
+  /*}*/
 
 </style>

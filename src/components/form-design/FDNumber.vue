@@ -3,7 +3,7 @@
     <el-form-item label="标题">
       <el-input v-model="data.title" size="small"></el-input>
     </el-form-item>
-    <el-form-item label="表字段映射">
+    <el-form-item label="表字段code">
       <el-input v-model="data.code" size="small"></el-input>
     </el-form-item>
     <el-form-item label="宽度">
@@ -40,7 +40,7 @@ export default {
           title: '计数器',
           type: 'number',
           code: '',
-          icon: '/src/assets/img/form-design/number.png',
+          icon: '/static/img/form-design/number.png',
           options: {
             width: '120px',
             min: 0,
@@ -59,7 +59,7 @@ export default {
         title: '计数器',
         type: 'number',
         code: '',
-        icon: '/src/assets/img/form-design/number.png',
+        icon: '/static/img/form-design/number.png',
         options: {
           width: '120px',
           min: 0,

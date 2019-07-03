@@ -409,6 +409,22 @@
       // 查看
       detailHandle (id) {
         // if (this.isAuth('trouble:selfCheck:find')) {
+        let ids = id ? [id] : this.dataListSelections.map(item => {
+          return item.internalMailLinkUserVo.id
+        })
+        this.$http({
+          url: this.$http.adornUrl(this.moduleApi + `/update/mail`),
+          method: 'put',
+          data: this.$http.adornData({
+            ids: ids,
+            typeKey: 1,
+            commonBoolean: true
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.getDataList()
+          }
+        })
         this.detailVisible = true
         this.$nextTick(() => {
           this.$refs.checkDetails.init(id)

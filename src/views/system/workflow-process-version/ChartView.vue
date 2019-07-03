@@ -4,9 +4,12 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     append-to-body
+    fullscreen
     @close="close"
   >
-    <img :src="imgData" />
+    <div style="overflow: auto;">
+      <img :src="imgData" />
+    </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">返回</el-button>
     </span>

@@ -23,7 +23,7 @@
                   type="success">
                   {{tag.userName}}
                 </el-tag>
-                <el-input type="text" @focus="focusChangeMan('receiveUserDto', '')" class="tag-input" :class="'receiveUserDto'+'tag-input'" :placeholder="dataForm.receiveUserDtoList.length < 1 ? '收件人' : ''"></el-input>
+                <el-input type="text" @focus="focusChangeMan('receiveUserDto', '')" class="tag-input" :class="'receiveUserDto'+'tag-input'" :placeholder="dataForm.receiveUserDtoList.length < 1 ? '' : ''"></el-input>
               </div>
               <el-button type="info" class="inputbutton-button" @click="openChangeMan('receiveUserDto', '', dataForm.receiveUserDtoList)">选择</el-button>
             </el-form-item>
@@ -40,7 +40,7 @@
                   type="success">
                   {{tag.userName}}
                 </el-tag>
-                <el-input type="text" @focus="focusChangeMan('ccUserDto', '')" class="tag-input" :class="'ccUserDto'+'tag-input'" :placeholder="dataForm.ccUserDtoList.length < 1 ? '抄送人' : ''"></el-input>
+                <el-input type="text" @focus="focusChangeMan('ccUserDto', '')" class="tag-input" :class="'ccUserDto'+'tag-input'" :placeholder="dataForm.ccUserDtoList.length < 1 ? '' : ''"></el-input>
               </div>
               <el-button type="info" class="inputbutton-button" @click="openChangeMan('ccUserDto', '', dataForm.ccUserDtoList)">选择</el-button>
             </el-form-item>
@@ -51,7 +51,7 @@
               <span class="hint-span" v-if="dataForm.partSend !== 0">每个收件人将收到单独发给他/她的邮件。</span>
             </el-form-item>
             <el-form-item label="主题" prop="theme">
-              <el-input v-model="dataForm.theme" placeholder="主题" clearable></el-input>
+              <el-input v-model="dataForm.theme" placeholder="" clearable></el-input>
             </el-form-item>
             <el-form-item label="紧急程度" prop="urgentLevel">
               <el-radio-group v-model="dataForm.urgentLevel">
@@ -65,8 +65,10 @@
                 <el-checkbox v-for="(item, index) in immediateNoticeList" :key="index" :label="item.lable"></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
-            <el-form-item label="正文" prop="mailContext" id="mailContextBox">
-              <script :id="'J_ueditorBox' + ueId" class="ueditor-box" type="text/plain" style="width: 100%; height: 260px;">{{dataForm.mailContext}}</script>
+            <el-form-item label="正文" prop="mailContext">
+              <span id="mailContextBox">
+                <script :id="'J_ueditorBox' + ueId" class="ueditor-box" type="text/plain" style="width: 100%; height: 260px;">{{dataForm.mailContext}}</script>
+              </span>
             </el-form-item>
             <handling-title title="附件" style="margin: 0;padding: 10px 0px;"></handling-title>
             <el-upload
@@ -118,7 +120,7 @@
         callback()
       }
       let checkMailContext = (rule, value, callback) => {
-        if (this.dataForm.receiveUserDtoList.length < 1) {
+        if (this.dataForm.mailContext.length < 1) {
           callback(new Error('不能为空'))
         }
         callback()
@@ -219,10 +221,11 @@
           this.dataForm.mailContext = ''
           this.dataForm.internalMailFileDtoList = []
           this.dataForm.state = 0
-          this.ue.ready(() => {
-            this.ue.setContent(this.dataForm.mailContext)
-          })
-          document.getElementById('mailContextBox').childNodes[1].innerHTML = ''
+          // this.ue.ready(() => {
+          //   this.ue.setContent(this.dataForm.mailContext)
+          // })
+          // document.getElementById('mailContextBox').innerHTML = ''
+          // document.getElementById('mailContextBox').childNodes[1].innerHTML = ''
         }
       }
     },
@@ -293,6 +296,11 @@
             })
           } else {
             this.submitAble = true
+            this.$nextTick(() => {
+              this.ue.ready(() => {
+                this.ue.setContent('')
+              })
+            })
           }
         })
       },
@@ -366,17 +374,32 @@
           }
         }
         if (this.ueId === ueId) {
-          document.getElementById('mailContextBox').childNodes[1].innerHTML = ''
+          document.getElementById('mailContextBox').innerHTML = ''
+          // document.getElementById('mailContextBox').childNodes[1].innerHTML = ''
           let script = document.createElement('script')
           script.id = 'J_ueditorBox' + this.ueId
           script.class = 'ueditor-box'
           script.type = 'text/plain'
           script.style.width = '100%'
           script.style.height = '260px'
-          document.getElementById('mailContextBox').childNodes[1].appendChild(script)
+          document.getElementById('mailContextBox').appendChild(script)
+          // document.getElementById('mailContextBox').childNodes[1].appendChild(script)
           this.ue = null
           this.ue = ueditor.getEditor('J_ueditorBox' + this.ueId, {    // 添加编辑器
             serverUrl: '', // 服务器统一请求接口路径
+            toolbars: [[
+              'source', '|', 'undo', 'redo', '|',
+              'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+              'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+              'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+              'directionalityltr', 'directionalityrtl', 'indent', '|',
+              'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+              'imageleft', 'imageright', '|',
+              'emotion', '|', 'insertcode', 'pagebreak', 'template', '|',
+              'horizontal', 'date', 'time', 'spechars', '|',
+              'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+              'print', 'preview', 'searchreplace', 'drafts', 'help'
+            ]],
             zIndex: 2
           })
         }
@@ -402,12 +425,12 @@
       // 根据系统参数标识获取系统参数值/sys/param/value/{paramKey}
       getParamKey () {
         this.$http({
-          url: this.$http.adornUrl(`/api-oa/sys/param/value/sysUploadFileConfig`),
+          url: this.$http.adornUrl(`/api-admin/param/value/sysUploadFileConfig`),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.paramValue = JSON.parse(data.paramValue)
+            this.paramValue = JSON.parse(data.resultData)
           }
         })
       },
@@ -481,6 +504,7 @@
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.linkmanList = []
+              this.linkmanListAll = []
               this.$message({
                 message: '操作成功',
                 type: 'success',
@@ -740,18 +764,22 @@
             this.ue.ready(() => {
               this.dataForm.mailContext = this.ue.getContent()
             })
-            if (this.dataForm.mailContext === '') {
-              document.getElementById('mailContextBox').childNodes[1].innerHTML = document.getElementById('mailContextBox').childNodes[1].innerHTML + '<div class="el-form-item__error">不能为空</div>'
-            } else {
-              if (document.getElementById('mailContextBox').childNodes[1].childNodes[1]) {
-                document.getElementById('mailContextBox').childNodes[1].removeChild(document.getElementById('mailContextBox').childNodes[1].childNodes[1])
-              }
-              setTimeout(() => {
-                this.ue.ready(() => {
-                  this.ue.setContent(this.dataForm.mailContext)
-                })
-              }, 200)
-            }
+            // if (this.dataForm.mailContext === '') {
+            //   document.getElementById('mailContextBox').innerHTML = document.getElementById('mailContextBox').innerHTML + '<div class="el-form-item__error">不能为空</div>'
+            //   // document.getElementById('mailContextBox').childNodes[1].innerHTML = document.getElementById('mailContextBox').childNodes[1].innerHTML + '<div class="el-form-item__error">不能为空</div>'
+            // } else {
+            //   if (document.getElementById('mailContextBox').childNodes[1]) {
+            //     document.getElementById('mailContextBox').removeChild(document.getElementById('mailContextBox').childNodes[1])
+            //   }
+            //   // if (document.getElementById('mailContextBox').childNodes[1].childNodes[1]) {
+            //   //   document.getElementById('mailContextBox').childNodes[1].removeChild(document.getElementById('mailContextBox').childNodes[1].childNodes[1])
+            //   // }
+            //   setTimeout(() => {
+            //     this.ue.ready(() => {
+            //       this.ue.setContent(this.dataForm.mailContext)
+            //     })
+            //   }, 200)
+            // }
             this.$refs['dataForm'].validate((valid) => {
               if (valid) {
                 let portApi = ''

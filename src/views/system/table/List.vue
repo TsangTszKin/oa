@@ -19,7 +19,7 @@
           type="danger"
           @click="deleteHandle()"
           :disabled="dataListSelections.length <= 0"
-        >批量删除</el-button> -->
+        >批量删除</el-button>-->
       </el-form-item>
     </el-form>
     <el-table
@@ -52,11 +52,13 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <Save v-if="saveVisible" ref="Save" @refreshDataList="getDataList"></Save>
   </div>
 </template>
 
 <script>
+import Save from './Save'
+
 export default {
   data () {
     return {
@@ -73,10 +75,11 @@ export default {
       addOrUpdateVisible: false,
       importProductUrl: this.$http.adornUrl(
         `/product/tproductbase/importProduct?token=${this.$cookie.get('token')}`
-      )
+      ),
+      saveVisible: false
     }
   },
-  components: {},
+  components: { Save },
   activated () {
     this.getDataList()
   },
@@ -139,15 +142,10 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {
-      // this.addOrUpdateVisible = true;
-      // this.$nextTick(() => {
-      //   this.$refs.addOrUpdate.init(id);
-      // });
-      if (id) {
-        this.$router.push({ name: 'system-table-save', params: { id: id } })
-      } else {
-        this.$router.push({ name: 'system-table-save' })
-      }
+      this.saveVisible = true
+      this.$nextTick(() => {
+        this.$refs.Save.init(id)
+      })
     },
     // 删除
     deleteHandle (id) {

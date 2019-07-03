@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.templateId ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
     append-to-body
@@ -10,7 +10,6 @@
       :model="dataForm"
       :rules="dataRule"
       ref="dataForm"
-      @keyup.enter.native="dataFormSubmit()"
       label-width="120px"
     >
       <el-row :gutter="10">
@@ -66,11 +65,11 @@
           <el-option label="延期" value="3"></el-option>
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="工作流" prop="workFlowId">
+      <el-form-item label="工作流" prop="workFlowId">
         <el-select class="select" v-model="dataForm.workFlowId" placeholder="请选择" filterable>
-          <el-option :label="item.name" :value="item.id" v-for="(item, i) in workFlowList" :key="i"></el-option>
+          <el-option :label="item.name" :value="item.id" v-for="(item, i) in processDefList" :key="i"></el-option>
         </el-select>
-      </el-form-item>-->
+      </el-form-item>
       <el-form-item label="表单" prop="dyncFormId">
         <el-select
           class="select"
@@ -305,30 +304,28 @@
               <el-checkbox v-model="dataForm.tapprovalTemplateExpVo.expIsTenu">是否十统一数据推送</el-checkbox>
             </el-form-item>
           </el-col>
-          
-          
         </el-row>
         <el-form-item label="发证业务" prop="orderFileModel">
-            <el-radio-group v-model="dataForm.orderFileModel">
-              <el-radio :label="0">否</el-radio>
-              <el-radio :label="1">是</el-radio>
-            </el-radio-group>
-          </el-form-item>
+          <el-radio-group v-model="dataForm.orderFileModel">
+            <el-radio :label="0">否</el-radio>
+            <el-radio :label="1">是</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="其他配置" prop="sptAppType">
-            <el-checkbox v-model="dataForm.sptAppType">教育培训审批</el-checkbox>
-          </el-form-item>
-          <el-form-item label="业务概述" prop="templateNote">
-            <!-- <el-input
+          <el-checkbox v-model="dataForm.sptAppType">教育培训审批</el-checkbox>
+        </el-form-item>
+        <el-form-item label="业务概述" prop="templateNote">
+          <!-- <el-input
               type="textarea"
               :autosize="{ minRows: 6, maxRows: 15}"
               placeholder="请输入内容"
               v-model="dataForm.templateNote"
-            ></el-input>-->
+          ></el-input>-->
 
-            <div class="edit_container">
-              <quill-editor v-model="dataForm.templateNote" ref="myQuillEditor"></quill-editor>
-            </div>
-          </el-form-item>
+          <div class="edit_container">
+            <quill-editor v-model="dataForm.templateNote" ref="myQuillEditor"></quill-editor>
+          </div>
+        </el-form-item>
         <el-upload
           class="upload-demo"
           ref="upload"
@@ -548,6 +545,7 @@ export default {
       formList: [],
       workFlowList: [],
       fieldList: [],
+      processDefList: [],
       fileList: [
         {
           name: 'food.jpeg',
@@ -560,7 +558,7 @@ export default {
             'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
         }
       ],
-      editorOption: {height: '300px'}
+      editorOption: { height: '300px' }
     }
   },
   computed: {
@@ -570,17 +568,17 @@ export default {
   },
   methods: {
     init (id) {
-      this.dataForm.id = id || 0
+      this.dataForm.templateId = id || 0
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id) {
+        if (this.dataForm.templateId) {
           this.$http({
             url: this.$http.adornUrl(`/api-oa/approval/Template/get`),
             method: 'get',
             params: this.$http.adornParams(
               {
-                id: this.dataForm.id
+                id: this.dataForm.templateId
               },
               false
             )
@@ -639,6 +637,16 @@ export default {
               }
 
               this.dataForm = data.resultData.approvalTemplate
+
+              this.processDefList = data.resultData.processDefList
+              this.formList = data.resultData.dycFormList
+
+              this.formList.forEach(element => {
+                if (element.id === this.dataForm.dyncFormId) {
+                  this.dataForm.dyncFormName = element.name
+                  this.fieldList = element.columnList
+                }
+              })
             }
           })
         }
@@ -727,46 +735,6 @@ export default {
       })
       this.dataForm.applyFormList = []
       this.dataForm.precheckFormList = []
-    },
-    getFormList () {
-      this.$http({
-        url: this.$http.adornUrl('/api-flow/dycform/list'),
-        method: 'post',
-        params: this.$http.adornParams(
-          {
-            pageNo: 1,
-            pageSize: 999
-          },
-          false
-        )
-      }).then(({ data }) => {
-        if (data && data.code === 0) {
-          this.formList = data.resultData.resultList
-        } else {
-          this.formList = []
-        }
-        this.dataListLoading = false
-      })
-    },
-    getWorkFlowList () {
-      this.$http({
-        url: this.$http.adornUrl('/api-oa/model/list'),
-        method: 'post',
-        params: this.$http.adornParams(
-          {
-            pageNo: 1,
-            pageSize: 999
-          },
-          false
-        )
-      }).then(({ data }) => {
-        if (data && data.code === 0) {
-          this.workFlowList = data.resultData.resultList
-        } else {
-          this.workFlowList = []
-        }
-        this.dataListLoading = false
-      })
     },
     changePepple (value, direction, key) {
       console.log('value, direction, key', value, direction, key)
@@ -929,7 +897,7 @@ export default {
   },
   mounted () {
     this.getFormList()
-    // this.getWorkFlowList()
+    this.getWorkFlowList()
   },
   filters: {
     arrayToString (value) {
@@ -942,8 +910,51 @@ export default {
   },
   watch: {
     dataForm: {
-      handler: function (value) {
+      handler: function (value, oldValue) {
         console.log('dataForm', value)
+        if (value.templateType !== oldValue.templateType) {
+          if (value.templateType === 1) {
+            this.dataRule = {
+              templateName: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ],
+              templateType: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ],
+              businessType: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ],
+              workFlowId: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ],
+              dyncFormId: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ]
+            }
+          }
+          if (value.templateType === 2) {
+            this.dataRule = {
+              templateName: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ],
+              templateType: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ],
+              businessType: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ],
+              workFlowId: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ],
+              dyncFormId: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ],
+              templateNote: [
+                { required: true, message: '不能为空', trigger: 'blur' }
+              ]
+            }
+          }
+        }
       },
       deep: true
     }

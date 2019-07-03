@@ -20,7 +20,7 @@
       :default-expanded-keys="['103e37f5-a11b-4029-8ced-512b32516b9f', 'b248e83e-9c84-46de-a790-a755f7446dd4']"
         <i :class="{ 'el-icon-star-on': data.customRight, 'el-icon-star-off': !data.customRight }"></i>{{ node.label }}
       </div>-->
-      <div class="div-ellipsis" slot-scope="{ node }">
+      <div class="div-ellipsis div-checkAreas" slot-scope="{ node }">
         <span :title="node.label">{{ node.label }}</span>
       </div>
     </el-tree>
@@ -40,12 +40,18 @@
         dataList: [],
         dataListProps: {
           children: 'children',
-          label: 'label'
+          label: 'label',
+          disabled: function (data, node) {
+            return !data.permission
+          }
         }
       }
     },
     props: {
-      operTypeKey: String,     // 业务key
+      operTypeKey: {           // 业务key
+        type: String,
+        default: 'commonAreaModule'
+      },
       isFillAddr: Boolean,     // 是否获取完整地址
       treeWidth: String,       // 宽度
       treeMaxHeight: String,   // 最大高度
@@ -77,7 +83,11 @@
           params: this.$http.adornParams()
         }).then(({data}) => {
           // this.dataList = data.resultData
-          this.$refs.areaCheckTree.updateKeyChildren(this.areaRoot.id, data.resultData)
+          if (data.resultData && data.resultData.length > 0) {
+            this.$refs.areaCheckTree.updateKeyChildren(this.areaRoot.id, data.resultData)
+          } else {
+            this.dataList = []
+          }
           if (this.dataList && this.dataList.length) {
             this.$nextTick(function () {
               this.setTreeCheckType()
@@ -93,10 +103,12 @@
       },
       // 设置第一级不可选
       setTreeCheckType () {
-        for (let i = 0; i < document.getElementsByClassName('el-checkbox').length; i++) {
-          if (document.getElementsByClassName('div-ellipsis')[i].children[0].innerHTML === '行政区域') {
-            document.getElementsByClassName('el-checkbox')[i].style.display = 'none'
-          }
+        for (let i = 0; i < document.getElementsByClassName('el-checkbox__input is-disabled').length; i++) {
+          document.getElementsByClassName('el-checkbox__input is-disabled')[i].style.display = 'none'
+          document.getElementsByClassName('el-checkbox is-disabled')[i].style.marginRight = '0px'
+          // if (document.getElementsByClassName('div-ellipsis')[i].children[0].innerHTML === '行政区域') {
+          //   document.getElementsByClassName('el-checkbox')[i].style.display = 'none'
+          // }
         }
       },
       // 筛选节点显示、隐藏
@@ -110,7 +122,7 @@
       },
       // 点击节点事件
       nodeClick (data, node, element) {
-        if (data.id !== this.areaRoot.id) {
+        if (data.permission) {
           this.$refs.areaCheckTree.setChecked(data.id, !node.checked)
         }
       },

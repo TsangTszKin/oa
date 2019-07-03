@@ -8,7 +8,7 @@
     class="import-management-add"
   >
     <div v-loading="!submitAble">
-      <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="135px">
+      <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="90px">
         <el-form-item label="日期" prop="dateArr">
           <el-date-picker
             v-model="dataForm.dateArr"

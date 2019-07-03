@@ -3,7 +3,7 @@
     <el-form-item label="标题">
       <el-input v-model="data.title" size="small"></el-input>
     </el-form-item>
-    <el-form-item label="表字段映射">
+    <el-form-item label="表字段code">
       <el-input v-model="data.code" size="small"></el-input>
     </el-form-item>
     <el-form-item label="宽度">
@@ -50,7 +50,7 @@ export default {
           title: '单选框组',
           type: 'radio',
           code: '',
-          icon: '/src/assets/img/form-design/radio.png',
+          icon: '/static/img/form-design/radio.png',
           options: {
             width: '100%',
             required: false,
@@ -81,7 +81,7 @@ export default {
         title: '单选框组',
         type: 'radio',
         code: '',
-        icon: '/src/assets/img/form-design/radio.png',
+        icon: '/static/img/form-design/radio.png',
         options: {
           width: '100%',
           required: false,

@@ -45,7 +45,10 @@
       }
     },
     props: {
-      operTypeKey: String,     // 业务key
+      operTypeKey: {           // 业务key
+        type: String,
+        default: 'commonOrgTypeModule'
+      },
       treeWidth: String,       // 宽度
       treeMaxHeight: String,   // 最大高度
       value: Array             // v-model的值

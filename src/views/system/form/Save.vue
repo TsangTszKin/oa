@@ -1,39 +1,58 @@
 <template>
   <el-dialog
-    :title="!saveData.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
     append-to-body
     fullscreen
+    :show-close="false"
+    custom-class="form-design-main"
   >
-    <div style="padding: 10px 30px;">
-      <el-row>
-        <el-col :span="6">
-          <FDMenu/>
+    <div>
+      <el-row style="margin-top: 17px;">
+        <el-col style="width: 230px;position: fixed;top: 28px;">
+          <FDMenu />
         </el-col>
         <el-col
-          :span="12"
-          style="height:100%;"
+          style="height:100%; width: calc(100% - 505px); margin-left:240px;"
           :class="{'fd-main': $store.state.formDesign.formList.length == 0}"
         >
-          <div style="padding: 10px;">
-            <a @click="dialogFormVisible = true">预览</a>
-            <!-- <a @click="dialogVisible = true">保存</a> -->
-          </div>
-
-          <Panel :formAttr="formAttr"/>
-
+          <Panel :formAttr="formAttr" v-if="!formAttr.isTabs" />
+          <el-tabs :type="formAttr.tabType" v-else v-model="tabIndex" @tab-click="tabHandleClick">
+            <el-tab-pane
+              :label="item.name"
+              :name="String(i)"
+              v-for="(item, i) in formAttr.tabs"
+              :key="i"
+            >
+              <Panel ref="Panel" :formAttr="formAttr" @callBack="formListCallBack" />
+            </el-tab-pane>
+          </el-tabs>
           <!-- <nestedExample /> -->
         </el-col>
-        <el-col :span="6">
+        <el-col style="width: 265px;position: fixed;top: 28px;right: 6px;">
+          <div style="margin-bottom: 10px;">
+            <el-button
+              type="danger"
+              plain
+              @click="visible = false"
+              icon="el-icon-close"
+              size="small"
+            >关闭</el-button>
+            <el-button
+              type="primary"
+              @click="dialogVisible = true"
+              icon="el-icon-check"
+              size="small"
+            >保存</el-button>
+            <el-button type="info" @click="showPreview" icon="el-icon-view" size="small">预览</el-button>
+          </div>
           <el-tabs
-            v-show="$store.state.formDesign.showType"
             class="form-design"
             v-model="activeName"
             @tab-click="handleClick"
-            style="border-left: 1px solid #eee;padding: 0 10px;overflow: scroll;height: 100%;"
+            style="border-left: 1px solid #eee;padding: 0 10px;overflow: auto;height: 100%;"
           >
-            <el-tab-pane label="字段属性" name="1">
+            <el-tab-pane label="字段属性" name="1" v-if="$store.state.formDesign.showType">
               <FDInput
                 v-show="$store.state.formDesign.showType === 'input'"
                 :propData="$store.state.formDesign.activeForm"
@@ -70,6 +89,10 @@
                 v-show="$store.state.formDesign.showType === 'img'"
                 :propData="$store.state.formDesign.activeForm"
               />
+              <FDTitle
+                v-show="$store.state.formDesign.showType === 'title'"
+                :propData="$store.state.formDesign.activeForm"
+              />
               <FDGrid
                 v-show="$store.state.formDesign.showType === 'grid'"
                 :propData="$store.state.formDesign.activeForm"
@@ -95,6 +118,40 @@
                 <el-form-item label="表单字段宽度">
                   <el-input v-model="formAttr.labelWidth"></el-input>
                 </el-form-item>
+
+                <el-form-item label="启用tab表单">
+                  <el-switch v-model="formAttr.isTabs" @change="changeTabMode"></el-switch>
+                </el-form-item>
+                <el-form-item label="tab模式" v-show="formAttr.isTabs">
+                  <el-radio-group v-model="formAttr.tabType">
+                    <el-radio-button label>简洁</el-radio-button>
+                    <el-radio-button label="card">选项卡</el-radio-button>
+                    <el-radio-button label="border-card ">卡片化</el-radio-button>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="tab选项配置" v-show="formAttr.isTabs">
+                  <div>
+                    <ul style="list-style: none;padding: 0;">
+                      <li v-for="(item, i) in formAttr.tabs" :key="i" style="margin-bottom: 10px;">
+                        <el-input
+                          size="small"
+                          style="width:200px;"
+                          :title="item.name"
+                          v-model="item.name"
+                        ></el-input>
+                        <i class="el-icon-circle-close" style="color: red;" @click="subOption(i)"></i>
+                      </li>
+                      <li style="margin: 10px;">
+                        <i
+                          class="el-icon-circle-plus"
+                          style="color: #17B3A3;"
+                          title="增加选项"
+                          @click="addOption"
+                        ></i>
+                      </li>
+                    </ul>
+                  </div>
+                </el-form-item>
               </el-form>
             </el-tab-pane>
           </el-tabs>
@@ -106,10 +163,16 @@
           :label-position="formAttr.align"
           :label-width="formAttr.labelWidth"
           :size="formAttr.size"
-          :rules="$store.state.formDesign.rules"
+          :rules="rules"
+          v-if="!formAttr.isTabs"
         >
-          <template v-for="(item, i) in this.$store.state.formDesign.formList">
-            <el-form-item :label="item.title" :prop="item.key" v-if="item.type !== 'grid'" :key="i">
+          <template v-for="(item, i) in $store.state.formDesign.formList">
+            <el-form-item
+              :label="item.title"
+              :prop="item.key"
+              v-if="item.type !== 'grid' && item.type !== 'title'"
+              :key="i"
+            >
               <el-input
                 v-if="item.type === 'input'"
                 :placeholder="item.options.placeholder"
@@ -201,10 +264,20 @@
                 <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
               </el-upload>
             </el-form-item>
+            <p
+              v-if="item.type === 'title'"
+              :style="{'text-align': item.options.align, 'font-size': item.options.fontSize, 'margin-bottom': '5px'}"
+              :key="i"
+            >{{item.value}}</p>
             <el-row v-if="item.type === 'grid'" :key="i" :gutter="10">
               <el-col :span="col.span" v-for="(col, j) in item.cols" :key="j" class="col">
                 <template v-for="(item2, j) in col.list">
-                  <el-form-item :label="item2.title" :prop="item2.key" :key="j">
+                  <el-form-item
+                    :label="item2.title"
+                    :prop="item2.key"
+                    v-if="item2.type !== 'title'"
+                    :key="j"
+                  >
                     <el-input
                       v-if="item2.type === 'input'"
                       :placeholder="item2.options.placeholder"
@@ -284,6 +357,11 @@
                       :disabled="item2.options.disabled"
                     ></el-date-picker>
                   </el-form-item>
+                  <p
+                    v-if="item2.type === 'title'"
+                    :style="{'text-align': item2.options.align, 'font-size': item2.options.fontSize, 'margin-bottom': '5px'}"
+                    :key="j"
+                  >{{item2.value}}</p>
                 </template>
               </el-col>
             </el-row>
@@ -292,6 +370,226 @@
             <el-button type="primary" @click="submitForm('rules')">模拟提交表单</el-button>
           </el-form-item>
         </el-form>
+
+        <el-tabs
+          :type="formAttr.tabType"
+          v-else
+          @tab-click="tabHandleClick_preview"
+          v-model="tabIndex"
+        >
+          <el-tab-pane
+            :label="item.name"
+            :name="String(i)"
+            v-for="(item, i) in formAttr.tabs"
+            :key="i"
+          >
+            <el-form
+              :label-position="formAttr.align"
+              :label-width="formAttr.labelWidth"
+              :size="formAttr.size"
+              :rules="rules"
+            >
+              <template v-for="(item, i) in $store.state.formDesign.formList">
+                <el-form-item
+                  :label="item.title"
+                  :prop="item.key"
+                  v-if="item.type !== 'grid' && item.type !== 'title'"
+                  :key="i"
+                >
+                  <el-input
+                    v-if="item.type === 'input'"
+                    :placeholder="item.options.placeholder"
+                    :disabled="item.options.disabled"
+                    :readonly="item.options.readonly"
+                    :style="{width: item.options.width}"
+                  ></el-input>
+                  <el-input
+                    v-if="item.type === 'textarea'"
+                    :placeholder="item.options.placeholder"
+                    :disabled="item.options.disabled"
+                    :readonly="item.options.readonly"
+                    type="textarea"
+                    :rows="5"
+                    :style="{width: item.options.width}"
+                  ></el-input>
+                  <el-input-number
+                    v-if="item.type === 'number'"
+                    :disabled="item.options.disabled"
+                    :readonly="item.options.readonly"
+                    :style="{width: item.options.width}"
+                  ></el-input-number>
+                  <el-radio-group
+                    v-if="item.type === 'radio'"
+                    v-model="item.options.defaultValue"
+                    :disabled="item.options.disabled"
+                    :readonly="item.options.readonly"
+                    :style="{width: item.options.width}"
+                  >
+                    <el-radio
+                      v-for="(item, i) in item.options.option"
+                      :label="item.value"
+                      :key="i"
+                    >{{item.label}}</el-radio>
+                  </el-radio-group>
+                  <el-checkbox-group
+                    v-if="item.type === 'checkbox'"
+                    v-model="item.options.defaultValue"
+                    :disabled="item.options.disabled"
+                    :readonly="item.options.readonly"
+                    :style="{width: item.options.width}"
+                  >
+                    <el-checkbox
+                      v-for="(item, i) in item.options.option"
+                      :label="item.value"
+                      :key="i"
+                    >{{item.label}}</el-checkbox>
+                  </el-checkbox-group>
+                  <el-select
+                    v-if="item.type === 'select'"
+                    :placeholder="item.options.placeholder"
+                    :style="{width: item.options.width}"
+                    :readonly="item.options.readonly"
+                    :disabled="item.options.disabled"
+                  >
+                    <el-option
+                      v-for="(item, i) in item.options.option"
+                      :key="i"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+                  <el-switch
+                    v-if="item.type === 'switch'"
+                    v-model="item.options.defaultValue"
+                    active-color="#13ce66"
+                    inactive-color="#EEEEEE"
+                    :style="{width: item.options.width}"
+                    :readonly="item.options.readonly"
+                    :disabled="item.options.disabled"
+                  ></el-switch>
+                  <el-date-picker
+                    type="datetime"
+                    v-if="item.type === 'datetime'"
+                    :placeholder="item.options.placeholder"
+                    :style="{width: item.options.width}"
+                    :disabled="item.options.disabled"
+                  ></el-date-picker>
+                </el-form-item>
+                <p
+                  v-if="item.type === 'title'"
+                  :style="{'text-align': item.options.align, 'font-size': item.options.fontSize, 'margin-bottom': '5px'}"
+                  :key="i"
+                >{{item.value}}</p>
+                <el-row v-if="item.type === 'grid'" :key="i">
+                  <el-col
+                    :span="col.span"
+                    v-for="(col, j) in item.cols"
+                    :key="j"
+                    class="col"
+                    style="padding: 5px;"
+                  >
+                    <template v-for="(item2, j) in col.list">
+                      <el-form-item
+                        :label="item2.title"
+                        :prop="item2.key"
+                        v-if="item2.type !== 'title'"
+                        :key="j"
+                      >
+                        <el-input
+                          v-if="item2.type === 'input'"
+                          :placeholder="item2.options.placeholder"
+                          :disabled="item2.options.disabled"
+                          :readonly="item2.options.readonly"
+                          :style="{width: item2.options.width}"
+                        ></el-input>
+                        <el-input
+                          v-if="item2.type === 'textarea'"
+                          :placeholder="item2.options.placeholder"
+                          :disabled="item2.options.disabled"
+                          :readonly="item2.options.readonly"
+                          type="textarea"
+                          :rows="5"
+                          :style="{width: item2.options.width}"
+                        ></el-input>
+                        <el-input-number
+                          v-if="item2.type === 'number'"
+                          :disabled="item2.options.disabled"
+                          :readonly="item2.options.readonly"
+                          :style="{width: item2.options.width}"
+                        ></el-input-number>
+                        <el-radio-group
+                          v-if="item2.type === 'radio'"
+                          v-model="item2.options.defaultValue"
+                          :disabled="item2.options.disabled"
+                          :readonly="item2.options.readonly"
+                          :style="{width: item2.options.width}"
+                        >
+                          <el-radio
+                            v-for="(item2, i) in item2.options.option"
+                            :label="item2.value"
+                            :key="i"
+                          >{{item.label}}</el-radio>
+                        </el-radio-group>
+                        <el-checkbox-group
+                          v-if="item2.type === 'checkbox'"
+                          v-model="item2.options.defaultValue"
+                          :disabled="item2.options.disabled"
+                          :readonly="item2.options.readonly"
+                          :style="{width: item2.options.width}"
+                        >
+                          <el-checkbox
+                            v-for="(item2, i) in item2.options.option"
+                            :label="item2.value"
+                            :key="i"
+                          >{{item2.label}}</el-checkbox>
+                        </el-checkbox-group>
+                        <el-select
+                          v-if="item2.type === 'select'"
+                          :placeholder="item2.options.placeholder"
+                          :style="{width: item2.options.width}"
+                          :readonly="item2.options.readonly"
+                          :disabled="item2.options.disabled"
+                        >
+                          <el-option
+                            v-for="(item2, i) in item2.options.option"
+                            :key="i"
+                            :label="item2.label"
+                            :value="item2.value"
+                          ></el-option>
+                        </el-select>
+                        <el-switch
+                          v-if="item2.type === 'switch'"
+                          v-model="item2.options.defaultValue"
+                          active-color="#13ce66"
+                          inactive-color="#EEEEEE"
+                          :style="{width: item2.options.width}"
+                          :readonly="iitem2tem.options.readonly"
+                          :disabled="item2.options.disabled"
+                        ></el-switch>
+                        <el-date-picker
+                          type="datetime"
+                          v-if="item2.type === 'datetime'"
+                          :placeholder="item2.options.placeholder"
+                          :style="{width: item2.options.width}"
+                          :disabled="item2.options.disabled"
+                        ></el-date-picker>
+                      </el-form-item>
+                      <p
+                        v-if="item2.type === 'title'"
+                        :style="{'text-align': item2.options.align, 'font-size': item2.options.fontSize, 'margin-bottom': '5px'}"
+                        :key="j"
+                      >{{item2.value}}</p>
+                    </template>
+                  </el-col>
+                </el-row>
+              </template>
+              <el-form-item>
+                <el-button type="primary" @click="submitForm('rules')">模拟提交表单</el-button>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+        </el-tabs>
+
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
           <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
@@ -299,17 +597,21 @@
       </el-dialog>
 
       <el-dialog title="保存" :visible.sync="dialogVisible" append-to-body>
-        <el-form
-          :inline="true"
-          :model="saveData"
-          @keyup.enter.native="getDataList()"
-          :size="'mini'"
-        >
-          <el-form-item>
-            <el-input v-model="saveData.name" placeholder="名称" clearable></el-input>
+        <el-form :model="saveData" @keyup.enter.native="getDataList()" label-position="left">
+          <el-form-item label="名称">
+            <el-input v-model="saveData.name" placeholder="名称" clearable style="width: 100%;"></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-input v-model="saveData.code" placeholder="编码" clearable></el-input>
+          <el-form-item label="编码">
+            <el-input v-model="saveData.code" placeholder="编码" clearable style="width: 100%;"></el-input>
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input
+              style="width: 100%;"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+              v-model="saveData.remarks"
+            ></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -318,11 +620,6 @@
         </div>
       </el-dialog>
     </div>
-
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dialogVisible = true">确定</el-button>
-    </span>
   </el-dialog>
 </template>
 
@@ -342,6 +639,9 @@ import FDMenu from '@/components/form-design/FDMenu'
 import FDGrid from '@/components/form-design/FDGrid'
 import nestedExample from '@/components/form-design/nestedExample'
 import common from '@/utils/common'
+import FDTitle from '@/components/form-design/FDTitle'
+import bus from '@/utils/bus'
+
 export default {
   components: {
     FDInput,
@@ -357,20 +657,30 @@ export default {
     Test,
     FDMenu,
     nestedExample,
-    FDGrid
+    FDGrid,
+    FDTitle
   },
   data () {
     return {
       visible: false,
-      activeName: '1',
+      activeName: '2',
       formAttr: {
         align: 'left',
         size: 'medium',
-        labelWidth: '80px'
+        labelWidth: '80px',
+        isTabs: false,
+        tabType: 'card',
+        tabs: [
+          {
+            name: 'tab1',
+            formList: []
+          }
+        ]
       },
       dialogFormVisible: false,
       dataListLoading: false,
       dialogVisible: false,
+      tabIndex: '0',
       saveData: {
         // category: "string",
         code: '',
@@ -400,10 +710,59 @@ export default {
       totalPage: 0,
       // eslint-disable-next-line no-dupe-keys
       dataListLoading: false,
-      columnList: []
+      columnList: [],
+      columnList_extend: [],
+      rules: {}
     }
   },
   methods: {
+    showPreview () {
+      this.dialogFormVisible = true
+      this.tabIndex = '0'
+      if (this.formAttr.isTabs) {
+        this.$store.dispatch('formDesign/setFormList', this.formAttr.tabs[0].formList)
+      }
+      this.initFormRule()
+    },
+    formListCallBack (formList) {
+      this.formAttr.tabs[Number(this.tabIndex)].formList = this.$store.state.formDesign.formList
+      console.log('this.formAttr', this.formAttr)
+    },
+    tabHandleClick (tab, event) {
+      console.log(
+        'this.$store.state.formDesign.formList = ',
+        this.$store.state.formDesign.formList
+      )
+      console.log(tab, event)
+      this.$refs.Panel[Number(this.tabIndex)].init(
+        common.deepClone(this.formAttr.tabs[Number(this.tabIndex)].formList)
+      )
+      // this.$refs.Panel[Number(this.tabIndex)].init(this.$store.state.formDesign.formList);
+    },
+    tabHandleClick_preview (tab, event) {
+      console.log('tab.index', tab.index)
+      this.$store.dispatch(
+        'formDesign/setFormList',
+        common.deepClone(this.formAttr.tabs[Number(tab.index)].formList)
+      )
+      let formList = this.formAttr.tabs[Number(tab.index)].formList
+      let rules = {}
+      formList.forEach(element => {
+        if (element.options.required) {
+          rules[element.key] = [{ required: element.options.required, message: '必填项不能为空', trigger: 'blur' }]
+        }
+      })
+      this.rules = rules
+    },
+    addOption () {
+      this.formAttr.tabs.push({
+        name: `tab${this.formAttr.tabs.length + 1}`,
+        formList: []
+      })
+    },
+    subOption (index) {
+      this.formAttr.tabs.splice(index, 1)
+    },
     handleClick (tab, event) {
       console.log(tab, event)
     },
@@ -419,64 +778,126 @@ export default {
       })
     },
     packData (formList) {
-      formList.forEach(element => {
+      for (let i = 0; i < formList.length; i++) {
+        const element = formList[i]
         if (element.type !== 'grid') {
           // eslint-disable-next-line no-unused-vars
           let exist = false
+
+          this.columnList.forEach(element2 => {
+            if (element2.key === element.key) {
+              exist = true
+              element2.code = element.code
+              element2.placeholder = element.options.placeholder
+              element2.defaultValue = element.options.defaultValue
+              element2.isReadonly = element.options.readonly
+              element2.name = element.title
+            }
+          })
+
+          if (exist) continue
           switch (element.type) {
             case 'input':
-              this.columnList.push({
-                code: '',
-                len: 50,
+              this.columnList_extend.push({
+                key: element.key,
+                code: element.code,
+                tableColumnCode: element.tableColumnCode,
+                placeholder: element.options.placeholder,
+                defaultValue: element.options.defaultValue,
+                formType: element.formType,
+                isReadonly: element.options.readonly,
+                len: element.options.maxlength,
                 name: element.title
               })
               break
             case 'textarea':
-              this.columnList.push({
-                code: '',
-                len: 50,
+              this.columnList_extend.push({
+                key: element.key,
+                code: element.code,
+                tableColumnCode: element.tableColumnCode,
+                placeholder: element.options.placeholder,
+                defaultValue: element.options.defaultValue,
+                formType: element.formType,
+                isReadonly: element.options.readonly,
+                len: element.options.maxlength,
                 name: element.title
               })
               break
             case 'number':
-              this.columnList.push({
-                code: '',
-                len: 50,
+              this.columnList_extend.push({
+                key: element.key,
+                code: element.code,
+                tableColumnCode: element.tableColumnCode,
+                placeholder: element.options.placeholder,
+                defaultValue: element.options.defaultValue,
+                formType: element.formType,
+                isReadonly: element.options.readonly,
+                len: element.options.maxlength,
                 name: element.title
               })
               break
             case 'radio':
-              this.columnList.push({
-                code: '',
-                len: 50,
+              this.columnList_extend.push({
+                key: element.key,
+                code: element.code,
+                tableColumnCode: element.tableColumnCode,
+                placeholder: element.options.placeholder,
+                defaultValue: element.options.defaultValue,
+                formType: element.formType,
+                isReadonly: element.options.readonly,
+                len: element.options.maxlength,
                 name: element.title
               })
               break
             case 'checkbox':
-              this.columnList.push({
-                code: '',
-                len: 50,
+              this.columnList_extend.push({
+                key: element.key,
+                code: element.code,
+                tableColumnCode: element.tableColumnCode,
+                placeholder: element.options.placeholder,
+                defaultValue: element.options.defaultValue,
+                formType: element.formType,
+                isReadonly: element.options.readonly,
+                len: element.options.maxlength,
                 name: element.title
               })
               break
             case 'datetime':
-              this.columnList.push({
-                code: '',
-                len: 50,
+              this.columnList_extend.push({
+                key: element.key,
+                code: element.code,
+                tableColumnCode: element.tableColumnCode,
+                placeholder: element.options.placeholder,
+                defaultValue: element.options.defaultValue,
+                formType: element.formType,
+                isReadonly: element.options.readonly,
+                len: element.options.maxlength,
                 name: element.title
               })
               break
             case 'select':
-              this.columnList.push({
-                code: '',
-                len: 50,
+              this.columnList_extend.push({
+                key: element.key,
+                code: element.code,
+                tableColumnCode: element.tableColumnCode,
+                placeholder: element.options.placeholder,
+                defaultValue: element.options.defaultValue,
+                formType: element.formType,
+                isReadonly: element.options.readonly,
+                len: element.options.maxlength,
                 name: element.title
               })
               break
             case 'switch':
-              this.columnList.push({
-                code: '',
-                len: 50,
+              this.columnList_extend.push({
+                key: element.key,
+                code: element.code,
+                tableColumnCode: element.tableColumnCode,
+                placeholder: element.options.placeholder,
+                defaultValue: element.options.defaultValue,
+                formType: element.formType,
+                isReadonly: element.options.readonly,
+                len: element.options.maxlength,
                 name: element.title
               })
               break
@@ -488,16 +909,31 @@ export default {
             this.packData(element2.list)
           })
         }
-      })
+      }
     },
     // 保存数据
     save () {
       console.log(this.saveData)
       if (!this.verify()) return
-      this.packData(common.deepClone(this.$store.state.formDesign.formList))
+      if (this.formAttr.isTabs) {
+        this.formAttr.tabs.forEach(element => {
+          this.packData(common.deepClone(element.formList))
+        })
+      } else {
+        this.packData(common.deepClone(this.$store.state.formDesign.formList))
+      }
+      console.log('this.columnList', this.columnList)
+      console.log('this.columnList_extend', this.columnList_extend)
+      return
       this.saveData.columnList = common.deepClone(this.columnList)
+      this.saveData.content = JSON.stringify({
+        formList: this.$store.state.formDesign.formList,
+        formAttr: this.formAttr
+      })
       this.columnList = []
       this.dataListLoading = true
+      console.log('this.saveData', common.deepClone(this.saveData))
+
       this.$http({
         url: this.$http.adornUrl('/api-flow/dycform/save'),
         method: 'put',
@@ -515,12 +951,15 @@ export default {
             this.$message.error(data.msg)
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     init (id) {
       this.visible = true
       this.$nextTick(() => {
-        if (common.isEmpty(id)) return
+        if (common.isEmpty(id)) {
+          this.$store.dispatch('formDesign/setFormList', [])
+          return
+        }
         this.$http({
           url: this.$http.adornUrl('/api-flow/dycform/get'),
           method: 'get',
@@ -529,16 +968,25 @@ export default {
           .then(({ data }) => {
             if (data && data.code === 0) {
               this.saveData = common.deepClone(data.resultData)
+              this.columnList = common.deepClone(data.resultData.columnList)
               // eslint-disable-next-line no-unused-vars
-              let contentStr = data.resultData.content
+
               let content = JSON.parse(data.resultData.content)
-              this.$store.dispatch('formDesign/setFormList', content.formList)
               this.formAttr = content.formAttr
+
+              if (this.formAttr.isTabs) {
+                this.$store.dispatch(
+                  'formDesign/setFormList',
+                  this.formAttr.tabs[0].formList
+                )
+              } else {
+                this.$store.dispatch('formDesign/setFormList', content.formList)
+              }
             } else {
               this.$message.error(data.msg)
             }
           })
-          .catch(() => {})
+          .catch(() => { })
       })
     },
     verify () {
@@ -549,13 +997,13 @@ export default {
         })
         return false
       }
-      if (common.isEmpty(this.saveData.content)) {
-        this.$message({
-          message: '表单内容不能为空',
-          type: 'warning'
-        })
-        return false
-      }
+      // if (common.isEmpty(this.saveData.content)) {
+      //   this.$message({
+      //     message: '表单内容不能为空',
+      //     type: 'warning'
+      //   })
+      //   return false
+      // }
       return true
     },
     // 获取数据列表
@@ -585,6 +1033,40 @@ export default {
         }
         this.dataListLoading = false
       })
+    },
+    changeTabMode (value) {
+      if (value) {
+        let formAttr = common.deepClone(this.formAttr)
+        formAttr.tabType = 'card'
+        formAttr.tabs = [
+          {
+            name: 'tab1',
+            formList: this.$store.state.formDesign.formList
+          }
+        ]
+        this.formAttr = formAttr
+      }
+    },
+    initFormRule () {
+      if (this.formAttr.isTabs) {
+        let formList = this.formAttr.tabs[0].formList
+        let rules = {}
+        formList.forEach(element => {
+          if (element.options.required) {
+            rules[element.key] = [{ required: element.options.required, message: '必填项不能为空', trigger: 'blur' }]
+          }
+        })
+        this.rules = rules
+      } else {
+        let formList = this.$store.state.formDesign.formList
+        let rules = {}
+        formList.forEach(element => {
+          if (element.options.required) {
+            rules[element.key] = [{ required: element.options.required, message: '必填项不能为空', trigger: 'blur' }]
+          }
+        })
+        this.rules = rules
+      }
     }
   },
   mounted () {
@@ -594,6 +1076,10 @@ export default {
       name: '',
       remarks: ''
     }
+
+    bus.$on('update.activeName', (value) => {
+      this.activeName = value
+    })
   },
   filters: {
     labelWidth (value) {

@@ -19,7 +19,7 @@
           type="danger"
           @click="deleteHandle()"
           :disabled="dataListSelections.length <= 0"
-        >批量删除</el-button> -->
+        >批量删除</el-button>-->
       </el-form-item>
     </el-form>
     <el-table
@@ -49,7 +49,7 @@
           <el-button
             type="text"
             size="small"
-            @click="getFormDetails(scope.row.id);getTableList();dialogMapping = true;"
+            @click="getFormDetails(scope.row.id);dialogMapping = true;"
           >映射</el-button>
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
@@ -68,19 +68,19 @@
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
 
-    <el-dialog title="设置表字段映射" :visible.sync="dialogMapping" append-to-body>
+    <el-dialog title="设置表字段code" :visible.sync="dialogMapping" append-to-body>
       <div class="cleanfix" style="margin-bottom: 30px;">
         <p style="float: left;height: 30px;line-height: 30px;margin: 0;">选择表：</p>
-        <el-select :value="dycformId" @change="tableChange" filterable placeholder="请选择表">
-          <el-option v-for="(item, i) in tableList" :key="i" :label="item.name" :value="item.id"></el-option>
+        <el-select v-model="dycform.tableCode" @change="tableChange" filterable placeholder="请选择表">
+          <el-option v-for="(item, i) in tableList" :key="i" :label="item.name" :value="item.code"></el-option>
         </el-select>
       </div>
       <el-table :data="dycform.columnList" border v-loading="dataListLoading" style="width: 100%;">
         <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column> -->
         <el-table-column prop="name" header-align="center" align="center" label="表单字段"></el-table-column>
-        <el-table-column prop="code" header-align="center" align="center" label="业务表字段">
+        <el-table-column prop="tableColumnCode" header-align="center" align="center" label="业务表字段">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.code" placeholder="请选择字段" filterable>
+            <el-select v-model="scope.row.tableColumnCode" placeholder="请选择字段" filterable>
               <el-option
                 v-for="(item, i) in dyctable.columnList"
                 :key="i"
@@ -125,7 +125,9 @@ export default {
       dialogSelectTable: false,
       dialogMapping: false,
       dyctable: {},
-      dycform: {},
+      dycform: {
+        tableCode: null
+      },
       tableList: [],
       dycformId: '',
       saveVisible: false
@@ -142,7 +144,7 @@ export default {
     tableChange (value) {
       console.log('value', value)
       this.tableList.forEach(element => {
-        if (element.id === value) {
+        if (element.code === value) {
           this.dyctable = element
           this.dycformId = value
         }
@@ -198,6 +200,8 @@ export default {
         .then(({ data }) => {
           if (data && data.code === 0) {
             this.dycform = data.resultData
+
+            this.getTableList()
           } else {
             this.$message.error(data.msg)
           }
@@ -260,6 +264,11 @@ export default {
         if (data && data.code === 0) {
           this.dialogSelectTable = true
           this.tableList = data.resultData.resultList
+          data.resultData.resultList.forEach(element => {
+            if (element.code === this.dycform.tableCode) {
+              this.dyctable = element
+            }
+          })
         } else {
           this.tableList = []
         }

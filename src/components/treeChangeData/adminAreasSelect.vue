@@ -43,7 +43,10 @@
       }
     },
     props: {
-      operTypeKey: String,     // 业务key
+      operTypeKey: {           // 业务key
+        type: String,
+        default: 'commonAreaModule'
+      },
       isFillAddr: Boolean,     // 是否获取完整地址
       treeWidth: String,       // 宽度
       treeMaxHeight: String,   // 最大高度
@@ -75,7 +78,11 @@
           params: this.$http.adornParams()
         }).then(({data}) => {
           // this.dataList = data.resultData
-          this.$refs.areaSelectTree.updateKeyChildren(this.areaRoot.id, data.resultData)
+          if (data.resultData && data.resultData.length > 0) {
+            this.$refs.areaSelectTree.updateKeyChildren(this.areaRoot.id, data.resultData)
+          } else {
+            this.dataList = []
+          }
           if (this.dataList && this.dataList.length) {
             this.$nextTick(function () {
               this.$refs.areaSelectTree.setCurrentKey(this.value)
@@ -99,23 +106,24 @@
       },
       // 单选事件
       arealistSelect (data, node, element) {
-        if (this.isFillAddr || this.$refs.areaSelectTree.getCurrentKey() === this.areaRoot.id) {
+        let noteDate = data
+        if (this.isFillAddr && data.permission) {
           this.$http({
             url: this.$http.adornUrl('/api-admin/area/pickArea/fullAreaNames'),
             method: 'post',
             data: this.$http.adornData([this.$refs.areaSelectTree.getCurrentKey()], false)
           }).then(({data}) => {
-            if (this.$refs.areaSelectTree.getCurrentKey() === this.areaRoot.id) {
-              this.$emit('check-select', data, node, element, null, null)
+            if (!noteDate.permission) {
+              this.$emit('check-select', noteDate, node, element, null, null)
             } else {
-              this.$emit('check-select', data, node, element, data.resultData ? data.resultData[0] : {}, this.$refs.areaSelectTree.getCurrentKey())
+              this.$emit('check-select', noteDate, node, element, data.resultData ? data.resultData[0] : {}, this.$refs.areaSelectTree.getCurrentKey())
             }
           }).catch(() => {
             this.commonError()
           })
         } else {
-          if (this.$refs.areaSelectTree.getCurrentKey() === this.areaRoot.id) {
-            this.$emit('check-select', data, node, element, '', '')
+          if (!data.permission) {
+            this.$emit('check-select', data, node, element, null, null)
           } else {
             this.$emit('check-select', data, node, element, this.$refs.areaSelectTree.getCurrentNode(), this.$refs.areaSelectTree.getCurrentKey())
           }

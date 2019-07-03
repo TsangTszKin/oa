@@ -8,7 +8,7 @@
       >
         <div class="cell" v-for="(item, i) in base.child" :key="i">
           <p class="left">
-            <img :src="item.icon">
+            <span :class="`iconfont icon-${item.icon}`"></span>
           </p>
           <p class="right">{{item.title}}</p>
         </div>
@@ -22,7 +22,7 @@
       >
         <div class="cell" v-for="(item, i) in senior.child" :key="i">
           <p class="left">
-            <img :src="item.icon">
+           <span :class="`iconfont icon-${item.icon}`"></span>
           </p>
           <p class="right">{{item.title}}</p>
         </div>
@@ -36,7 +36,21 @@
       >
         <div class="cell" v-for="(item, i) in layout.child" :key="i">
           <p class="left">
-            <img :src="item.icon">
+           <span :class="`iconfont icon-${item.icon}`"></span>
+          </p>
+          <p class="right">{{item.title}}</p>
+        </div>
+      </draggable>
+    </el-collapse-item>
+    <el-collapse-item title="其它字段" name="3">
+      <draggable
+        :list="elseItem.child"
+        :group="{ name: 'form-design', pull: 'clone', put: false }"
+        @change="log"
+      >
+        <div class="cell" v-for="(item, i) in elseItem.child" :key="i">
+          <p class="left">
+           <span :class="`iconfont icon-${item.icon}`"></span>
           </p>
           <p class="right">{{item.title}}</p>
         </div>
@@ -55,8 +69,7 @@ const base = {
     {
       title: '单行文本',
       type: 'input',
-      code: '',
-      icon: '/src/assets/img/form-design/input.png',
+      icon: 'danhangwenben',
       value: '',
       options: {
         width: '100%',
@@ -99,7 +112,7 @@ const base = {
       title: '多行文本',
       type: 'textarea',
       code: '',
-      icon: '/src/assets/img/form-design/textarea.png',
+      icon: 'duohangwenben',
       value: '',
       options: {
         width: '100%',
@@ -115,7 +128,7 @@ const base = {
       title: '计数器',
       type: 'number',
       code: '',
-      icon: '/src/assets/img/form-design/number.png',
+      icon: 'jishubiaoqian',
       value: '',
       options: {
         width: '120px',
@@ -130,7 +143,7 @@ const base = {
       title: '单选框组',
       type: 'radio',
       code: '',
-      icon: '/src/assets/img/form-design/radio.png',
+      icon: 'danxuankuang',
       value: '',
       options: {
         width: '100%',
@@ -157,7 +170,7 @@ const base = {
       title: '多选框组',
       type: 'checkbox',
       code: '',
-      icon: '/src/assets/img/form-design/checkbox.png',
+      icon: 'duoxuankuang1',
       value: '',
       options: {
         width: '100%',
@@ -184,7 +197,7 @@ const base = {
       title: '时间选择器',
       type: 'datetime',
       code: '',
-      icon: '/src/assets/img/form-design/datetime.png',
+      icon: 'shijianxuanzeqi',
       value: '',
       options: {
         width: '100%',
@@ -200,7 +213,7 @@ const base = {
       title: '下拉选择框',
       type: 'select',
       code: '',
-      icon: '/src/assets/img/form-design/select.png',
+      icon: 'xialaxuanze',
       value: '',
       options: {
         width: '100%',
@@ -229,7 +242,7 @@ const base = {
       title: '开关',
       type: 'switch',
       code: '',
-      icon: '/src/assets/img/form-design/switch.png',
+      icon: 'kaiguan',
       value: false,
       options: {
         defaultValue: false,
@@ -247,7 +260,7 @@ const senior = {
       title: '图片上传',
       type: 'img',
       code: '',
-      icon: '/src/assets/img/form-design/img.png',
+      icon: 'tupianshangchuan',
       options: {
         defaultValue: '',
         required: false,
@@ -263,7 +276,7 @@ const layout = {
     {
       title: '栅格布局',
       type: 'grid',
-      icon: '/src/assets/img/form-design/grid.png',
+      icon: 'ai211',
       cols: [
         {
           span: 12,
@@ -279,6 +292,21 @@ const layout = {
   ],
   key: ''
 }
+const elseItem = {
+  title: '其它字段',
+  child: [{
+    title: '表单标题',
+    type: 'title',
+    icon: 'biaoti',
+    value: '标题',
+    options: {
+      align: 'center',
+      fontSize: '18px'
+    },
+    key: ''
+  }],
+  key: ''
+}
 export default {
   components: {
     draggable
@@ -291,8 +319,9 @@ export default {
           {
             title: '单行文本',
             type: 'input',
-            icon: '/src/assets/img/form-design/input.png',
+            icon: 'danhangwenben',
             value: '',
+            code: '',
             options: {
               width: '100%',
               defaultValue: '',
@@ -334,8 +363,9 @@ export default {
           {
             title: '多行文本',
             type: 'textarea',
-            icon: '/src/assets/img/form-design/textarea.png',
+            icon: 'duohangwenben',
             value: '',
+            code: '',
             options: {
               width: '100%',
               defaultValue: '',
@@ -350,8 +380,9 @@ export default {
           {
             title: '计数器',
             type: 'number',
-            icon: '/src/assets/img/form-design/number.png',
+            icon: 'jishubiaoqian',
             value: '',
+            code: '',
             options: {
               width: '120px',
               min: 0,
@@ -364,8 +395,9 @@ export default {
           {
             title: '单选框组',
             type: 'radio',
-            icon: '/src/assets/img/form-design/radio.png',
+            icon: 'danxuankuang',
             value: '',
+            code: '',
             options: {
               width: '100%',
               required: false,
@@ -390,8 +422,9 @@ export default {
           {
             title: '多选框组',
             type: 'checkbox',
-            icon: '/src/assets/img/form-design/checkbox.png',
+            icon: 'xialaxuanze',
             value: '',
+            code: '',
             options: {
               width: '100%',
               required: false,
@@ -416,8 +449,9 @@ export default {
           {
             title: '时间选择器',
             type: 'datetime',
-            icon: '/src/assets/img/form-design/datetime.png',
+            icon: 'shijianxuanzeqi',
             value: '',
+            code: '',
             options: {
               width: '100%',
               type: ['ymd', 'yyyy-MM-dd'],
@@ -431,8 +465,9 @@ export default {
           {
             title: '下拉选择框',
             type: 'select',
-            icon: '/src/assets/img/form-design/select.png',
+            icon: 'xialaxuanze',
             value: '',
+            code: '',
             options: {
               width: '100%',
               defaultValue: '',
@@ -459,8 +494,9 @@ export default {
           {
             title: '开关',
             type: 'switch',
-            icon: '/src/assets/img/form-design/switch.png',
+            icon: 'kaiguan',
             value: false,
+            code: '',
             options: {
               defaultValue: false,
               required: false,
@@ -477,7 +513,7 @@ export default {
             title: '图片上传',
             type: 'img',
             code: '',
-            icon: '/src/assets/img/form-design/img.png',
+            icon: 'tupianshangchuan',
             options: {
               defaultValue: '',
               required: false,
@@ -493,7 +529,7 @@ export default {
           {
             title: '栅格布局',
             type: 'grid',
-            icon: '/src/assets/img/form-design/grid.png',
+            icon: 'ai211',
             cols: [
               {
                 span: 12,
@@ -507,6 +543,21 @@ export default {
             key: ''
           }
         ],
+        key: ''
+      },
+      elseItem: {
+        title: '其它字段',
+        child: [{
+          title: '表单标题',
+          type: 'title',
+          icon: 'biaoti',
+          value: '标题',
+          options: {
+            align: 'center',
+            fontSize: '18px'
+          },
+          key: ''
+        }],
         key: ''
       }
     }
@@ -525,6 +576,7 @@ export default {
       this.base = common.deepClone(base)
       this.senior = common.deepClone(senior)
       this.layout = common.deepClone(layout)
+      this.elseItem = common.deepClone(elseItem)
     }
   }
 }
@@ -556,6 +608,9 @@ export default {
   width: 73px;
   height: 100%;
   margin: 0;
+}
+.iconfont  {
+  margin-left: 5px;
 }
 </style>
 

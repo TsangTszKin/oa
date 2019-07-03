@@ -1,38 +1,56 @@
 <template>
   <div class="emergency-shelter-container">
     <div class="mod-config">
-      <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-        <el-form-item>
-          <el-date-picker v-model="dataForm.dutyDate" type="daterange" size="mini" style="width: 220px" :unlink-panels="true"
-                        range-separator="-" start-placeholder="日期开始" end-placeholder="日期结束" value-format="yyyy-MM-dd">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-input size="mini" class="public-select-sys" v-model="dataForm.leader" placeholder="值班领导" clearable></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-input size="mini" class="public-select-sys" v-model="dataForm.director" placeholder="值班科长（主任）" clearable></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-input size="mini" class="public-select-sys" v-model="dataForm.watchman" placeholder="值班人员" clearable></el-input>
-        </el-form-item>
+      <div class="ctrlbtn-list">
+        <el-button size="mini" class="ctrlbtn-list-float" icon="el-icon-printer" :disabled="dataListSelections.length < 1" type="primary" @click="printList()">打印</el-button>
+      </div>
+      <el-form :inline="true" class="search-from" :model="dataForm" @keyup.enter.native="getDataList()">
+        <el-row>
+          <el-col :span="6">
+            <el-form-item>
+              <el-date-picker v-model="dataForm.dutyDate" type="daterange" size="mini" style="width: 100%" :unlink-panels="true"
+                            range-separator="-" start-placeholder="日期开始" end-placeholder="日期结束" value-format="yyyy-MM-dd">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item>
+              <el-input size="mini" class="public-select-sys" v-model="dataForm.leader" placeholder="值班领导" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input size="mini" class="public-select-sys" v-model="dataForm.director" placeholder="值班科长（主任）" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item>
+              <el-input size="mini" class="public-select-sys" v-model="dataForm.watchman" placeholder="值班人员" clearable></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <search-btn
+          class="search-btn"
+          :length="5"
+          @doFilter="doFilter"
+          @clearFilter="clearFilter"
+          ></search-btn>
       </el-form>
-      <el-button size="mini" @click="doFilter()">搜索</el-button>
+      <!-- <el-button size="mini" @click="doFilter()">搜索</el-button>
       <el-button size="mini" type="info" @click="clearFilter()">清空搜索</el-button>
-      <el-button size="mini" :disabled="dataListSelections.length < 1" type="primary" @click="printList()">打印</el-button>
+      <el-button size="mini" :disabled="dataListSelections.length < 1" type="primary" @click="printList()">打印</el-button> -->
     </div>
     <el-table
       :data="dataList"
-      :height="tableHeight"
-      border
       size="small"
       tooltip-effect="light"
+      :header-cell-style="tablelistheader"
       v-loading="dataListLoading"
       :span-method="objectSpanMethod"
       @sort-change="sortChangeHandle"
       @select="selectDate"
       @select-all="selectDate"
-      style="width: 100%;">
+      style="width: 100%; border:1px solid #ebeef5;">
         <!-- type="index"
         :index="(pageIndex * pageSize - pageSize) + 1" -->
       <el-table-column
@@ -56,23 +74,23 @@
         align="center"
         sortable='custom'
         label="值班日期"
-        min-width="100"
+        min-width="80"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <el-button class="custom-table-button" type="text" @click="viewHandle(scope.row.id)">{{scope.row.dutyDate ? scope.row.dutyDate :
+          <el-button class="custom-table-button iviewTextBtn" type="text" @click="viewHandle(scope.row.id)">{{scope.row.dutyDate ? scope.row.dutyDate :
             '—'}}
           </el-button>
         </template>
       </el-table-column>
       <el-table-column
         prop="leader"
-        header-align="center"
-        align="center"
+        header-align="left"
+        align="left"
         label="值班领导"
         min-width="100"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <el-button class="custom-table-button" type="text" @click="viewHandle(scope.row.id)">{{scope.row.leader ? scope.row.leader :
+          <el-button class="custom-table-button iviewTextBtn" type="text" @click="viewHandle(scope.row.id)">{{scope.row.leader ? scope.row.leader :
             '—'}}
           </el-button>
         </template>
@@ -80,13 +98,13 @@
         <!-- sortable='custom' -->
       <el-table-column
         prop="director"
-        header-align="center"
-        align="center"
-        label="值班（科长）主任"
+        header-align="left"
+        align="left"
+        label="值班科长（主任）"
         min-width="100"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <el-button class="custom-table-button" type="text" @click="viewHandle(scope.row.id)">{{scope.row.director ?
+          <el-button class="custom-table-button iviewTextBtn" type="text" @click="viewHandle(scope.row.id)">{{scope.row.director ?
             scope.row.director : '—'}}
           </el-button>
         </template>
@@ -97,10 +115,10 @@
         align="center"
         sortable='custom'
         label="值班时间"
-        min-width="100"
+        min-width="80"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <el-button class="custom-table-button" type="text" @click="viewHandle(scope.row.id)">
+          <el-button class="custom-table-button iviewTextBtn" type="text" @click="viewHandle(scope.row.id)">
             {{scope.row.timeStartStr ? scope.row.timeStartStr : '—'}}至{{scope.row.timeEndStr ? scope.row.timeEndStr : '—'}}
           </el-button>
         </template>
@@ -108,27 +126,29 @@
         <!-- sortable='custom' -->
       <el-table-column
         prop="watchman"
-        header-align="center"
-        align="center"
+        header-align="left"
+        align="left"
         label="值班人员"
         min-width="100"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <el-button class="custom-table-button" type="text" @click="viewHandle(scope.row.id)">{{scope.row.watchman ? scope.row.watchman
+          <el-button class="custom-table-button iviewTextBtn" type="text" @click="viewHandle(scope.row.id)">{{scope.row.watchman ? scope.row.watchman
             : '—'}}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
-      :current-page="pageIndex"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="pageSize"
-      :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+    <div class="pagination-container">
+      <el-pagination
+        @size-change="sizeChangeHandle"
+        @current-change="currentChangeHandle"
+        :current-page="pageIndex"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="pageSize"
+        :total="totalPage"
+        layout="total, sizes, prev, pager, next, jumper">
+      </el-pagination>
+    </div>
     <!-- 弹窗, 查看 -->
     <situation-details v-if="detailVisible" ref="checkDetails" @refreshDataList="getDataList"></situation-details>
   </div>
@@ -338,53 +358,46 @@
 </script>
 
 <style lang="scss" scoped>
+  @import '../../../assets/scss/_variables.scss';
   .el-table .cell pre {
     white-space: pre-line;
   }
-  .public-select-sys {
-    width: 160px;
+  .ctrlbtn-list {
+    height: 30px;
+    margin-bottom: 6px;
+    .ctrlbtn-list-float {
+      float: right;
+      margin-left: 10px;
+    }
   }
-  .fil-search-button {
-    padding: 0px 0 5px 0;
+  .search-from {
+    position: relative;
+    margin-bottom: 6px;
+    .search-btn {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+    }
+  }
+  .iviewTextBtn {
+    color: #000000;
+  }
+  .iviewTextBtn:hover {
+    color: $--color-primary;
+  }
+  .public-select-sys {
+    width: 100%;
   }
   .el-form-item {
-    margin-bottom: 8px;
-  }
-  .public-href-a {
-    cursor: pointer;
-    text-decoration: none;
-  }
-  .fil-crud-left {
-    float: left;
-  }
-  .fil-crud-right {
-    float: right;
+    margin-bottom: 0px;
   }
   .mod-config{
     /*height: 45px;*/
     overflow: hidden;
-    margin-bottom: 10px;
-  }
-  .mybox-leave-active,.mybox-enter-active{
-    transition:  all 1s ease;
-  }
-  .mybox-leave-active,.mybox-enter{
-    height:0px !important;
-  }
-  .mybox-leave,.mybox-enter-active{
-    height: 45px;
-  }
-  .el-button--mini.is-circle {
-    padding: 7px;
+    margin-bottom: 0px;
   }
 </style>
 <style>
-  /*.safety-responsibility-container .el-table th {*/
-  /*background-color: #fafafa;*/
-  /*}*/
-  /*.emergency-store-container .el-table .cell, .el-table th div {*/
-    /*padding-right: 0px;*/
-  /*}*/
   .form-select-poppersfor{
     max-width: 100px;
   }
@@ -397,7 +410,4 @@
   .emergency-shelter-container .el-date-editor .el-range-separator {
     width: 20px;
   }
-  /*.safety-responsibility-container .el-table--medium td, .safety-responsibility-container .el-table--medium th {*/
-    /*padding: 5px 0;*/
-  /*}*/
 </style>

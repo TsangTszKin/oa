@@ -3,7 +3,7 @@
     <el-form-item label="标题">
       <el-input v-model="data.title" size="small"></el-input>
     </el-form-item>
-    <el-form-item label="表字段映射">
+    <el-form-item label="表字段code">
       <el-input v-model="data.code" size="small"></el-input>
     </el-form-item>
     <el-form-item label="宽度">
@@ -52,7 +52,7 @@ export default {
           title: '多行文本',
           type: 'textarea',
           code: '',
-          icon: '/src/assets/img/form-design/textarea.png',
+          icon: '/static/img/form-design/textarea.png',
           options: {
             width: '100%',
             defaultValue: '',
@@ -73,7 +73,7 @@ export default {
         title: '多行文本',
         type: 'textarea',
         code: '',
-        icon: '/src/assets/img/form-design/textarea.png',
+        icon: '/static/img/form-design/textarea.png',
         options: {
           width: '100%',
           defaultValue: '',
